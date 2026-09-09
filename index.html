@@ -1,4860 +1,4462 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
 
   <title>Support Operations Dashboard</title>
 
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Font Awesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+  />
 
   <script>
     tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            notion: {
-              bgDark: '#191919',
-              cardDark: '#202020',
-              borderDark: '#2f2f2f',
-              bgLight: '#fcfbf9',
-              cardLight: '#ffffff',
-              borderLight: '#e9e9e8',
-              accent: '#2eaadc',
-              georgiaRed: '#e03e3e'
-            }
-          }
-        }
-      }
+      darkMode: 'class'
     };
   </script>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-    rel="stylesheet"
-  >
-
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-  >
 
   <style>
     * {
       box-sizing: border-box;
     }
 
-    html {
-      scroll-behavior: smooth;
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
     }
 
     body {
-      font-family: Inter, sans-serif;
-    }
-
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: #777;
-      border-radius: 10px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    .clock-font {
-      font-variant-numeric: tabular-nums;
-      letter-spacing: -0.045em;
-    }
-
-    .card-hover {
+      background: #f8fafc;
+      color: #0f172a;
       transition:
-        transform 0.16s ease,
-        border-color 0.16s ease,
-        box-shadow 0.16s ease;
+        background-color 0.2s ease,
+        color 0.2s ease;
     }
 
-    .card-hover:hover {
+    .dark body {
+      background: #020617;
+      color: #e2e8f0;
+    }
+
+    .app-card {
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid #e2e8f0;
+      border-radius: 18px;
+      box-shadow:
+        0 8px 30px rgba(15, 23, 42, 0.06);
+    }
+
+    .dark .app-card {
+      background: rgba(15, 23, 42, 0.92);
+      border-color: #1e293b;
+      box-shadow:
+        0 8px 30px rgba(0, 0, 0, 0.18);
+    }
+
+    .tab-button {
+      transition: all 0.18s ease;
+    }
+
+    .tab-button.active {
+      background: #0f172a;
+      color: white;
+    }
+
+    .dark .tab-button.active {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
+    .timezone-card {
+      transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease;
+    }
+
+    .timezone-card:hover {
       transform: translateY(-1px);
+      box-shadow:
+        0 8px 20px rgba(15, 23, 42, 0.08);
     }
 
-    .state-row {
-      transition:
-        background 0.15s ease,
-        transform 0.15s ease;
-    }
-
-    .state-row:hover {
-      background: rgba(128, 128, 128, 0.08);
-    }
-
-    .hero-panel {
-      background:
-        linear-gradient(
-          135deg,
-          rgba(46, 170, 220, 0.10),
-          transparent 60%
-        );
-    }
-
-    .dark .hero-panel {
-      background:
-        linear-gradient(
-          135deg,
-          rgba(46, 170, 220, 0.12),
-          transparent 60%
-        );
-    }
-
-    .tab-active {
-      background: #2eaadc !important;
-      color: #ffffff !important;
-      box-shadow: 0 4px 15px rgba(46, 170, 220, 0.25);
+    .dark .timezone-card:hover {
+      box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.2);
     }
 
     .modal-backdrop {
-      background: rgba(0, 0, 0, 0.62);
+      background: rgba(2, 6, 23, 0.66);
       backdrop-filter: blur(5px);
     }
 
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      min-width: 8px;
-      border-radius: 999px;
-      display: inline-block;
+    .modal-panel {
+      max-height: calc(100vh - 32px);
+      overflow-y: auto;
     }
 
-    input,
+    .loading-spinner {
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .incident-card {
+      transition:
+        transform 0.15s ease,
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+    }
+
+    .incident-card:hover {
+      transform: translateY(-1px);
+      box-shadow:
+        0 8px 22px rgba(15, 23, 42, 0.08);
+    }
+
+    .dark .incident-card:hover {
+      box-shadow:
+        0 8px 22px rgba(0, 0, 0, 0.22);
+    }
+
+    .detail-section {
+      border-radius: 16px;
+      border: 1px solid #e2e8f0;
+      padding: 18px;
+    }
+
+    .dark .detail-section {
+      border-color: #334155;
+    }
+
+    .detail-section.issue {
+      background: #f8fafc;
+    }
+
+    .dark .detail-section.issue {
+      background: #0f172a;
+    }
+
+    .detail-section.action {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+    }
+
+    .dark .detail-section.action {
+      background: rgba(30, 64, 175, 0.18);
+      border-color: #1e40af;
+    }
+
+    .detail-section.check {
+      background: #fffbeb;
+      border-color: #fde68a;
+    }
+
+    .dark .detail-section.check {
+      background: rgba(146, 64, 14, 0.16);
+      border-color: #92400e;
+    }
+
+    .detail-section.response {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+    }
+
+    .dark .detail-section.response {
+      background: rgba(20, 83, 45, 0.16);
+      border-color: #166534;
+    }
+
+    .detail-section.procedure {
+      background: #faf5ff;
+      border-color: #e9d5ff;
+    }
+
+    .dark .detail-section.procedure {
+      background: rgba(88, 28, 135, 0.16);
+      border-color: #6b21a8;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border-radius: 999px;
+      padding: 4px 9px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .badge-active {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .badge-monitoring {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .badge-resolved {
+      background: #e2e8f0;
+      color: #475569;
+    }
+
+    .dark .badge-resolved {
+      background: #334155;
+      color: #cbd5e1;
+    }
+
+    .badge-high {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .badge-medium {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .badge-low {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .platform-badge {
+      background: #ede9fe;
+      color: #5b21b6;
+    }
+
+    .dark .platform-badge {
+      background: rgba(109, 40, 217, 0.22);
+      color: #c4b5fd;
+    }
+
+    .category-badge {
+      background: #e0f2fe;
+      color: #075985;
+    }
+
+    .dark .category-badge {
+      background: rgba(3, 105, 161, 0.2);
+      color: #7dd3fc;
+    }
+
     textarea,
+    input,
     select {
       outline: none;
     }
 
-    input:focus,
     textarea:focus,
+    input:focus,
     select:focus {
-      box-shadow: 0 0 0 2px rgba(46, 170, 220, 0.35);
+      border-color: #64748b !important;
+      box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.12);
     }
 
-    button {
-      transition: all 0.15s ease;
+    .dark textarea,
+    .dark input,
+    .dark select {
+      background: #020617;
+      color: #e2e8f0;
+      border-color: #334155;
     }
 
-    button:active {
-      transform: scale(0.98);
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
     }
 
-    .line-clamp-3 {
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+    .scrollbar-thin::-webkit-scrollbar-track {
+      background: transparent;
     }
 
-    .hidden-section {
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 999px;
+    }
+
+    .dark .scrollbar-thin::-webkit-scrollbar-thumb {
+      background: #475569;
+    }
+
+    .hidden-view {
       display: none !important;
+    }
+
+    .toast {
+      animation:
+        toastIn 0.2s ease,
+        toastOut 0.25s ease 3.4s forwards;
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes toastOut {
+      to {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+    }
+
+    .empty-state {
+      min-height: 220px;
+    }
+
+    .clock-number {
+      letter-spacing: -0.04em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .city-row {
+      font-variant-numeric: tabular-nums;
+    }
+
+    @media (max-width: 768px) {
+      .app-card {
+        border-radius: 14px;
+      }
+
+      .modal-panel {
+        max-height: calc(100vh - 16px);
+      }
     }
   </style>
 </head>
 
-<body
-  class="min-h-screen bg-notion-bgLight text-slate-900 dark:bg-notion-bgDark dark:text-slate-100"
->
+<body class="min-h-screen">
 
-<!-- ============================================================
-     HEADER
-============================================================ -->
+  <!-- =========================================================
+       HEADER
+  ========================================================== -->
 
-<header
-  class="sticky top-0 z-40 border-b border-notion-borderLight/80
-         bg-notion-bgLight/95 backdrop-blur
-         dark:border-notion-borderDark dark:bg-notion-bgDark/95"
->
-  <div class="mx-auto max-w-[1600px] px-4 py-3 lg:px-6">
-
-    <div class="flex flex-wrap items-center gap-3">
-
-      <!-- LOGO / TITLE -->
-
-      <div class="mr-auto flex items-center gap-3">
-
-        <div
-          class="flex h-10 w-10 items-center justify-center
-                 rounded-xl bg-notion-accent text-white shadow"
-        >
-          <i class="fa-solid fa-headset"></i>
-        </div>
-
-        <div>
-          <h1 class="text-base font-bold sm:text-lg">
-            Support Operations Dashboard
-          </h1>
-
-          <p class="text-xs text-slate-500 dark:text-slate-400">
-            US time reference & live support incidents
-          </p>
-        </div>
-
-      </div>
-
-      <!-- TBILISI HEADER CLOCK -->
-
-      <div
-        class="hidden items-center gap-2 rounded-xl
-               border border-notion-borderLight bg-white px-3 py-2
-               sm:flex
-               dark:border-notion-borderDark dark:bg-notion-cardDark"
-      >
-        <span class="status-dot animate-pulse bg-emerald-500"></span>
-
-        <span class="text-xs font-bold">
-          TBILISI
-        </span>
-
-        <span
-          id="headerTbilisi"
-          class="clock-font text-sm font-bold"
-        >
-          --:--
-        </span>
-      </div>
-
-      <!-- THEME -->
-
-      <button
-        id="themeBtn"
-        class="rounded-xl border border-notion-borderLight
-               px-3 py-2 text-sm
-               hover:bg-slate-100
-               dark:border-notion-borderDark
-               dark:hover:bg-white/5"
-        title="Toggle theme"
-      >
-        <i id="themeIcon" class="fa-solid fa-sun"></i>
-
-        <span
-          id="themeText"
-          class="ml-1 hidden sm:inline"
-        >
-          Light
-        </span>
-      </button>
-
-      <!-- MANAGEMENT -->
-
-      <button
-        id="managementBtn"
-        class="rounded-xl bg-slate-900
-               px-3 py-2 text-sm font-semibold text-white
-               hover:opacity-90
-               dark:bg-white dark:text-slate-900"
-      >
-        <i class="fa-solid fa-users-gear mr-1"></i>
-        TL / QA / MA
-      </button>
-
-    </div>
-
-    <!-- NAVIGATION -->
-
-    <nav class="mt-3 flex gap-2 overflow-x-auto">
-
-      <button
-        data-tab="time"
-        class="tab-btn tab-active shrink-0 rounded-xl
-               px-4 py-2 text-sm font-semibold"
-      >
-        <i class="fa-solid fa-earth-americas mr-2"></i>
-        US TIME
-      </button>
-
-      <button
-        data-tab="incidents"
-        class="tab-btn shrink-0 rounded-xl
-               px-4 py-2 text-sm font-semibold
-               text-slate-600
-               hover:bg-slate-100
-               dark:text-slate-300
-               dark:hover:bg-white/5"
-      >
-        <i class="fa-solid fa-triangle-exclamation mr-2"></i>
-
-        CURRENT INCIDENTS
-
-        <span
-          id="headerIncidentCount"
-          class="ml-1 rounded-full bg-red-500
-                 px-1.5 py-0.5 text-[10px] text-white"
-        >
-          0
-        </span>
-      </button>
-
-    </nav>
-
-  </div>
-</header>
-
-
-<!-- ============================================================
-     MAIN
-============================================================ -->
-
-<main class="mx-auto max-w-[1600px] px-4 py-5 lg:px-6">
-
-
-<!-- ============================================================
-     US TIME SECTION
-============================================================ -->
-
-<section id="timeSection">
-
-  <!-- TOP AREA -->
-
-  <div class="grid gap-4 lg:grid-cols-[1.35fr_.65fr]">
-
-    <!-- TBILISI MASTER -->
-
-    <div
-      class="rounded-2xl border border-red-200 bg-white p-5 shadow-sm
-             dark:border-red-900/40 dark:bg-notion-cardDark"
-    >
+  <header
+    class="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur dark:border-slate-800 dark:bg-slate-950/90"
+  >
+    <div class="mx-auto max-w-[1600px] px-4 py-3 sm:px-6">
 
       <div class="flex flex-wrap items-center justify-between gap-3">
 
-        <div>
+        <div class="flex min-w-0 items-center gap-3">
 
           <div
-            class="mb-1 flex items-center gap-2
-                   text-xs font-bold uppercase tracking-wider
-                   text-red-500"
+            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
           >
-            <span class="status-dot bg-red-500"></span>
-
-            Reference Time
+            <i class="fa-solid fa-headset"></i>
           </div>
 
-          <h2 class="text-sm font-semibold text-slate-500 dark:text-slate-400">
-            Tbilisi, Georgia
-          </h2>
+          <div class="min-w-0">
+            <h1
+              class="truncate text-base font-bold text-slate-900 dark:text-slate-100 sm:text-lg"
+            >
+              Support Operations Dashboard
+            </h1>
+
+            <p
+              class="truncate text-xs text-slate-500 dark:text-slate-400"
+            >
+              US time reference & live support incidents
+            </p>
+          </div>
 
         </div>
 
-        <span
-          id="tbilisiDate"
-          class="text-xs text-slate-500"
+        <div class="flex items-center gap-2">
+
+          <!-- Tbilisi mini clock -->
+          <div
+            class="hidden items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs dark:border-slate-800 dark:bg-slate-900 sm:flex"
+          >
+            <i class="fa-regular fa-clock text-slate-500"></i>
+
+            <span class="font-medium text-slate-600 dark:text-slate-300">
+              Tbilisi
+            </span>
+
+            <span
+              id="headerTbilisiClock"
+              class="font-bold tabular-nums text-slate-900 dark:text-white"
+            >
+              --:--:--
+            </span>
+          </div>
+
+          <!-- Theme -->
+          <button
+            id="themeToggle"
+            onclick="toggleTheme()"
+            class="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 transition hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+            title="Toggle theme"
+          >
+            <i
+              id="themeIcon"
+              class="fa-solid fa-moon"
+            ></i>
+          </button>
+
+          <!-- Management -->
+          <button
+            onclick="openAdmin()"
+            class="flex h-10 items-center gap-2 rounded-xl bg-slate-900 px-3 text-sm font-semibold text-white transition hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
+          >
+            <i class="fa-solid fa-user-shield"></i>
+            <span class="hidden sm:inline">TL / QA / MA</span>
+          </button>
+
+        </div>
+
+      </div>
+
+      <!-- =====================================================
+           MAIN TABS
+      ====================================================== -->
+
+      <div class="mt-3 flex gap-1 rounded-xl bg-slate-100 p-1 dark:bg-slate-900">
+
+        <button
+          id="tabTime"
+          onclick="switchTab('time')"
+          class="tab-button active flex-1 rounded-lg px-4 py-2 text-sm font-semibold"
         >
-          --
-        </span>
+          <i class="fa-regular fa-clock mr-1"></i>
+          US TIME
+        </button>
 
-      </div>
+        <button
+          id="tabIncidents"
+          onclick="switchTab('incidents')"
+          class="tab-button flex-1 rounded-lg px-4 py-2 text-sm font-semibold text-slate-500 dark:text-slate-400"
+        >
+          <i class="fa-solid fa-triangle-exclamation mr-1"></i>
+          CURRENT INCIDENTS
+        </button>
 
-      <div
-        id="masterClock"
-        class="clock-font mt-2 text-5xl font-extrabold sm:text-6xl"
-      >
-        --:--:--
-      </div>
-
-      <div class="mt-2 text-xs text-slate-500">
-        Asia/Tbilisi · UTC+4
       </div>
 
     </div>
+  </header>
 
 
-    <!-- TIMEZONE SUMMARY -->
+  <!-- =========================================================
+       MAIN
+  ========================================================== -->
 
-    <div
-      class="rounded-2xl border border-notion-borderLight
-             bg-white p-5
-             dark:border-notion-borderDark
-             dark:bg-notion-cardDark"
-    >
+  <main class="mx-auto max-w-[1600px] px-4 py-5 sm:px-6">
 
-      <div class="flex items-center justify-between">
+    <!-- =======================================================
+         TIME VIEW
+    ======================================================== -->
+
+    <section id="timeView">
+
+      <!-- Top search / controls -->
+
+      <div
+        class="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between"
+      >
 
         <div>
-          <h2 class="font-bold">
+          <h2
+            class="text-lg font-bold text-slate-900 dark:text-slate-100"
+          >
             US Time Zones
           </h2>
 
-          <p class="text-xs text-slate-500">
+          <p
+            class="text-xs text-slate-500 dark:text-slate-400"
+          >
             Quick operational view
           </p>
         </div>
 
-        <label class="flex items-center gap-2 text-xs">
-
-          <input
-            id="showSeconds"
-            type="checkbox"
-            checked
-            class="h-4 w-4 accent-sky-500"
-          >
-
-          Seconds
-
-        </label>
-
-      </div>
-
-      <div
-        id="timezoneSummary"
-        class="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-2"
-      ></div>
-
-    </div>
-
-  </div>
-
-
-  <!-- TIME SEARCH -->
-
-  <div
-    class="mt-4 flex flex-col gap-3
-           rounded-2xl border border-notion-borderLight
-           bg-white p-4
-           sm:flex-row sm:items-center
-           dark:border-notion-borderDark
-           dark:bg-notion-cardDark"
-  >
-
-    <div class="relative flex-1">
-
-      <i
-        class="fa-solid fa-magnifying-glass
-               absolute left-3 top-1/2
-               -translate-y-1/2 text-slate-400"
-      ></i>
-
-      <input
-        id="timezoneSearch"
-        class="w-full rounded-xl
-               border border-notion-borderLight
-               bg-transparent py-2.5 pl-9 pr-3 text-sm
-               dark:border-notion-borderDark"
-        placeholder="Search state or city..."
-      >
-
-    </div>
-
-    <div class="text-xs text-slate-500">
-      <span id="visibleStateCount">0</span>
-      locations shown
-    </div>
-
-  </div>
-
-
-  <!-- TIMEZONE GROUPS -->
-
-  <div
-    id="timezoneSections"
-    class="mt-5 space-y-5"
-  ></div>
-
-</section>
-
-
-<!-- ============================================================
-     INCIDENT SECTION
-============================================================ -->
-
-<section
-  id="incidentSection"
-  class="hidden"
->
-
-  <!-- INCIDENT HEADER -->
-
-  <div class="flex flex-col gap-4 lg:flex-row lg:items-end">
-
-    <div class="mr-auto">
-
-      <h2 class="text-2xl font-extrabold">
-        Current Incidents
-      </h2>
-
-      <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
-        Live support information for CS, TL, QA & MA
-      </p>
-
-    </div>
-
-    <button
-      id="refreshIncidents"
-      class="rounded-xl border
-             border-notion-borderLight
-             px-4 py-2 text-sm font-semibold
-             hover:bg-slate-100
-             dark:border-notion-borderDark
-             dark:hover:bg-white/5"
-    >
-      <i class="fa-solid fa-rotate mr-2"></i>
-      Refresh
-    </button>
-
-  </div>
-
-
-  <!-- SEARCH -->
-
-  <div class="mt-4 grid gap-3 sm:grid-cols-[1fr_220px]">
-
-    <div class="relative">
-
-      <i
-        class="fa-solid fa-magnifying-glass
-               absolute left-3 top-1/2
-               -translate-y-1/2 text-slate-400"
-      ></i>
-
-      <input
-        id="incidentSearch"
-        class="w-full rounded-xl
-               border border-notion-borderLight
-               bg-white py-3 pl-9 pr-3 text-sm
-               dark:border-notion-borderDark
-               dark:bg-notion-cardDark"
-        placeholder="Search incidents..."
-      >
-
-    </div>
-
-    <select
-      id="categoryFilter"
-      class="rounded-xl
-             border border-notion-borderLight
-             bg-white px-3 py-3 text-sm
-             dark:border-notion-borderDark
-             dark:bg-notion-cardDark"
-    >
-      <option value="">All categories</option>
-      <option>Payments</option>
-      <option>Withdrawals</option>
-      <option>Deposits</option>
-      <option>Games</option>
-      <option>KYC</option>
-      <option>Account</option>
-      <option>Promotions</option>
-      <option>Technical</option>
-      <option>Other</option>
-    </select>
-
-  </div>
-
-
-  <!-- ACTIVE -->
-
-  <div class="mt-5 flex items-center gap-2">
-
-    <span class="text-sm font-bold">
-      Active incidents
-    </span>
-
-    <span
-      id="activeCount"
-      class="rounded-full bg-red-500
-             px-2 py-0.5 text-xs font-bold text-white"
-    >
-      0
-    </span>
-
-  </div>
-
-  <div
-    id="activeGrid"
-    class="mt-3 grid gap-4 md:grid-cols-2 xl:grid-cols-3"
-  ></div>
-
-
-  <!-- EMPTY -->
-
-  <div
-    id="emptyActive"
-    class="hidden rounded-2xl
-           border border-dashed
-           border-notion-borderLight
-           p-10 text-center
-           dark:border-notion-borderDark"
-  >
-
-    <i
-      class="fa-solid fa-circle-check
-             text-3xl text-emerald-500"
-    ></i>
-
-    <p class="mt-3 font-bold">
-      No active incidents
-    </p>
-
-    <p class="mt-1 text-sm text-slate-500">
-      Everything looks clear right now.
-    </p>
-
-  </div>
-
-
-  <!-- HISTORY -->
-
-  <button
-    id="historyToggle"
-    class="mt-8 flex w-full items-center
-           justify-between rounded-xl
-           border border-notion-borderLight
-           bg-white px-4 py-3
-           text-sm font-bold
-           dark:border-notion-borderDark
-           dark:bg-notion-cardDark"
-  >
-
-    <span>
-      <i class="fa-solid fa-clock-rotate-left mr-2"></i>
-      Incident history
-    </span>
-
-    <i
-      id="historyIcon"
-      class="fa-solid fa-chevron-down"
-    ></i>
-
-  </button>
-
-  <div
-    id="historyList"
-    class="mt-3 hidden space-y-3"
-  ></div>
-
-</section>
-
-</main>
-
-
-<!-- ============================================================
-     LOGIN MODAL
-============================================================ -->
-
-<div
-  id="loginModal"
-  class="modal-backdrop fixed inset-0 z-50
-         hidden items-center justify-center p-4"
->
-
-  <div
-    class="w-full max-w-sm rounded-2xl
-           border border-notion-borderLight
-           bg-white p-6 shadow-2xl
-           dark:border-notion-borderDark
-           dark:bg-notion-cardDark"
-  >
-
-    <h3 class="text-xl font-extrabold">
-      Management Login
-    </h3>
-
-    <p class="mt-1 text-xs text-slate-500">
-      TL, QA and MA access
-    </p>
-
-    <form
-      id="loginForm"
-      class="mt-5 space-y-4"
-    >
-
-      <select
-        id="loginRole"
-        class="w-full rounded-xl
-               border border-notion-borderLight
-               bg-transparent px-3 py-3 text-sm
-               dark:border-notion-borderDark"
-      >
-        <option value="TL">
-          TL — Team Lead
-        </option>
-
-        <option value="QA">
-          QA
-        </option>
-
-        <option value="MA">
-          MA — Management
-        </option>
-      </select>
-
-
-      <input
-        id="loginPin"
-        type="password"
-        inputmode="numeric"
-        autocomplete="off"
-        class="w-full rounded-xl
-               border border-notion-borderLight
-               bg-transparent px-3 py-3 text-sm
-               dark:border-notion-borderDark"
-        placeholder="PIN"
-      >
-
-
-      <div
-        id="loginError"
-        class="hidden rounded-xl
-               bg-red-50 p-3
-               text-xs font-semibold text-red-600
-               dark:bg-red-950/30
-               dark:text-red-400"
-      ></div>
-
-
-      <div class="flex gap-2">
-
-        <button
-          type="button"
-          id="closeLogin"
-          class="flex-1 rounded-xl
-                 border border-notion-borderLight
-                 px-4 py-2.5
-                 text-sm font-semibold
-                 dark:border-notion-borderDark"
-        >
-          Cancel
-        </button>
-
-        <button
-          type="submit"
-          class="flex-1 rounded-xl
-                 bg-notion-accent
-                 px-4 py-2.5
-                 text-sm font-bold text-white"
-        >
-          Login
-        </button>
-
-      </div>
-
-    </form>
-
-  </div>
-
-</div>
-
-
-<!-- ============================================================
-     ADMIN MODAL
-============================================================ -->
-
-<div
-  id="adminModal"
-  class="modal-backdrop fixed inset-0 z-50
-         hidden items-center justify-center p-3 sm:p-5"
->
-
-  <div
-    class="flex max-h-[94vh] w-full max-w-6xl
-           flex-col overflow-hidden rounded-2xl
-           border border-notion-borderLight
-           bg-white shadow-2xl
-           dark:border-notion-borderDark
-           dark:bg-notion-cardDark"
-  >
-
-    <!-- ADMIN HEADER -->
-
-    <div
-      class="flex items-center gap-3
-             border-b border-notion-borderLight
-             p-4
-             dark:border-notion-borderDark"
-    >
-
-      <div class="mr-auto">
-
-        <h3 class="font-extrabold">
-          Incident Management
-        </h3>
-
-        <p
-          id="adminRoleText"
-          class="text-xs text-slate-500"
-        ></p>
-
-      </div>
-
-
-      <button
-        id="newIncidentBtn"
-        class="rounded-xl bg-notion-accent
-               px-3 py-2
-               text-xs font-bold text-white"
-      >
-        <i class="fa-solid fa-plus mr-1"></i>
-        New incident
-      </button>
-
-
-      <button
-        id="logoutBtn"
-        class="rounded-xl
-               border border-notion-borderLight
-               px-3 py-2
-               text-xs font-bold
-               dark:border-notion-borderDark"
-      >
-        Logout
-      </button>
-
-
-      <button
-        id="closeAdmin"
-        class="rounded-xl p-2 text-slate-500
-               hover:bg-slate-100
-               dark:hover:bg-white/5"
-      >
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-
-    </div>
-
-
-    <!-- ADMIN CONTENT -->
-
-    <div
-      class="grid min-h-0 flex-1
-             md:grid-cols-[300px_1fr]"
-    >
-
-      <!-- INCIDENT LIST -->
-
-      <div
-        id="adminIncidentList"
-        class="max-h-[30vh]
-               overflow-auto
-               border-b border-notion-borderLight
-               p-3
-               dark:border-notion-borderDark
-               md:max-h-none
-               md:border-b-0
-               md:border-r"
-      ></div>
-
-
-      <!-- EDITOR -->
-
-      <div
-        id="editorPane"
-        class="overflow-auto p-5"
-      >
-
-        <div
-          class="py-16 text-center
-                 text-sm text-slate-500"
-        >
-          Select an incident or create a new one.
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</div>
-
-
-<!-- ============================================================
-     DETAIL MODAL
-============================================================ -->
-
-<div
-  id="detailModal"
-  class="modal-backdrop fixed inset-0 z-50
-         hidden items-center justify-center p-4"
->
-
-  <div
-    class="max-h-[90vh] w-full max-w-2xl
-           overflow-auto rounded-2xl
-           border border-notion-borderLight
-           bg-white p-6 shadow-2xl
-           dark:border-notion-borderDark
-           dark:bg-notion-cardDark"
-  >
-
-    <div class="flex items-center gap-3">
-
-      <h3
-        id="detailTitle"
-        class="mr-auto text-xl font-extrabold"
-      ></h3>
-
-      <button
-        id="closeDetail"
-        class="rounded-xl p-2 text-slate-500
-               hover:bg-slate-100
-               dark:hover:bg-white/5"
-      >
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-
-    </div>
-
-    <div
-      id="detailContent"
-      class="mt-5"
-    ></div>
-
-  </div>
-
-</div>
-
-
-<!-- ============================================================
-     TOAST
-============================================================ -->
-
-<div
-  id="toast"
-  class="fixed bottom-5 right-5 z-[60]
-         hidden rounded-xl
-         bg-slate-900
-         px-4 py-3
-         text-sm font-semibold text-white
-         shadow-xl
-         dark:bg-white
-         dark:text-slate-900"
-></div>
-
-
-<script>
-
-/* ============================================================
-   CONFIG
-============================================================ */
-
-/*
-  IMPORTANT:
-  Put your existing Google Apps Script Web App URL here.
-
-  Example:
-
-  const API_URL =
-    'https://script.google.com/macros/s/AKfycbx4tSUdnFm6oSrGqK06eQ6INHyc9JA_W6TGYbfulqv5WBvB9XLDEtTLx5qSe3U4cW9DwA/exec';
-
-  Do NOT put TL/QA/MA PINs here.
-*/
-
-const API_URL =
-  'https://script.google.com/macros/s/AKfycbx4tSUdnFm6oSrGqK06eQ6INHyc9JA_W6TGYbfulqv5WBvB9XLDEtTLx5qSe3U4cW9DwA/exec';
-
-
-/* ============================================================
-   TIMEZONE GROUPS
-============================================================ */
-
-const GROUPS = [
-
-  {
-    key: 'Eastern',
-    title: 'Eastern Time',
-    code: 'ET',
-    icon: 'fa-sun',
-    accent: 'sky'
-  },
-
-  {
-    key: 'Central',
-    title: 'Central Time',
-    code: 'CT',
-    icon: 'fa-cloud-sun',
-    accent: 'cyan'
-  },
-
-  {
-    key: 'Mountain',
-    title: 'Mountain Time',
-    code: 'MT',
-    icon: 'fa-mountain-sun',
-    accent: 'amber'
-  },
-
-  {
-    key: 'Arizona',
-    title: 'Arizona',
-    code: 'MST',
-    icon: 'fa-sun',
-    accent: 'orange'
-  },
-
-  {
-    key: 'Pacific',
-    title: 'Pacific Time',
-    code: 'PT',
-    icon: 'fa-water',
-    accent: 'purple'
-  },
-
-  {
-    key: 'Alaska',
-    title: 'Alaska Time',
-    code: 'AKT',
-    icon: 'fa-snowflake',
-    accent: 'sky'
-  },
-
-  {
-    key: 'Hawaii',
-    title: 'Hawaii Time',
-    code: 'HST',
-    icon: 'fa-umbrella-beach',
-    accent: 'emerald'
-  }
-
-];
-
-
-/* ============================================================
-   STATE DATA
-============================================================ */
-
-const STATES = [
-
-  ['AL', 'Alabama', 'Birmingham', 'America/Chicago', 'Central'],
-
-  ['FL', 'Florida', 'Miami', 'America/New_York', 'Eastern'],
-  ['GA', 'Georgia', 'Atlanta', 'America/New_York', 'Eastern'],
-  ['KY', 'Kentucky', 'Louisville', 'America/New_York', 'Eastern'],
-  ['MD', 'Maryland', 'Baltimore', 'America/New_York', 'Eastern'],
-  ['MA', 'Massachusetts', 'Boston', 'America/New_York', 'Eastern'],
-  ['NH', 'New Hampshire', 'Concord', 'America/New_York', 'Eastern'],
-  ['NC', 'North Carolina', 'Charlotte', 'America/New_York', 'Eastern'],
-  ['OH', 'Ohio', 'Columbus', 'America/New_York', 'Eastern'],
-  ['PA', 'Pennsylvania', 'Philadelphia', 'America/New_York', 'Eastern'],
-  ['RI', 'Rhode Island', 'Providence', 'America/New_York', 'Eastern'],
-  ['SC', 'South Carolina', 'Columbia', 'America/New_York', 'Eastern'],
-  ['VT', 'Vermont', 'Burlington', 'America/New_York', 'Eastern'],
-  ['VA', 'Virginia', 'Richmond', 'America/New_York', 'Eastern'],
-
-  ['AR', 'Arkansas', 'Little Rock', 'America/Chicago', 'Central'],
-  ['KS', 'Kansas', 'Wichita', 'America/Chicago', 'Central'],
-  ['MN', 'Minnesota', 'Minneapolis', 'America/Chicago', 'Central'],
-  ['MO', 'Missouri', 'St. Louis', 'America/Chicago', 'Central'],
-  ['NE', 'Nebraska', 'Omaha', 'America/Chicago', 'Central'],
-  ['ND', 'North Dakota', 'Fargo', 'America/Chicago', 'Central'],
-  ['OK', 'Oklahoma', 'Oklahoma City', 'America/Chicago', 'Central'],
-  ['SD', 'South Dakota', 'Sioux Falls', 'America/Chicago', 'Central'],
-  ['TX', 'Texas', 'Dallas', 'America/Chicago', 'Central'],
-  ['WI', 'Wisconsin', 'Milwaukee', 'America/Chicago', 'Central'],
-
-  ['CO', 'Colorado', 'Denver', 'America/Denver', 'Mountain'],
-  ['NM', 'New Mexico', 'Albuquerque', 'America/Denver', 'Mountain'],
-  ['UT', 'Utah', 'Salt Lake City', 'America/Denver', 'Mountain'],
-  ['WY', 'Wyoming', 'Cheyenne', 'America/Denver', 'Mountain'],
-
-  ['AZ', 'Arizona', 'Phoenix', 'America/Phoenix', 'Arizona'],
-
-  ['OR', 'Oregon', 'Portland', 'America/Los_Angeles', 'Pacific'],
-
-  ['AK', 'Alaska', 'Anchorage', 'America/Anchorage', 'Alaska'],
-
-  ['HI', 'Hawaii', 'Honolulu', 'Pacific/Honolulu', 'Hawaii']
-
-].map(row => ({
-
-  state: row[0],
-  name: row[1],
-  city: row[2],
-  tz: row[3],
-  group: row[4]
-
-}));
-
-
-/* ============================================================
-   TIME HELPERS
-============================================================ */
-
-function getParts(date, timeZone) {
-
-  return new Intl.DateTimeFormat(
-    'en-US',
-    {
-      timeZone,
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false
-    }
-  )
-    .formatToParts(date)
-    .reduce((result, part) => {
-
-      result[part.type] = part.value;
-
-      return result;
-
-    }, {});
-
-}
-
-
-function getOffsetHours(date, timeZone) {
-
-  const parts = getParts(date, timeZone);
-
-  const hour =
-    parts.hour === '24'
-      ? 0
-      : Number(parts.hour);
-
-  const utc =
-    Date.UTC(
-      Number(parts.year),
-      Number(parts.month) - 1,
-      Number(parts.day),
-      hour,
-      Number(parts.minute),
-      Number(parts.second)
-    );
-
-  return (utc - date.getTime()) / 3600000;
-
-}
-
-
-function getZoneName(date, timeZone) {
-
-  const parts =
-    new Intl.DateTimeFormat(
-      'en-US',
-      {
-        timeZone,
-        timeZoneName: 'short'
-      }
-    ).formatToParts(date);
-
-  const part =
-    parts.find(x => x.type === 'timeZoneName');
-
-  return part ? part.value : '';
-
-}
-
-
-function formatClock(
-  date,
-  timeZone,
-  seconds = true
-) {
-
-  const parts =
-    getParts(date, timeZone);
-
-  return (
-    parts.hour +
-    ':' +
-    parts.minute +
-    (
-      seconds
-        ? ':' + parts.second
-        : ''
-    )
-  );
-
-}
-
-
-function formatDate(
-  date,
-  timeZone
-) {
-
-  return new Intl.DateTimeFormat(
-    'en-US',
-    {
-      timeZone,
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric'
-    }
-  ).format(date);
-
-}
-
-
-function formatDifference(hours) {
-
-  if (Math.abs(hours) < 0.01) {
-    return 'Same as Tbilisi';
-  }
-
-  const sign =
-    hours > 0
-      ? '+'
-      : '−';
-
-  const amount =
-    Number.isInteger(Math.abs(hours))
-      ? Math.abs(hours)
-      : Math.abs(hours).toFixed(1);
-
-  return sign + amount + 'h vs Tbilisi';
-
-}
-
-
-function getWorkingStatus(
-  date,
-  timeZone
-) {
-
-  const parts =
-    getParts(date, timeZone);
-
-  const hour =
-    Number(parts.hour);
-
-  /*
-    Operational working-hours window:
-    08:00 - 18:00 local time.
-  */
-
-  if (hour >= 8 && hour < 18) {
-
-    return {
-      label: 'Working hours',
-      dot: 'bg-emerald-500',
-      text: 'text-emerald-600 dark:text-emerald-400'
-    };
-
-  }
-
-  return {
-    label: 'Outside hours',
-    dot: 'bg-red-500',
-    text: 'text-red-500'
-  };
-
-}
-
-
-/* ============================================================
-   BUILD TIME DASHBOARD
-============================================================ */
-
-function buildTimeDashboard() {
-
-  const container =
-    document.getElementById(
-      'timezoneSections'
-    );
-
-  container.innerHTML = '';
-
-
-  GROUPS.forEach(group => {
-
-    const states =
-      STATES.filter(
-        state => state.group === group.key
-      );
-
-    if (!states.length) {
-      return;
-    }
-
-
-    const timeZone =
-      states[0].tz;
-
-
-    const section =
-      document.createElement('section');
-
-    section.className =
-      'timezone-section';
-
-    section.dataset.group =
-      group.key;
-
-
-    section.innerHTML = `
-
-      <div
-        class="
-          hero-panel
-          overflow-hidden
-          rounded-2xl
-          border
-          border-notion-borderLight
-          bg-white
-          dark:border-notion-borderDark
-          dark:bg-notion-cardDark
-        "
-      >
-
-        <div
-          class="
-            grid
-            lg:grid-cols-[330px_1fr]
-          "
-        >
-
-          <!-- HERO CLOCK -->
-
-          <div
-            class="
-              border-b
-              border-notion-borderLight
-              p-5
-              dark:border-notion-borderDark
-              lg:border-b-0
-              lg:border-r
-            "
-          >
-
-            <div
-              class="
-                flex
-                items-center
-                gap-2
-                text-xs
-                font-bold
-                uppercase
-                tracking-wider
-                text-${group.accent}-500
-              "
-            >
-
-              <i
-                class="fa-solid ${group.icon}"
-              ></i>
-
-              ${group.title}
-
-            </div>
-
-
-            <div
-              id="heroClock-${group.key}"
-              class="
-                clock-font
-                mt-3
-                text-4xl
-                font-extrabold
-              "
-            >
-              --:--
-            </div>
-
-
-            <div
-              id="heroDate-${group.key}"
-              class="
-                mt-1
-                text-xs
-                text-slate-500
-              "
-            >
-              --
-            </div>
-
-
-            <div
-              id="heroStatus-${group.key}"
-              class="
-                mt-4
-                flex
-                items-center
-                gap-2
-                text-xs
-                font-bold
-              "
-            ></div>
-
-
-            <div
-              id="heroDiff-${group.key}"
-              class="
-                mt-1
-                text-xs
-                text-slate-500
-              "
-            >
-              --
-            </div>
-
+        <div class="flex flex-wrap items-center gap-2">
+
+          <!-- Timezone search moved to top -->
+          <div class="relative w-full sm:w-72">
+            <i
+              class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400"
+            ></i>
+
+            <input
+              id="timezoneSearch"
+              type="text"
+              placeholder="Search state or city..."
+              oninput="renderTimezones()"
+              class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-9 pr-3 text-sm text-slate-900 placeholder:text-slate-400 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+            />
           </div>
 
-
-          <!-- STATE LIST -->
-
-          <div class="p-3 sm:p-4">
-
-            <div
-              class="
-                mb-2
-                flex
-                items-center
-                justify-between
-                px-2
-              "
-            >
-
-              <span
-                class="
-                  text-xs
-                  font-bold
-                  uppercase
-                  tracking-wider
-                  text-slate-400
-                "
-              >
-                States & cities
-              </span>
-
-              <span
-                class="
-                  text-[11px]
-                  text-slate-400
-                "
-              >
-                ${states.length}
-                location${states.length === 1 ? '' : 's'}
-              </span>
-
-            </div>
-
-
-            <div
-              id="stateList-${group.key}"
-              class="
-                grid
-                gap-1
-                sm:grid-cols-2
-                xl:grid-cols-3
-              "
-            ></div>
-
-          </div>
+          <!-- Seconds -->
+          <button
+            id="secondsToggle"
+            onclick="toggleSeconds()"
+            class="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs font-semibold text-slate-600 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
+          >
+            <i class="fa-solid fa-stopwatch mr-1"></i>
+            Seconds
+          </button>
 
         </div>
 
       </div>
 
-    `;
 
+      <!-- =====================================================
+           COMPACT TBILISI REFERENCE
+      ====================================================== -->
 
-    container.appendChild(section);
+      <div
+        class="app-card mb-4 flex flex-col justify-between gap-3 px-4 py-3 sm:flex-row sm:items-center"
+      >
 
-
-    const stateList =
-      section.querySelector(
-        `#stateList-${group.key}`
-      );
-
-
-    states.forEach(state => {
-
-      const row =
-        document.createElement('div');
-
-      row.className =
-        'state-row rounded-xl p-3';
-
-      row.dataset.state =
-        state.state;
-
-      row.dataset.search =
-        (
-          state.name +
-          ' ' +
-          state.city +
-          ' ' +
-          state.state
-        ).toLowerCase();
-
-
-      row.innerHTML = `
-
-        <div
-          class="
-            flex
-            items-center
-            gap-3
-          "
-        >
+        <div class="flex items-center gap-3">
 
           <div
-            class="
-              flex
-              h-9
-              w-9
-              shrink-0
-              items-center
-              justify-center
-              rounded-lg
-              bg-slate-100
-              text-xs
-              font-extrabold
-              dark:bg-white/5
-            "
+            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
           >
-            ${state.state}
+            <i class="fa-solid fa-location-dot"></i>
           </div>
 
-
-          <div
-            class="
-              min-w-0
-              flex-1
-            "
-          >
+          <div>
+            <p
+              class="text-[10px] font-bold uppercase tracking-wider text-slate-400"
+            >
+              Reference Time
+            </p>
 
             <div
-              class="
-                truncate
-                text-xs
-                font-bold
-              "
+              class="mt-0.5 flex flex-wrap items-baseline gap-x-2 gap-y-0"
             >
-              ${state.name}
-            </div>
+              <h2
+                class="text-sm font-bold text-slate-900 dark:text-white"
+              >
+                Tbilisi, Georgia
+              </h2>
 
-            <div
-              class="
-                truncate
-                text-[11px]
-                text-slate-500
-              "
-            >
-              ${state.city}
+              <span
+                id="tbilisiDate"
+                class="text-xs text-slate-500 dark:text-slate-400"
+              >
+                --
+              </span>
             </div>
-
           </div>
 
+        </div>
+
+        <div class="flex items-center gap-4 sm:gap-6">
 
           <div class="text-right">
-
             <div
-              id="clock-${state.state}"
-              class="
-                clock-font
-                text-sm
-                font-bold
-              "
+              id="tbilisiClock"
+              class="clock-number text-2xl font-black text-slate-900 dark:text-white sm:text-3xl"
             >
-              --:--
+              --:--:--
             </div>
 
             <div
-              id="code-${state.state}"
-              class="
-                text-[10px]
-                text-slate-400
-              "
+              class="text-[10px] text-slate-400"
             >
-              --
+              Asia/Tbilisi · UTC+4
             </div>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- =====================================================
+           TIMEZONE CARDS
+      ====================================================== -->
+
+      <div
+        id="timezoneGroups"
+        class="space-y-3"
+      ></div>
+
+    </section>
+
+
+    <!-- =======================================================
+         INCIDENT VIEW
+    ======================================================== -->
+
+    <section
+      id="incidentsView"
+      class="hidden-view"
+    >
+
+      <!-- Search and filters ALWAYS at top -->
+
+      <div
+        class="app-card mb-4 p-4"
+      >
+
+        <div
+          class="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between"
+        >
+
+          <div>
+            <h2
+              class="text-lg font-bold text-slate-900 dark:text-slate-100"
+            >
+              Current Incidents
+            </h2>
+
+            <p
+              class="text-xs text-slate-500 dark:text-slate-400"
+            >
+              Active operational issues and support playbooks
+            </p>
+          </div>
+
+          <div
+            class="flex flex-col gap-2 sm:flex-row"
+          >
+
+            <!-- Incident search -->
+            <div class="relative sm:w-72">
+              <i
+                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400"
+              ></i>
+
+              <input
+                id="incidentSearch"
+                type="text"
+                placeholder="Search incidents..."
+                oninput="renderIncidents()"
+                class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-9 pr-3 text-sm text-slate-900 placeholder:text-slate-400 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+              />
+            </div>
+
+            <!-- Platform -->
+            <select
+              id="platformFilter"
+              onchange="renderIncidents()"
+              class="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+            >
+              <option value="">All Platforms</option>
+              <option value="Fortune Purple">Fortune Purple</option>
+              <option value="Movacoins">Movacoins</option>
+              <option value="9F">9F</option>
+              <option value="All Platforms">All Platforms</option>
+            </select>
+
+            <!-- Category -->
+            <select
+              id="categoryFilter"
+              onchange="renderIncidents()"
+              class="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+            >
+              <option value="">All Categories</option>
+              <option value="Payments">Payments</option>
+              <option value="Withdrawals">Withdrawals</option>
+              <option value="Deposits">Deposits</option>
+              <option value="Games">Games</option>
+              <option value="KYC">KYC</option>
+              <option value="Account">Account</option>
+              <option value="Promotions">Promotions</option>
+              <option value="Technical">Technical</option>
+              <option value="Other">Other</option>
+            </select>
 
           </div>
 
         </div>
 
-      `;
-
-
-      stateList.appendChild(row);
-
-    });
-
-  });
-
-}
-
-
-/* ============================================================
-   UPDATE CLOCKS
-============================================================ */
-
-function updateTimes() {
-
-  const now =
-    new Date();
-
-  const showSeconds =
-    document.getElementById(
-      'showSeconds'
-    ).checked;
-
-
-  const tbilisi =
-    'Asia/Tbilisi';
-
-
-  document.getElementById(
-    'masterClock'
-  ).textContent =
-    formatClock(
-      now,
-      tbilisi,
-      showSeconds
-    );
-
-
-  document.getElementById(
-    'headerTbilisi'
-  ).textContent =
-    formatClock(
-      now,
-      tbilisi,
-      false
-    );
-
-
-  document.getElementById(
-    'tbilisiDate'
-  ).textContent =
-    formatDate(
-      now,
-      tbilisi
-    );
-
-
-  GROUPS.forEach(group => {
-
-    const firstState =
-      STATES.find(
-        state =>
-          state.group === group.key
-      );
-
-
-    if (!firstState) {
-      return;
-    }
-
-
-    const zone =
-      firstState.tz;
-
-
-    const difference =
-      getOffsetHours(
-        now,
-        zone
-      ) -
-      getOffsetHours(
-        now,
-        tbilisi
-      );
-
-
-    const working =
-      getWorkingStatus(
-        now,
-        zone
-      );
-
-
-    const heroClock =
-      document.getElementById(
-        `heroClock-${group.key}`
-      );
-
-    const heroDate =
-      document.getElementById(
-        `heroDate-${group.key}`
-      );
-
-    const heroStatus =
-      document.getElementById(
-        `heroStatus-${group.key}`
-      );
-
-    const heroDiff =
-      document.getElementById(
-        `heroDiff-${group.key}`
-      );
-
-
-    heroClock.textContent =
-      formatClock(
-        now,
-        zone,
-        showSeconds
-      );
-
-
-    heroDate.textContent =
-      formatDate(
-        now,
-        zone
-      ) +
-      ' · ' +
-      getZoneName(
-        now,
-        zone
-      );
-
-
-    heroStatus.innerHTML = `
-
-      <span
-        class="status-dot ${working.dot}"
-      ></span>
-
-      <span
-        class="${working.text}"
-      >
-        ${working.label}
-      </span>
-
-    `;
-
-
-    heroDiff.textContent =
-      formatDifference(
-        difference
-      );
-
-
-    STATES
-      .filter(
-        state =>
-          state.group === group.key
-      )
-      .forEach(state => {
-
-        const clock =
-          document.getElementById(
-            `clock-${state.state}`
-          );
-
-        const code =
-          document.getElementById(
-            `code-${state.state}`
-          );
-
-
-        clock.textContent =
-          formatClock(
-            now,
-            state.tz,
-            showSeconds
-          );
-
-
-        code.textContent =
-          getZoneName(
-            now,
-            state.tz
-          );
-
-      });
-
-  });
-
-
-  updateTimezoneSummary(now);
-
-}
-
-
-/* ============================================================
-   TIMEZONE SUMMARY
-============================================================ */
-
-function updateTimezoneSummary(
-  now
-) {
-
-  const container =
-    document.getElementById(
-      'timezoneSummary'
-    );
-
-  container.innerHTML = '';
-
-
-  GROUPS.forEach(group => {
-
-    const state =
-      STATES.find(
-        item =>
-          item.group === group.key
-      );
-
-
-    if (!state) {
-      return;
-    }
-
-
-    const working =
-      getWorkingStatus(
-        now,
-        state.tz
-      );
-
-
-    const difference =
-      getOffsetHours(
-        now,
-        state.tz
-      ) -
-      getOffsetHours(
-        now,
-        'Asia/Tbilisi'
-      );
-
-
-    const card =
-      document.createElement(
-        'button'
-      );
-
-
-    card.className = `
-      summary-card
-      rounded-xl
-      border
-      border-notion-borderLight
-      p-2.5
-      text-left
-      hover:border-notion-accent
-      dark:border-notion-borderDark
-    `;
-
-
-    let differenceText =
-      'Same';
-
-
-    if (Math.abs(difference) >= 0.01) {
-
-      differenceText =
-        (
-          difference > 0
-            ? '+'
-            : '−'
-        ) +
-        Math.abs(difference) +
-        'h';
-
-    }
-
-
-    card.innerHTML = `
-
-      <div
-        class="
-          flex
-          items-center
-          justify-between
-        "
-      >
-
-        <span
-          class="
-            text-[10px]
-            font-bold
-            uppercase
-            text-slate-400
-          "
-        >
-          ${group.code}
-        </span>
-
-        <span
-          class="
-            status-dot
-            ${working.dot}
-          "
-        ></span>
-
       </div>
 
 
-      <div
-        class="
-          clock-font
-          mt-1
-          text-lg
-          font-extrabold
-        "
-      >
-        ${formatClock(
-          now,
-          state.tz,
-          false
-        )}
-      </div>
+      <!-- Active incidents -->
 
-
-      <div
-        class="
-          text-[10px]
-          text-slate-500
-        "
-      >
-        ${differenceText}
-      </div>
-
-    `;
-
-
-    card.addEventListener(
-      'click',
-      () => {
-
-        const section =
-          document.querySelector(
-            `[data-group="${group.key}"]`
-          );
-
-
-        if (section) {
-
-          section.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          });
-
-        }
-
-      }
-    );
-
-
-    container.appendChild(card);
-
-  });
-
-}
-
-
-/* ============================================================
-   TIME SEARCH
-============================================================ */
-
-function filterTimezones() {
-
-  const query =
-    document
-      .getElementById(
-        'timezoneSearch'
-      )
-      .value
-      .trim()
-      .toLowerCase();
-
-
-  let visibleCount = 0;
-
-
-  document
-    .querySelectorAll(
-      '.timezone-section'
-    )
-    .forEach(section => {
-
-      let sectionVisible =
-        0;
-
-
-      section
-        .querySelectorAll(
-          '.state-row'
-        )
-        .forEach(row => {
-
-          const matches =
-            !query ||
-            row.dataset.search.includes(
-              query
-            );
-
-
-          row.classList.toggle(
-            'hidden',
-            !matches
-          );
-
-
-          if (matches) {
-            sectionVisible++;
-          }
-
-        });
-
-
-      section.classList.toggle(
-        'hidden-section',
-        query &&
-        sectionVisible === 0
-      );
-
-
-      visibleCount +=
-        sectionVisible;
-
-    });
-
-
-  document.getElementById(
-    'visibleStateCount'
-  ).textContent =
-    visibleCount;
-
-}
-
-
-/* ============================================================
-   INCIDENT SYSTEM STATE
-============================================================ */
-
-let incidents = [];
-
-let adminToken =
-  sessionStorage.getItem(
-    'support_admin_token'
-  ) || '';
-
-let role =
-  (
-    sessionStorage.getItem(
-      'support_admin_role'
-    ) || ''
-  ).toUpperCase();
-
-let selectedIncidentId =
-  null;
-
-let creatingNewIncident =
-  false;
-
-
-const roleLabels = {
-
-  TL: 'Team Lead',
-
-  QA: 'QA',
-
-  MA: 'Management'
-
-};
-
-
-/* ============================================================
-   API
-============================================================ */
-
-async function api(
-  action,
-  data = {}
-) {
-
-  if (
-    API_URL.includes(
-      'PASTE_YOUR_'
-    )
-  ) {
-
-    throw new Error(
-      'Apps Script API URL is not configured.'
-    );
-
-  }
-
-
-  const payload =
-    JSON.stringify({
-      action,
-      ...data
-    });
-
-
-  const body =
-    new URLSearchParams();
-
-
-  body.set(
-    'payload',
-    payload
-  );
-
-
-  const response =
-    await fetch(
-      API_URL,
-      {
-        method: 'POST',
-        body
-      }
-    );
-
-
-  const text =
-    await response.text();
-
-
-  let json;
-
-
-  try {
-
-    json =
-      JSON.parse(text);
-
-  } catch (error) {
-
-    throw new Error(
-      `Server returned an invalid response (${response.status}).`
-    );
-
-  }
-
-
-  if (
-    !response.ok ||
-    json.success === false
-  ) {
-
-    throw new Error(
-      json.message ||
-      `Request failed (${response.status}).`
-    );
-
-  }
-
-
-  return json;
-
-}
-
-
-/* ============================================================
-   INCIDENT NORMALIZATION
-============================================================ */
-
-function normalizeIncidents(
-  data
-) {
-
-  const list =
-    Array.isArray(data)
-      ? data
-      : Array.isArray(
-          data?.incidents
-        )
-        ? data.incidents
-        : Array.isArray(
-            data?.data
-          )
-          ? data.data
-          : [];
-
-
-  return list.map(
-    incident => ({
-
-      ...incident,
-
-      id: String(
-        incident.id || ''
-      ),
-
-      status:
-        String(
-          incident.status ||
-          'ACTIVE'
-        ).toUpperCase(),
-
-      severity:
-        String(
-          incident.severity ||
-          'MEDIUM'
-        ).toUpperCase(),
-
-      category:
-        incident.category ||
-        'Other'
-
-    })
-  );
-
-}
-
-
-/* ============================================================
-   LOAD INCIDENTS
-============================================================ */
-
-async function loadIncidents() {
-
-  try {
-
-    const response =
-      await api(
-        'list'
-      );
-
-
-    incidents =
-      normalizeIncidents(
-        response
-      );
-
-
-    renderIncidents();
-
-
-    if (
-      document
-        .getElementById(
-          'adminModal'
-        )
-        .classList
-        .contains('flex')
-    ) {
-
-      renderAdminIncidentList();
-
-
-      if (
-        selectedIncidentId ||
-        creatingNewIncident
-      ) {
-
-        renderIncidentEditor();
-
-      }
-
-    }
-
-  } catch (error) {
-
-    console.error(
-      error
-    );
-
-    showToast(
-      error.message,
-      'error'
-    );
-
-  }
-
-}
-
-
-/* ============================================================
-   INCIDENT FILTERING
-============================================================ */
-
-function activeIncidents() {
-
-  return incidents.filter(
-    incident =>
-      incident.status === 'ACTIVE' ||
-      incident.status === 'MONITORING'
-  );
-
-}
-
-
-function incidentMatches(
-  incident
-) {
-
-  const query =
-    document
-      .getElementById(
-        'incidentSearch'
-      )
-      .value
-      .trim()
-      .toLowerCase();
-
-
-  const category =
-    document
-      .getElementById(
-        'categoryFilter'
-      )
-      .value;
-
-
-  if (
-    category &&
-    incident.category !== category
-  ) {
-
-    return false;
-
-  }
-
-
-  if (!query) {
-    return true;
-  }
-
-
-  const searchable =
-    [
-      incident.title,
-      incident.description,
-      incident.instructions,
-      incident.response,
-      incident.category,
-      incident.affected
-    ]
-      .join(' ')
-      .toLowerCase();
-
-
-  return searchable.includes(
-    query
-  );
-
-}
-
-
-/* ============================================================
-   RENDER INCIDENTS
-============================================================ */
-
-function renderIncidents() {
-
-  const active =
-    activeIncidents()
-      .filter(
-        incidentMatches
-      );
-
-
-  const resolved =
-    incidents
-      .filter(
-        incident =>
-          incident.status === 'RESOLVED'
-      )
-      .filter(
-        incidentMatches
-      );
-
-
-  document.getElementById(
-    'activeCount'
-  ).textContent =
-    active.length;
-
-
-  document.getElementById(
-    'headerIncidentCount'
-  ).textContent =
-    activeIncidents().length;
-
-
-  const grid =
-    document.getElementById(
-      'activeGrid'
-    );
-
-
-  grid.innerHTML = '';
-
-
-  active.forEach(
-    incident => {
-
-      grid.appendChild(
-        createIncidentCard(
-          incident
-        )
-      );
-
-    }
-  );
-
-
-  document
-    .getElementById(
-      'emptyActive'
-    )
-    .classList
-    .toggle(
-      'hidden',
-      active.length !== 0
-    );
-
-
-  const history =
-    document.getElementById(
-      'historyList'
-    );
-
-
-  history.innerHTML = '';
-
-
-  resolved.forEach(
-    incident => {
-
-      history.appendChild(
-        createHistoryCard(
-          incident
-        )
-      );
-
-    }
-  );
-
-}
-
-
-/* ============================================================
-   SEVERITY STYLING
-============================================================ */
-
-function severityClass(
-  severity
-) {
-
-  if (
-    severity === 'HIGH'
-  ) {
-
-    return `
-      bg-red-100
-      text-red-700
-      dark:bg-red-950/40
-      dark:text-red-300
-    `;
-
-  }
-
-
-  if (
-    severity === 'MEDIUM'
-  ) {
-
-    return `
-      bg-amber-100
-      text-amber-700
-      dark:bg-amber-950/40
-      dark:text-amber-300
-    `;
-
-  }
-
-
-  return `
-    bg-slate-100
-    text-slate-600
-    dark:bg-white/5
-    dark:text-slate-300
-  `;
-
-}
-
-
-/* ============================================================
-   INCIDENT CARD
-============================================================ */
-
-function createIncidentCard(
-  incident
-) {
-
-  const card =
-    document.createElement(
-      'article'
-    );
-
-
-  card.className = `
-    card-hover
-    cursor-pointer
-    rounded-2xl
-    border
-    border-notion-borderLight
-    bg-white
-    p-5
-    shadow-sm
-    dark:border-notion-borderDark
-    dark:bg-notion-cardDark
-  `;
-
-
-  card.dataset.incidentId =
-    incident.id;
-
-
-  card.innerHTML = `
-
-    <div
-      class="
-        flex
-        items-start
-        gap-3
-      "
-    >
-
-      <div class="mr-auto">
+      <div class="mb-6">
 
         <div
-          class="
-            mb-2
-            flex
-            flex-wrap
-            gap-2
-          "
+          class="mb-3 flex items-center justify-between"
         >
+          <div class="flex items-center gap-2">
 
-          <span
-            class="
-              rounded-full
-              px-2
-              py-1
-              text-[10px]
-              font-extrabold
-              ${severityClass(
-                incident.severity
-              )}
-            "
+            <span
+              class="flex h-7 w-7 items-center justify-center rounded-lg bg-red-100 text-red-600 dark:bg-red-950/50 dark:text-red-400"
+            >
+              <i class="fa-solid fa-bolt text-xs"></i>
+            </span>
+
+            <h3
+              class="font-bold text-slate-900 dark:text-slate-100"
+            >
+              Active Incidents
+            </h3>
+
+            <span
+              id="activeIncidentCount"
+              class="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600 dark:bg-slate-800 dark:text-slate-300"
+            >
+              0
+            </span>
+
+          </div>
+
+          <button
+            onclick="loadIncidents()"
+            class="rounded-lg px-2.5 py-1.5 text-xs font-semibold text-slate-500 hover:bg-slate-100 hover:text-slate-800 dark:hover:bg-slate-800 dark:hover:text-slate-200"
           >
-            ${escapeHtml(
-              incident.severity
-            )}
+            <i class="fa-solid fa-rotate-right mr-1"></i>
+            Refresh
+          </button>
+
+        </div>
+
+        <div
+          id="incidentList"
+          class="grid gap-3 md:grid-cols-2 xl:grid-cols-3"
+        ></div>
+
+      </div>
+
+
+      <!-- Resolved -->
+
+      <div>
+
+        <div
+          class="mb-3 flex items-center gap-2"
+        >
+          <span
+            class="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
+          >
+            <i class="fa-solid fa-check text-xs"></i>
           </span>
 
-
-          <span
-            class="
-              rounded-full
-              bg-slate-100
-              px-2
-              py-1
-              text-[10px]
-              font-bold
-              text-slate-600
-              dark:bg-white/5
-              dark:text-slate-300
-            "
+          <h3
+            class="font-bold text-slate-900 dark:text-slate-100"
           >
-            ${escapeHtml(
-              incident.category
-            )}
-          </span>
-
+            Resolved History
+          </h3>
         </div>
-
-
-        <h3 class="font-extrabold">
-          ${escapeHtml(
-            incident.title ||
-            'Untitled incident'
-          )}
-        </h3>
-
-      </div>
-
-
-      <span
-        class="
-          status-dot
-          mt-1
-          ${
-            incident.status === 'ACTIVE'
-              ? 'bg-red-500'
-              : 'bg-amber-500'
-          }
-        "
-      ></span>
-
-    </div>
-
-
-    <p
-      class="
-        line-clamp-3
-        mt-3
-        text-sm
-        text-slate-600
-        dark:text-slate-300
-      "
-    >
-      ${escapeHtml(
-        incident.description ||
-        ''
-      )}
-    </p>
-
-
-    <div
-      class="
-        mt-4
-        flex
-        items-center
-        justify-between
-        text-xs
-        text-slate-500
-      "
-    >
-
-      <span>
-        ${escapeHtml(
-          incident.affected ||
-          ''
-        )}
-      </span>
-
-      <span>
-        View details
-        <i
-          class="
-            fa-solid
-            fa-arrow-right
-            ml-1
-          "
-        ></i>
-      </span>
-
-    </div>
-
-  `;
-
-
-  return card;
-
-}
-
-
-/* ============================================================
-   HISTORY CARD
-============================================================ */
-
-function createHistoryCard(
-  incident
-) {
-
-  const card =
-    document.createElement(
-      'div'
-    );
-
-
-  card.className = `
-    rounded-xl
-    border
-    border-notion-borderLight
-    bg-white
-    p-4
-    dark:border-notion-borderDark
-    dark:bg-notion-cardDark
-  `;
-
-
-  card.dataset.incidentId =
-    incident.id;
-
-
-  card.innerHTML = `
-
-    <div
-      class="
-        flex
-        items-center
-        gap-3
-      "
-    >
-
-      <div class="mr-auto">
 
         <div
-          class="
-            text-sm
-            font-bold
-          "
-        >
-          ${escapeHtml(
-            incident.title ||
-            'Untitled'
-          )}
-        </div>
-
-
-        <div
-          class="
-            mt-1
-            text-xs
-            text-slate-500
-          "
-        >
-          ${escapeHtml(
-            incident.category
-          )}
-          · Resolved
-        </div>
+          id="resolvedList"
+          class="space-y-2"
+        ></div>
 
       </div>
 
+    </section>
 
-      <i
-        class="
-          fa-solid
-          fa-chevron-right
-          text-xs
-          text-slate-400
-        "
-      ></i>
-
-    </div>
-
-  `;
+  </main>
 
 
-  return card;
+  <!-- =========================================================
+       INCIDENT DETAIL MODAL
+  ========================================================== -->
 
-}
-
-
-/* ============================================================
-   DETAIL MODAL
-============================================================ */
-
-function detailBlock(
-  label,
-  value
-) {
-
-  if (!value) {
-    return '';
-  }
-
-
-  return `
-
-    <div class="mb-4">
-
-      <div
-        class="
-          text-[10px]
-          font-extrabold
-          uppercase
-          tracking-wider
-          text-slate-400
-        "
-      >
-        ${label}
-      </div>
-
-
-      <div
-        class="
-          mt-1
-          whitespace-pre-wrap
-          text-sm
-        "
-      >
-        ${escapeHtml(
-          value
-        )}
-      </div>
-
-    </div>
-
-  `;
-
-}
-
-
-function openIncidentDetails(
-  id
-) {
-
-  const incident =
-    incidents.find(
-      item =>
-        item.id === id
-    );
-
-
-  if (!incident) {
-    return;
-  }
-
-
-  document.getElementById(
-    'detailTitle'
-  ).textContent =
-    incident.title ||
-    'Incident';
-
-
-  document.getElementById(
-    'detailContent'
-  ).innerHTML = `
-
-    ${detailBlock(
-      'Status',
-      incident.status
-    )}
-
-    ${detailBlock(
-      'Severity',
-      incident.severity
-    )}
-
-    ${detailBlock(
-      'Category',
-      incident.category
-    )}
-
-    ${detailBlock(
-      'Affected',
-      incident.affected
-    )}
-
-    ${detailBlock(
-      'Description',
-      incident.description
-    )}
-
-    ${detailBlock(
-      'Instructions for CS',
-      incident.instructions
-    )}
-
+  <div
+    id="incidentModal"
+    class="modal-backdrop fixed inset-0 z-50 hidden items-center justify-center p-4"
+  >
 
     <div
-      class="
-        mt-4
-        rounded-xl
-        border
-        border-notion-accent/30
-        bg-sky-50
-        p-4
-        dark:bg-sky-950/20
-      "
+      class="modal-panel w-full max-w-4xl rounded-2xl bg-white shadow-2xl dark:bg-slate-900"
     >
 
-      <div
-        class="
-          mb-2
-          text-xs
-          font-extrabold
-          uppercase
-          text-sky-600
-          dark:text-sky-400
-        "
-      >
-        Suggested customer response
-      </div>
-
+      <!-- Header -->
 
       <div
-        class="
-          whitespace-pre-wrap
-          text-sm
-        "
+        class="sticky top-0 z-10 border-b border-slate-200 bg-white/95 px-5 py-4 backdrop-blur dark:border-slate-800 dark:bg-slate-900/95"
       >
-        ${escapeHtml(
-          incident.response ||
-          ''
-        )}
-      </div>
 
+        <div
+          class="flex items-start justify-between gap-4"
+        >
 
-      <button
-        data-copy-response="${escapeAttr(
-          incident.id
-        )}"
-        class="
-          mt-3
-          rounded-lg
-          bg-notion-accent
-          px-3
-          py-2
-          text-xs
-          font-bold
-          text-white
-        "
-      >
-        Copy response
-      </button>
+          <div class="min-w-0">
 
-    </div>
+            <div
+              id="detailBadges"
+              class="mb-2 flex flex-wrap gap-1.5"
+            ></div>
 
+            <h2
+              id="detailTitle"
+              class="text-xl font-black text-slate-900 dark:text-white"
+            >
+              Incident
+            </h2>
 
-    ${
-      incident.notionUrl
-        ? `
-          <a
-            class="
-              mt-4
-              inline-block
-              text-sm
-              font-bold
-              text-notion-accent
-              hover:underline
-            "
-            href="${escapeAttr(
-              incident.notionUrl
-            )}"
-            target="_blank"
-            rel="noopener noreferrer"
+            <p
+              id="detailMeta"
+              class="mt-1 text-xs text-slate-500 dark:text-slate-400"
+            ></p>
+
+          </div>
+
+          <button
+            onclick="hideModal('incidentModal')"
+            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-200"
           >
-            Open Notion
-            <i
-              class="
-                fa-solid
-                fa-arrow-up-right-from-square
-                ml-1
-              "
-            ></i>
-          </a>
-        `
-        : ''
-    }
+            <i class="fa-solid fa-xmark"></i>
+          </button>
 
-  `;
+        </div>
 
-
-  showModal(
-    'detailModal'
-  );
-
-}
-
-
-/* ============================================================
-   COPY RESPONSE
-============================================================ */
-
-async function copyResponse(
-  id
-) {
-
-  const incident =
-    incidents.find(
-      item =>
-        item.id === id
-    );
-
-
-  if (!incident) {
-    return;
-  }
-
-
-  try {
-
-    await navigator.clipboard.writeText(
-      incident.response || ''
-    );
-
-
-    showToast(
-      'Response copied.'
-    );
-
-  } catch (error) {
-
-    showToast(
-      'Could not copy response.',
-      'error'
-    );
-
-  }
-
-}
-
-
-/* ============================================================
-   ADMIN INCIDENT LIST
-============================================================ */
-
-function renderAdminIncidentList() {
-
-  const container =
-    document.getElementById(
-      'adminIncidentList'
-    );
-
-
-  container.innerHTML = '';
-
-
-  if (!incidents.length) {
-
-    container.innerHTML = `
-
-      <div
-        class="
-          p-5
-          text-center
-          text-xs
-          text-slate-500
-        "
-      >
-        No incidents.
       </div>
 
-    `;
 
-    return;
+      <!-- Body -->
 
-  }
+      <div class="space-y-4 p-5">
 
+        <!-- ISSUE -->
 
-  incidents.forEach(
-    incident => {
+        <div class="detail-section issue">
 
-      const button =
-        document.createElement(
-          'button'
-        );
+          <div class="mb-2 flex items-center gap-2">
 
+            <span
+              class="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
+            >
+              <i class="fa-solid fa-circle-info text-xs"></i>
+            </span>
 
-      button.className = `
+            <div>
+              <h3
+                class="font-bold text-slate-900 dark:text-white"
+              >
+                Issue
+              </h3>
 
-        mb-2
-        w-full
-        rounded-xl
-        border
-        p-3
-        text-left
+              <p
+                class="text-[10px] uppercase tracking-wider text-slate-400"
+              >
+                What is happening
+              </p>
+            </div>
 
-        ${
-          selectedIncidentId === incident.id
-            ? `
-              border-notion-accent
-              bg-sky-50
-              dark:bg-sky-950/20
-            `
-            : `
-              border-notion-borderLight
-              dark:border-notion-borderDark
-            `
-        }
+          </div>
 
-      `;
+          <div
+            id="detailDescription"
+            class="whitespace-pre-wrap text-sm leading-6 text-slate-700 dark:text-slate-300"
+          ></div>
 
-
-      button.dataset.adminIncidentId =
-        incident.id;
-
-
-      button.innerHTML = `
-
-        <div
-          class="
-            truncate
-            text-xs
-            font-bold
-          "
-        >
-          ${escapeHtml(
-            incident.title ||
-            'Untitled'
-          )}
         </div>
 
 
-        <div
-          class="
-            mt-1
-            text-[10px]
-            text-slate-500
-          "
-        >
-          ${escapeHtml(
-            incident.status
-          )}
-          ·
-          ${escapeHtml(
-            incident.category
-          )}
+        <!-- AGENT ACTION -->
+
+        <div class="detail-section action">
+
+          <div class="mb-2 flex items-center gap-2">
+
+            <span
+              class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-300"
+            >
+              <i class="fa-solid fa-user-check text-xs"></i>
+            </span>
+
+            <div>
+              <h3
+                class="font-bold text-slate-900 dark:text-white"
+              >
+                Agent Action
+              </h3>
+
+              <p
+                class="text-[10px] uppercase tracking-wider text-slate-400"
+              >
+                What the agent should do
+              </p>
+            </div>
+
+          </div>
+
+          <div
+            id="detailAgentAction"
+            class="whitespace-pre-wrap text-sm font-medium leading-6 text-slate-700 dark:text-slate-300"
+          ></div>
+
         </div>
 
-      `;
+
+        <!-- WHAT TO CHECK -->
+
+        <div class="detail-section check">
+
+          <div class="mb-2 flex items-center gap-2">
+
+            <span
+              class="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100 text-amber-600 dark:bg-amber-900/40 dark:text-amber-300"
+            >
+              <i class="fa-solid fa-magnifying-glass text-xs"></i>
+            </span>
+
+            <div>
+              <h3
+                class="font-bold text-slate-900 dark:text-white"
+              >
+                What to Check
+              </h3>
+
+              <p
+                class="text-[10px] uppercase tracking-wider text-slate-400"
+              >
+                Diagnostic information
+              </p>
+            </div>
+
+          </div>
+
+          <div
+            id="detailWhatToCheck"
+            class="whitespace-pre-wrap text-sm leading-6 text-slate-700 dark:text-slate-300"
+          ></div>
+
+        </div>
 
 
-      container.appendChild(
-        button
-      );
+        <!-- PROCEDURE -->
 
-    }
-  );
+        <div class="detail-section procedure">
 
-}
+          <div class="mb-2 flex items-center gap-2">
 
+            <span
+              class="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-100 text-purple-600 dark:bg-purple-900/40 dark:text-purple-300"
+            >
+              <i class="fa-solid fa-list-check text-xs"></i>
+            </span>
 
-/* ============================================================
-   ADMIN NEW INCIDENT
-============================================================ */
+            <div>
+              <h3
+                class="font-bold text-slate-900 dark:text-white"
+              >
+                Support Procedure
+              </h3>
 
-function createNewIncident() {
+              <p
+                class="text-[10px] uppercase tracking-wider text-slate-400"
+              >
+                Step-by-step internal instructions
+              </p>
+            </div>
 
-  selectedIncidentId =
-    null;
+          </div>
 
-  creatingNewIncident =
-    true;
+          <div
+            id="detailInstructions"
+            class="whitespace-pre-wrap text-sm leading-6 text-slate-700 dark:text-slate-300"
+          ></div>
 
-
-  renderAdminIncidentList();
-
-
-  renderIncidentEditor({
-
-    status: 'ACTIVE',
-
-    severity: 'MEDIUM',
-
-    category: 'Technical',
-
-    title: '',
-
-    affected: '',
-
-    description: '',
-
-    instructions: '',
-
-    response: '',
-
-    notionUrl: ''
-
-  });
-
-}
+        </div>
 
 
-/* ============================================================
-   ADMIN FIELD
-============================================================ */
+        <!-- CUSTOMER RESPONSE -->
 
-function editorField(
-  name,
-  label,
-  value = '',
-  type = 'input'
-) {
+        <div class="detail-section response">
 
-  const id =
-    'incidentField_' +
-    name;
+          <div class="mb-2 flex items-center gap-2">
 
+            <span
+              class="flex h-8 w-8 items-center justify-center rounded-lg bg-green-100 text-green-600 dark:bg-green-900/40 dark:text-green-300"
+            >
+              <i class="fa-solid fa-comment-dots text-xs"></i>
+            </span>
 
-  if (type === 'textarea') {
+            <div>
+              <h3
+                class="font-bold text-slate-900 dark:text-white"
+              >
+                Customer Response
+              </h3>
 
-    return `
+              <p
+                class="text-[10px] uppercase tracking-wider text-slate-400"
+              >
+                Ready-to-use customer message
+              </p>
+            </div>
 
-      <label class="block">
+          </div>
 
-        <span
-          class="
-            mb-1.5
-            block
-            text-xs
-            font-bold
-          "
-        >
-          ${label}
-        </span>
+          <div
+            id="detailResponse"
+            class="whitespace-pre-wrap rounded-xl border border-green-200 bg-white/70 p-3 text-sm leading-6 text-slate-700 dark:border-green-900 dark:bg-slate-950/40 dark:text-slate-300"
+          ></div>
 
-
-        <textarea
-          id="${id}"
-          rows="4"
-          class="
-            w-full
-            rounded-xl
-            border
-            border-notion-borderLight
-            bg-transparent
-            px-3
-            py-2.5
-            text-sm
-            dark:border-notion-borderDark
-          "
-        >${escapeHtml(
-          value
-        )}</textarea>
-
-      </label>
-
-    `;
-
-  }
+        </div>
 
 
-  if (type === 'select') {
+        <!-- NOTION -->
 
-    const options = {
-
-      status: [
-        'ACTIVE',
-        'MONITORING',
-        'RESOLVED'
-      ],
-
-      severity: [
-        'HIGH',
-        'MEDIUM',
-        'LOW'
-      ],
-
-      category: [
-        'Payments',
-        'Withdrawals',
-        'Deposits',
-        'Games',
-        'KYC',
-        'Account',
-        'Promotions',
-        'Technical',
-        'Other'
-      ]
-
-    }[name] || [];
-
-
-    return `
-
-      <label class="block">
-
-        <span
-          class="
-            mb-1.5
-            block
-            text-xs
-            font-bold
-          "
-        >
-          ${label}
-        </span>
-
-
-        <select
-          id="${id}"
-          class="
-            w-full
-            rounded-xl
-            border
-            border-notion-borderLight
-            bg-transparent
-            px-3
-            py-2.5
-            text-sm
-            dark:border-notion-borderDark
-          "
+        <div
+          id="detailNotionWrapper"
+          class="rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950"
         >
 
-          ${options
-            .map(
-              option => `
-                <option
-                  ${
-                    option === value
-                      ? 'selected'
-                      : ''
-                  }
+          <div class="flex items-center justify-between gap-3">
+
+            <div class="flex items-center gap-2">
+
+              <i class="fa-solid fa-book text-slate-500"></i>
+
+              <div>
+                <p
+                  class="text-sm font-bold text-slate-800 dark:text-slate-200"
                 >
-                  ${option}
-                </option>
-              `
-            )
-            .join('')}
+                  Notion Article
+                </p>
 
-        </select>
+                <p
+                  class="text-[10px] text-slate-400"
+                >
+                  Full internal reference
+                </p>
+              </div>
 
-      </label>
+            </div>
 
-    `;
+            <a
+              id="detailNotion"
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="rounded-lg bg-slate-900 px-3 py-2 text-xs font-bold text-white hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
+            >
+              Open Article
+              <i class="fa-solid fa-arrow-up-right-from-square ml-1"></i>
+            </a>
 
-  }
+          </div>
 
+        </div>
 
-  return `
-
-    <label class="block">
-
-      <span
-        class="
-          mb-1.5
-          block
-          text-xs
-          font-bold
-        "
-      >
-        ${label}
-      </span>
-
-
-      <input
-        id="${id}"
-        value="${escapeAttr(
-          value
-        )}"
-        class="
-          w-full
-          rounded-xl
-          border
-          border-notion-borderLight
-          bg-transparent
-          px-3
-          py-2.5
-          text-sm
-          dark:border-notion-borderDark
-        "
-      >
-
-    </label>
-
-  `;
-
-}
-
-
-/* ============================================================
-   ADMIN EDITOR
-============================================================ */
-
-function renderIncidentEditor(
-  data = null
-) {
-
-  const incident =
-    data ||
-    incidents.find(
-      item =>
-        item.id ===
-        selectedIncidentId
-    );
-
-
-  const pane =
-    document.getElementById(
-      'editorPane'
-    );
-
-
-  if (!incident) {
-
-    pane.innerHTML = `
-
-      <div
-        class="
-          py-16
-          text-center
-          text-sm
-          text-slate-500
-        "
-      >
-        Select an incident or create a new one.
       </div>
 
-    `;
+    </div>
 
-    return;
-
-  }
+  </div>
 
 
-  pane.innerHTML = `
+  <!-- =========================================================
+       LOGIN MODAL
+  ========================================================== -->
+
+  <div
+    id="loginModal"
+    class="modal-backdrop fixed inset-0 z-[60] hidden items-center justify-center p-4"
+  >
 
     <div
-      class="
-        flex
-        items-center
-        gap-3
-      "
+      class="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl dark:bg-slate-900"
     >
 
-      <div class="mr-auto">
+      <div class="mb-5 text-center">
 
-        <h4
-          class="
-            text-lg
-            font-extrabold
-          "
+        <div
+          class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
         >
-          ${
-            creatingNewIncident
-              ? 'Create incident'
-              : 'Edit incident'
-          }
-        </h4>
+          <i class="fa-solid fa-lock"></i>
+        </div>
 
+        <h2
+          class="text-lg font-black text-slate-900 dark:text-white"
+        >
+          Management Login
+        </h2>
 
         <p
-          class="
-            text-xs
-            text-slate-500
-          "
+          class="mt-1 text-xs text-slate-500 dark:text-slate-400"
         >
-          Changes are saved to the backend.
+          TL, QA and Management access
         </p>
 
       </div>
 
 
-      ${
-        !creatingNewIncident
-          ? `
-            <button
-              id="deleteIncidentBtn"
-              class="
-                rounded-xl
-                border
-                border-red-200
-                px-3
-                py-2
-                text-xs
-                font-bold
-                text-red-600
-                dark:border-red-900/50
-              "
-            >
-              Delete
-            </button>
-          `
-          : ''
-      }
+      <div class="space-y-3">
+
+        <div>
+
+          <label
+            class="mb-1.5 block text-xs font-bold text-slate-600 dark:text-slate-300"
+          >
+            Role
+          </label>
+
+          <select
+            id="loginRole"
+            class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm dark:border-slate-700 dark:bg-slate-950"
+          >
+            <option value="TL">Team Lead</option>
+            <option value="QA">QA</option>
+            <option value="MA">Management</option>
+          </select>
+
+        </div>
+
+
+        <div>
+
+          <label
+            class="mb-1.5 block text-xs font-bold text-slate-600 dark:text-slate-300"
+          >
+            PIN
+          </label>
+
+          <input
+            id="loginPin"
+            type="password"
+            inputmode="numeric"
+            maxlength="12"
+            placeholder="Enter PIN"
+            onkeydown="if(event.key === 'Enter') login()"
+            class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm dark:border-slate-700 dark:bg-slate-950"
+          />
+
+        </div>
+
+
+        <div
+          id="loginError"
+          class="hidden rounded-xl border border-red-200 bg-red-50 p-3 text-xs font-medium text-red-700 dark:border-red-900 dark:bg-red-950/30 dark:text-red-300"
+        ></div>
+
+
+        <button
+          id="loginSubmitButton"
+          onclick="login()"
+          class="flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-bold text-white hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
+        >
+          <i class="fa-solid fa-right-to-bracket"></i>
+          Login
+        </button>
+
+
+        <button
+          onclick="hideModal('loginModal')"
+          class="w-full rounded-xl px-4 py-2 text-xs font-semibold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+        >
+          Cancel
+        </button>
+
+      </div>
 
     </div>
 
+  </div>
+
+
+  <!-- =========================================================
+       ADMIN MODAL
+  ========================================================== -->
+
+  <div
+    id="adminModal"
+    class="modal-backdrop fixed inset-0 z-[55] hidden items-center justify-center p-4"
+  >
 
     <div
-      class="
-        mt-5
-        grid
-        gap-4
-        sm:grid-cols-2
-      "
+      class="modal-panel w-full max-w-6xl rounded-2xl bg-white shadow-2xl dark:bg-slate-900"
     >
 
-      ${editorField(
-        'title',
-        'Title',
-        incident.title
-      )}
+      <!-- Admin header -->
 
-      ${editorField(
-        'affected',
-        'Affected',
-        incident.affected
-      )}
-
-      ${editorField(
-        'status',
-        'Status',
-        incident.status,
-        'select'
-      )}
-
-      ${editorField(
-        'severity',
-        'Severity',
-        incident.severity,
-        'select'
-      )}
-
-      ${editorField(
-        'category',
-        'Category',
-        incident.category,
-        'select'
-      )}
-
-      ${editorField(
-        'notionUrl',
-        'Notion URL',
-        incident.notionUrl
-      )}
-
-    </div>
-
-
-    <div
-      class="
-        mt-4
-        space-y-4
-      "
-    >
-
-      ${editorField(
-        'description',
-        'Description',
-        incident.description,
-        'textarea'
-      )}
-
-      ${editorField(
-        'instructions',
-        'Instructions for CS',
-        incident.instructions,
-        'textarea'
-      )}
-
-      ${editorField(
-        'response',
-        'Suggested customer response',
-        incident.response,
-        'textarea'
-      )}
-
-    </div>
-
-
-    <div
-      class="
-        mt-5
-        flex
-        justify-end
-      "
-    >
-
-      <button
-        id="saveIncidentBtn"
-        class="
-          rounded-xl
-          bg-notion-accent
-          px-5
-          py-2.5
-          text-sm
-          font-bold
-          text-white
-        "
+      <div
+        class="sticky top-0 z-20 border-b border-slate-200 bg-white/95 px-5 py-4 backdrop-blur dark:border-slate-800 dark:bg-slate-900/95"
       >
-        ${
-          creatingNewIncident
-            ? 'Create'
-            : 'Save changes'
-        }
-      </button>
+
+        <div
+          class="flex flex-wrap items-center justify-between gap-3"
+        >
+
+          <div>
+
+            <div class="flex items-center gap-2">
+
+              <i
+                class="fa-solid fa-user-shield text-slate-500"
+              ></i>
+
+              <h2
+                class="text-lg font-black text-slate-900 dark:text-white"
+              >
+                Incident Management
+              </h2>
+
+            </div>
+
+            <p
+              id="adminRoleText"
+              class="mt-1 text-xs text-slate-500 dark:text-slate-400"
+            ></p>
+
+          </div>
+
+          <div class="flex items-center gap-2">
+
+            <button
+              onclick="startNewIncident()"
+              class="rounded-xl bg-slate-900 px-3 py-2 text-xs font-bold text-white hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900"
+            >
+              <i class="fa-solid fa-plus mr-1"></i>
+              New Incident
+            </button>
+
+            <button
+              onclick="logout()"
+              class="rounded-xl border border-slate-200 px-3 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+            >
+              <i class="fa-solid fa-right-from-bracket mr-1"></i>
+              Logout
+            </button>
+
+            <button
+              onclick="hideModal('adminModal')"
+              class="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+            >
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- Admin body -->
+
+      <div class="grid min-h-[600px] lg:grid-cols-[300px_1fr]">
+
+        <!-- Incident list -->
+
+        <aside
+          class="border-b border-slate-200 p-4 dark:border-slate-800 lg:border-b-0 lg:border-r"
+        >
+
+          <div
+            class="mb-3 flex items-center justify-between"
+          >
+
+            <h3
+              class="text-xs font-black uppercase tracking-wider text-slate-400"
+            >
+              Incidents
+            </h3>
+
+            <button
+              onclick="loadIncidents(); renderAdminIncidentList();"
+              class="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+              title="Refresh"
+            >
+              <i class="fa-solid fa-rotate-right text-xs"></i>
+            </button>
+
+          </div>
+
+          <div
+            id="adminIncidentList"
+            class="max-h-[260px] space-y-1 overflow-y-auto scrollbar-thin lg:max-h-[530px]"
+          ></div>
+
+        </aside>
+
+
+        <!-- Editor -->
+
+        <section class="p-4 sm:p-5">
+
+          <div
+            id="editorEmpty"
+            class="empty-state flex items-center justify-center rounded-2xl border border-dashed border-slate-300 dark:border-slate-700"
+          >
+
+            <div class="max-w-sm text-center">
+
+              <div
+                class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-slate-400 dark:bg-slate-800"
+              >
+                <i class="fa-solid fa-pen-to-square"></i>
+              </div>
+
+              <h3
+                class="font-bold text-slate-800 dark:text-slate-200"
+              >
+                Select an incident
+              </h3>
+
+              <p
+                class="mt-1 text-xs leading-5 text-slate-500 dark:text-slate-400"
+              >
+                Choose an incident from the left or create a new one.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div
+            id="incidentEditor"
+            class="hidden"
+          >
+
+            <div
+              class="mb-4 flex items-center justify-between gap-3"
+            >
+
+              <div>
+
+                <h3
+                  id="editorHeading"
+                  class="text-lg font-black text-slate-900 dark:text-white"
+                >
+                  Edit Incident
+                </h3>
+
+                <p
+                  class="text-xs text-slate-500 dark:text-slate-400"
+                >
+                  Keep the operational information structured.
+                </p>
+
+              </div>
+
+              <button
+                id="deleteIncidentButton"
+                onclick="deleteSelectedIncident()"
+                class="rounded-xl border border-red-200 px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 dark:border-red-900 dark:hover:bg-red-950/30"
+              >
+                <i class="fa-solid fa-trash mr-1"></i>
+                Delete
+              </button>
+
+            </div>
+
+
+            <!-- Form -->
+
+            <div class="space-y-4">
+
+              <!-- Platform + status + severity + category -->
+
+              <div
+                class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"
+              >
+
+                <div>
+                  <label class="field-label">
+                    Platform
+                  </label>
+
+                  <select
+                    id="editorPlatform"
+                    class="field-input"
+                  >
+                    <option value="Fortune Purple">Fortune Purple</option>
+                    <option value="Movacoins">Movacoins</option>
+                    <option value="9F">9F</option>
+                    <option value="All Platforms">All Platforms</option>
+                  </select>
+                </div>
+
+
+                <div>
+                  <label class="field-label">
+                    Status
+                  </label>
+
+                  <select
+                    id="editorStatus"
+                    class="field-input"
+                  >
+                    <option value="ACTIVE">ACTIVE</option>
+                    <option value="MONITORING">MONITORING</option>
+                    <option value="RESOLVED">RESOLVED</option>
+                  </select>
+                </div>
+
+
+                <div>
+                  <label class="field-label">
+                    Severity
+                  </label>
+
+                  <select
+                    id="editorSeverity"
+                    class="field-input"
+                  >
+                    <option value="HIGH">HIGH</option>
+                    <option value="MEDIUM">MEDIUM</option>
+                    <option value="LOW">LOW</option>
+                  </select>
+                </div>
+
+
+                <div>
+                  <label class="field-label">
+                    Category
+                  </label>
+
+                  <select
+                    id="editorCategory"
+                    class="field-input"
+                  >
+                    <option value="Payments">Payments</option>
+                    <option value="Withdrawals">Withdrawals</option>
+                    <option value="Deposits">Deposits</option>
+                    <option value="Games">Games</option>
+                    <option value="KYC">KYC</option>
+                    <option value="Account">Account</option>
+                    <option value="Promotions">Promotions</option>
+                    <option value="Technical">Technical</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+
+              </div>
+
+
+              <!-- Title -->
+
+              <div>
+                <label class="field-label">
+                  Incident Title
+                </label>
+
+                <input
+                  id="editorTitle"
+                  type="text"
+                  placeholder="Example: Temporary Game Availability Issue"
+                  class="field-input"
+                />
+              </div>
+
+
+              <!-- Affected -->
+
+              <div>
+                <label class="field-label">
+                  Affected
+                </label>
+
+                <input
+                  id="editorAffected"
+                  type="text"
+                  placeholder="Example: BGaming, Evoplay, Hacksaw and NETENT games"
+                  class="field-input"
+                />
+              </div>
+
+
+              <!-- Issue -->
+
+              <div>
+
+                <label class="field-label">
+                  Issue
+                </label>
+
+                <textarea
+                  id="editorDescription"
+                  rows="4"
+                  placeholder="Describe what is happening and why."
+                  class="field-input resize-y"
+                ></textarea>
+
+              </div>
+
+
+              <!-- Agent Action -->
+
+              <div>
+
+                <label class="field-label">
+                  Agent Action
+                </label>
+
+                <textarea
+                  id="editorAgentAction"
+                  rows="3"
+                  placeholder="What should the agent do immediately?"
+                  class="field-input resize-y"
+                ></textarea>
+
+              </div>
+
+
+              <!-- What to Check -->
+
+              <div>
+
+                <label class="field-label">
+                  What to Check
+                </label>
+
+                <textarea
+                  id="editorWhatToCheck"
+                  rows="4"
+                  placeholder="What information should the agent collect or verify?"
+                  class="field-input resize-y"
+                ></textarea>
+
+              </div>
+
+
+              <!-- Procedure -->
+
+              <div>
+
+                <label class="field-label">
+                  Support Procedure
+                </label>
+
+                <textarea
+                  id="editorInstructions"
+                  rows="7"
+                  placeholder="Step-by-step internal instructions."
+                  class="field-input resize-y"
+                ></textarea>
+
+              </div>
+
+
+              <!-- Customer Response -->
+
+              <div>
+
+                <label class="field-label">
+                  Customer Response
+                </label>
+
+                <textarea
+                  id="editorResponse"
+                  rows="5"
+                  placeholder="Ready-to-use response for the customer."
+                  class="field-input resize-y"
+                ></textarea>
+
+              </div>
+
+
+              <!-- Notion -->
+
+              <div>
+
+                <label class="field-label">
+                  Notion Article URL
+                </label>
+
+                <input
+                  id="editorNotionUrl"
+                  type="url"
+                  placeholder="https://..."
+                  class="field-input"
+                />
+
+              </div>
+
+
+              <!-- Save -->
+
+              <div
+                class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-4 dark:border-slate-800"
+              >
+
+                <p
+                  id="editorMessage"
+                  class="text-xs"
+                ></p>
+
+                <button
+                  onclick="saveIncident()"
+                  id="saveIncidentButton"
+                  class="rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-bold text-white hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
+                >
+                  <i class="fa-solid fa-floppy-disk mr-1"></i>
+                  Save Incident
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+      </div>
 
     </div>
 
-  `;
+  </div>
 
 
-  document
-    .getElementById(
-      'saveIncidentBtn'
-    )
-    .addEventListener(
-      'click',
-      saveIncident
-    );
+  <!-- =========================================================
+       TOAST
+  ========================================================== -->
+
+  <div
+    id="toastContainer"
+    class="pointer-events-none fixed bottom-5 right-5 z-[100] space-y-2"
+  ></div>
 
 
-  const deleteButton =
-    document.getElementById(
-      'deleteIncidentBtn'
-    );
+  <!-- =========================================================
+       JAVASCRIPT
+  ========================================================== -->
+
+  <script>
+
+    /* =========================================================
+       CONFIG
+    ========================================================== */
+
+    const API_URL =
+      'https://script.google.com/macros/s/AKfycbx4tSUdnFm6oSrGqK06eQ6INHyc9JA_W6TGYbfulqv5WBvB9XLDEtTLx5qSe3U4cW9DwA/exec';
 
 
-  if (deleteButton) {
+    /* =========================================================
+       STATE
+    ========================================================== */
 
-    deleteButton.addEventListener(
-      'click',
-      deleteIncident
-    );
+    let incidents = [];
 
-  }
+    let currentTab = 'time';
 
-}
+    let showSeconds = true;
+
+    let adminToken =
+      sessionStorage.getItem('support_admin_token') || '';
+
+    let role =
+      sessionStorage.getItem('support_admin_role') || '';
+
+    let adminPin = '';
+
+    let selectedIncidentId = null;
+
+    let creatingNewIncident = false;
 
 
-/* ============================================================
-   READ ADMIN EDITOR
-============================================================ */
-
-function readIncidentEditor() {
-
-  const get =
-    name => {
-
-      const element =
-        document.getElementById(
-          'incidentField_' +
-          name
-        );
-
-      return element
-        ? element.value
-        : '';
-
+    const roleLabels = {
+      TL: 'Team Lead',
+      QA: 'QA',
+      MA: 'Management'
     };
 
 
-  return {
+    /* =========================================================
+       TIMEZONE DATA
+    ========================================================== */
 
-    title:
-      get('title'),
+    const timezoneGroups = [
 
-    affected:
-      get('affected'),
+      {
+        key: 'ET',
+        name: 'Eastern Time',
+        short: 'ET',
+        zone: 'America/New_York',
+        icon: 'fa-sun',
+        states: [
+          ['FL', 'Florida', 'Miami'],
+          ['GA', 'Georgia', 'Atlanta'],
+          ['KY', 'Kentucky', 'Louisville'],
+          ['MD', 'Maryland', 'Baltimore'],
+          ['MA', 'Massachusetts', 'Boston'],
+          ['NH', 'New Hampshire', 'Concord'],
+          ['NC', 'North Carolina', 'Charlotte'],
+          ['OH', 'Ohio', 'Columbus'],
+          ['PA', 'Pennsylvania', 'Philadelphia'],
+          ['RI', 'Rhode Island', 'Providence'],
+          ['SC', 'South Carolina', 'Columbia'],
+          ['VT', 'Vermont', 'Burlington'],
+          ['VA', 'Virginia', 'Richmond']
+        ]
+      },
 
-    status:
-      get('status'),
+      {
+        key: 'CT',
+        name: 'Central Time',
+        short: 'CT',
+        zone: 'America/Chicago',
+        icon: 'fa-cloud-sun',
+        states: [
+          ['AL', 'Alabama', 'Birmingham'],
+          ['AR', 'Arkansas', 'Little Rock'],
+          ['KS', 'Kansas', 'Wichita'],
+          ['MN', 'Minnesota', 'Minneapolis'],
+          ['MO', 'Missouri', 'St. Louis'],
+          ['NE', 'Nebraska', 'Omaha'],
+          ['ND', 'North Dakota', 'Fargo'],
+          ['OK', 'Oklahoma', 'Oklahoma City'],
+          ['SD', 'South Dakota', 'Sioux Falls'],
+          ['TX', 'Texas', 'Dallas'],
+          ['WI', 'Wisconsin', 'Milwaukee']
+        ]
+      },
 
-    severity:
-      get('severity'),
+      {
+        key: 'MT',
+        name: 'Mountain Time',
+        short: 'MT',
+        zone: 'America/Denver',
+        icon: 'fa-mountain-sun',
+        states: [
+          ['CO', 'Colorado', 'Denver'],
+          ['NM', 'New Mexico', 'Albuquerque'],
+          ['UT', 'Utah', 'Salt Lake City'],
+          ['WY', 'Wyoming', 'Cheyenne']
+        ]
+      },
 
-    category:
-      get('category'),
+      {
+        key: 'MST',
+        name: 'Arizona',
+        short: 'MST',
+        zone: 'America/Phoenix',
+        icon: 'fa-sun',
+        states: [
+          ['AZ', 'Arizona', 'Phoenix']
+        ]
+      },
 
-    notionUrl:
-      get('notionUrl'),
+      {
+        key: 'PT',
+        name: 'Pacific Time',
+        short: 'PT',
+        zone: 'America/Los_Angeles',
+        icon: 'fa-water',
+        states: [
+          ['OR', 'Oregon', 'Portland']
+        ]
+      },
 
-    description:
-      get('description'),
+      {
+        key: 'AKT',
+        name: 'Alaska Time',
+        short: 'AKT',
+        zone: 'America/Anchorage',
+        icon: 'fa-snowflake',
+        states: [
+          ['AK', 'Alaska', 'Anchorage']
+        ]
+      },
 
-    instructions:
-      get('instructions'),
+      {
+        key: 'HST',
+        name: 'Hawaii Time',
+        short: 'HST',
+        zone: 'Pacific/Honolulu',
+        icon: 'fa-umbrella-beach',
+        states: [
+          ['HI', 'Hawaii', 'Honolulu']
+        ]
+      }
 
-    response:
-      get('response')
-
-  };
-
-}
-
-
-/* ============================================================
-   SAVE INCIDENT
-============================================================ */
-
-async function saveIncident() {
-
-  try {
-
-    const data =
-      readIncidentEditor();
+    ];
 
 
-    if (
-      !data.title.trim()
-    ) {
+    /* =========================================================
+       COMMON FIELD STYLING
+    ========================================================== */
 
-      throw new Error(
-        'Title is required.'
+    document.addEventListener('DOMContentLoaded', () => {
+
+      document.querySelectorAll('input, textarea, select')
+        .forEach(el => {
+
+          if (
+            el.classList.contains('field-input') ||
+            el.id.startsWith('editor')
+          ) {
+            el.classList.add(
+              'w-full',
+              'rounded-xl',
+              'border',
+              'border-slate-200',
+              'bg-white',
+              'px-3',
+              'py-2.5',
+              'text-sm',
+              'text-slate-900',
+              'dark:border-slate-700',
+              'dark:bg-slate-950',
+              'dark:text-slate-100'
+            );
+          }
+
+        });
+
+      document.querySelectorAll('.field-label')
+        .forEach(el => {
+          el.classList.add(
+            'mb-1.5',
+            'block',
+            'text-xs',
+            'font-bold',
+            'text-slate-600',
+            'dark:text-slate-300'
+          );
+        });
+
+    });
+
+
+    /* =========================================================
+       THEME
+    ========================================================== */
+
+    function initTheme() {
+
+      const saved =
+        localStorage.getItem('support_dashboard_theme');
+
+      if (saved === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else if (saved === 'light') {
+        document.documentElement.classList.remove('dark');
+      } else if (
+        window.matchMedia &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches
+      ) {
+        document.documentElement.classList.add('dark');
+      }
+
+      updateThemeIcon();
+    }
+
+
+    function toggleTheme() {
+
+      document.documentElement.classList.toggle('dark');
+
+      const dark =
+        document.documentElement.classList.contains('dark');
+
+      localStorage.setItem(
+        'support_dashboard_theme',
+        dark ? 'dark' : 'light'
       );
+
+      updateThemeIcon();
+    }
+
+
+    function updateThemeIcon() {
+
+      const icon =
+        document.getElementById('themeIcon');
+
+      if (!icon) return;
+
+      const dark =
+        document.documentElement.classList.contains('dark');
+
+      icon.className =
+        dark
+          ? 'fa-solid fa-sun'
+          : 'fa-solid fa-moon';
+    }
+
+
+    /* =========================================================
+       TABS
+    ========================================================== */
+
+    function switchTab(tab) {
+
+      currentTab = tab;
+
+      const timeView =
+        document.getElementById('timeView');
+
+      const incidentsView =
+        document.getElementById('incidentsView');
+
+      const tabTime =
+        document.getElementById('tabTime');
+
+      const tabIncidents =
+        document.getElementById('tabIncidents');
+
+      if (tab === 'time') {
+
+        timeView.classList.remove('hidden-view');
+        incidentsView.classList.add('hidden-view');
+
+        tabTime.classList.add('active');
+        tabIncidents.classList.remove('active');
+
+      } else {
+
+        timeView.classList.add('hidden-view');
+        incidentsView.classList.remove('hidden-view');
+
+        tabTime.classList.remove('active');
+        tabIncidents.classList.add('active');
+
+        if (!incidents.length) {
+          loadIncidents();
+        }
+
+      }
 
     }
 
 
-    if (creatingNewIncident) {
+    /* =========================================================
+       TIME HELPERS
+    ========================================================== */
+
+    function getTimeParts(zone) {
+
+      const now = new Date();
+
+      const time =
+        new Intl.DateTimeFormat(
+          'en-US',
+          {
+            timeZone: zone,
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+          }
+        ).formatToParts(now);
+
+      const map = {};
+
+      time.forEach(part => {
+        map[part.type] = part.value;
+      });
+
+      return map;
+    }
+
+
+    function getDate(zone) {
+
+      return new Intl.DateTimeFormat(
+        'en-US',
+        {
+          timeZone: zone,
+          weekday: 'short',
+          month: 'short',
+          day: 'numeric'
+        }
+      ).format(new Date());
+
+    }
+
+
+    function getOffset(zone) {
+
+      const parts =
+        new Intl.DateTimeFormat(
+          'en-US',
+          {
+            timeZone: zone,
+            timeZoneName: 'longOffset'
+          }
+        ).formatToParts(new Date());
+
+      const offset =
+        parts.find(
+          part => part.type === 'timeZoneName'
+        );
+
+      if (!offset) return '';
+
+      return offset.value
+        .replace('GMT', 'UTC');
+    }
+
+
+    function getMinutesForZone(zone) {
+
+      const parts =
+        new Intl.DateTimeFormat(
+          'en-US',
+          {
+            timeZone: zone,
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+          }
+        ).formatToParts(new Date());
+
+      const hour =
+        Number(
+          parts.find(
+            p => p.type === 'hour'
+          )?.value || 0
+        );
+
+      const minute =
+        Number(
+          parts.find(
+            p => p.type === 'minute'
+          )?.value || 0
+        );
+
+      return hour * 60 + minute;
+    }
+
+
+    function getWorkingStatus(zone) {
+
+      const minutes =
+        getMinutesForZone(zone);
+
+      if (
+        minutes >= 8 * 60 &&
+        minutes < 18 * 60
+      ) {
+        return {
+          text: 'Working hours',
+          class:
+            'text-emerald-600 dark:text-emerald-400'
+        };
+      }
+
+      return {
+        text: 'Outside hours',
+        class:
+          'text-slate-400'
+      };
+    }
+
+
+    function formatClock(zone) {
+
+      const parts =
+        getTimeParts(zone);
+
+      let result =
+        `${parts.hour}:${parts.minute}`;
+
+      if (showSeconds) {
+        result += `:${parts.second}`;
+      }
+
+      return result;
+    }
+
+
+    /* =========================================================
+       Tbilisi clock
+    ========================================================== */
+
+    function updateTbilisiClock() {
+
+      const zone = 'Asia/Tbilisi';
+
+      const parts =
+        getTimeParts(zone);
+
+      const clock =
+        `${parts.hour}:${parts.minute}:${parts.second}`;
+
+      const compactClock =
+        `${parts.hour}:${parts.minute}:${parts.second}`;
+
+      const main =
+        document.getElementById('tbilisiClock');
+
+      const header =
+        document.getElementById('headerTbilisiClock');
+
+      const date =
+        document.getElementById('tbilisiDate');
+
+      if (main) {
+        main.textContent = clock;
+      }
+
+      if (header) {
+        header.textContent = compactClock;
+      }
+
+      if (date) {
+        date.textContent = getDate(zone);
+      }
+
+    }
+
+
+    /* =========================================================
+       TIMEZONE RENDERING
+    ========================================================== */
+
+    function renderTimezones() {
+
+      const container =
+        document.getElementById('timezoneGroups');
+
+      if (!container) return;
+
+      const search =
+        (
+          document.getElementById('timezoneSearch')?.value ||
+          ''
+        )
+        .trim()
+        .toLowerCase();
+
+      let html = '';
+
+      timezoneGroups.forEach(group => {
+
+        const matchingStates =
+          group.states.filter(state => {
+
+            if (!search) return true;
+
+            return [
+              state[0],
+              state[1],
+              state[2],
+              group.name,
+              group.short
+            ]
+              .join(' ')
+              .toLowerCase()
+              .includes(search);
+
+          });
+
+        if (!matchingStates.length) return;
+
+        const time =
+          formatClock(group.zone);
+
+        const offset =
+          getOffset(group.zone);
+
+        const working =
+          getWorkingStatus(group.zone);
+
+        html += `
+          <div class="timezone-card app-card overflow-hidden">
+
+            <div class="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+
+              <!-- LEFT -->
+
+              <div class="flex min-w-0 items-center gap-3">
+
+                <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-300">
+                  <i class="fa-solid ${group.icon} text-xs"></i>
+                </div>
+
+                <div class="min-w-0">
+
+                  <div class="flex items-center gap-2">
+
+                    <h3 class="text-sm font-bold text-slate-900 dark:text-white">
+                      ${group.name}
+                    </h3>
+
+                    <span class="rounded-md bg-slate-100 px-1.5 py-0.5 text-[10px] font-black text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+                      ${group.short}
+                    </span>
+
+                  </div>
+
+                  <div class="mt-0.5 flex flex-wrap items-center gap-2 text-[10px]">
+
+                    <span class="${working.class}">
+                      ${working.text}
+                    </span>
+
+                    <span class="text-slate-400">
+                      ${offset}
+                    </span>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <!-- CENTER CLOCK -->
+
+              <div class="flex items-center gap-4 sm:ml-auto">
+
+                <div class="text-right">
+
+                  <div
+                    id="zoneClock-${group.key}"
+                    class="clock-number text-2xl font-black leading-none text-slate-900 dark:text-white"
+                  >
+                    ${time}
+                  </div>
+
+                  <div class="mt-1 text-[9px] text-slate-400">
+                    Local time
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <!-- STATES -->
+
+            <div class="border-t border-slate-100 bg-slate-50/70 px-4 py-2.5 dark:border-slate-800 dark:bg-slate-950/30">
+
+              <div class="grid grid-cols-2 gap-x-4 gap-y-1 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+
+                ${matchingStates.map(state => `
+
+                  <div class="city-row flex min-w-0 items-center justify-between gap-2 py-1">
+
+                    <div class="min-w-0">
+
+                      <span class="mr-1 text-[10px] font-black text-slate-500 dark:text-slate-400">
+                        ${state[0]}
+                      </span>
+
+                      <span class="truncate text-[10px] text-slate-700 dark:text-slate-300">
+                        ${state[1]}
+                      </span>
+
+                    </div>
+
+                    <span
+                      class="state-clock shrink-0 text-[10px] font-bold tabular-nums text-slate-500 dark:text-slate-400"
+                      data-zone="${state[3] || group.zone}"
+                    >
+                      ${formatClock(state[3] || group.zone)}
+                    </span>
+
+                  </div>
+
+                `).join('')}
+
+              </div>
+
+            </div>
+
+          </div>
+        `;
+
+      });
+
+
+      if (!html) {
+
+        html = `
+          <div class="app-card flex min-h-[180px] items-center justify-center">
+            <div class="text-center">
+              <i class="fa-solid fa-magnifying-glass mb-2 text-xl text-slate-300 dark:text-slate-600"></i>
+              <p class="text-sm font-semibold text-slate-600 dark:text-slate-300">
+                No states or cities found
+              </p>
+              <p class="mt-1 text-xs text-slate-400">
+                Try another search.
+              </p>
+            </div>
+          </div>
+        `;
+
+      }
+
+      container.innerHTML = html;
+
+    }
+
+
+    /* =========================================================
+       TIMEZONE LIVE UPDATE
+    ========================================================== */
+
+    function updateLiveTimeDisplays() {
+
+      updateTbilisiClock();
+
+      timezoneGroups.forEach(group => {
+
+        const clock =
+          document.getElementById(
+            `zoneClock-${group.key}`
+          );
+
+        if (clock) {
+          clock.textContent =
+            formatClock(group.zone);
+        }
+
+      });
+
+      document
+        .querySelectorAll('.state-clock')
+        .forEach(el => {
+
+          const zone =
+            el.dataset.zone;
+
+          if (zone) {
+            el.textContent =
+              formatClock(zone);
+          }
+
+        });
+
+    }
+
+
+    function toggleSeconds() {
+
+      showSeconds =
+        !showSeconds;
+
+      const button =
+        document.getElementById('secondsToggle');
+
+      if (showSeconds) {
+
+        button.innerHTML =
+          `<i class="fa-solid fa-stopwatch mr-1"></i> Seconds`;
+
+      } else {
+
+        button.innerHTML =
+          `<i class="fa-solid fa-clock mr-1"></i> Minutes only`;
+
+      }
+
+      updateLiveTimeDisplays();
+
+    }
+
+
+    /* =========================================================
+       API
+    ========================================================== */
+
+    async function api(action, data = {}) {
+
+      if (API_URL.includes('PASTE_YOUR_')) {
+        throw new Error(
+          'Apps Script API URL is not configured.'
+        );
+      }
+
+      const requestData = {
+        action,
+        ...data
+      };
+
+      if (adminToken) {
+        requestData.token = adminToken;
+      }
+
+      if (adminPin) {
+        requestData.pin = adminPin;
+      }
+
+      if (role) {
+        requestData.role = role;
+      }
+
+      const body =
+        new URLSearchParams();
+
+      body.set(
+        'payload',
+        JSON.stringify(requestData)
+      );
 
       const response =
-        await api(
-          'create',
+        await fetch(
+          API_URL,
           {
-            token:
-              adminToken,
+            method: 'POST',
+            body
+          }
+        );
 
-            role,
+      const text =
+        await response.text();
 
-            ...data
+      let json;
+
+      try {
+
+        json =
+          JSON.parse(text);
+
+      } catch (error) {
+
+        console.error(
+          'Raw Apps Script response:',
+          text
+        );
+
+        throw new Error(
+          `Apps Script returned an invalid response (${response.status}).`
+        );
+
+      }
+
+      console.log(
+        'Apps Script response:',
+        json
+      );
+
+      if (
+        !response.ok ||
+        json.success === false
+      ) {
+
+        throw new Error(
+          json.message ||
+          json.error ||
+          `Request failed (${response.status}).`
+        );
+
+      }
+
+      return json;
+
+    }
+
+
+    /* =========================================================
+       LOAD INCIDENTS
+    ========================================================== */
+
+    async function loadIncidents() {
+
+      try {
+
+        const result =
+          await api('list');
+
+        incidents =
+          normalizeIncidentList(
+            result
+          );
+
+        renderIncidents();
+        renderAdminIncidentList();
+
+      } catch (error) {
+
+        console.error(
+          'Failed to load incidents:',
+          error
+        );
+
+        incidents = [];
+
+        renderIncidents();
+
+        showToast(
+          error.message ||
+          'Unable to load incidents.',
+          'error'
+        );
+
+      }
+
+    }
+
+
+    function normalizeIncidentList(result) {
+
+      if (Array.isArray(result)) {
+        return result;
+      }
+
+      if (Array.isArray(result.incidents)) {
+        return result.incidents;
+      }
+
+      if (Array.isArray(result.data)) {
+        return result.data;
+      }
+
+      if (Array.isArray(result.rows)) {
+        return result.rows;
+      }
+
+      return [];
+
+    }
+
+
+    /* =========================================================
+       INCIDENT NORMALIZATION
+    ========================================================== */
+
+    function normalizeIncident(incident) {
+
+      const item = {
+        ...incident
+      };
+
+      item.id =
+        item.id ||
+        item.ID ||
+        item.incidentId ||
+        '';
+
+      item.platform =
+        item.platform ||
+        item.Platform ||
+        'All Platforms';
+
+      item.status =
+        String(
+          item.status ||
+          item.Status ||
+          'ACTIVE'
+        ).toUpperCase();
+
+      item.severity =
+        String(
+          item.severity ||
+          item.Severity ||
+          'MEDIUM'
+        ).toUpperCase();
+
+      item.category =
+        item.category ||
+        item.Category ||
+        'Other';
+
+      item.title =
+        item.title ||
+        item.Title ||
+        'Untitled Incident';
+
+      item.affected =
+        item.affected ||
+        item.Affected ||
+        '';
+
+      item.description =
+        item.description ||
+        item.Description ||
+        '';
+
+      item.agentAction =
+        item.agentAction ||
+        item.AgentAction ||
+        item.agent_action ||
+        '';
+
+      item.whatToCheck =
+        item.whatToCheck ||
+        item.WhatToCheck ||
+        item.what_to_check ||
+        '';
+
+      item.instructions =
+        item.instructions ||
+        item.Instructions ||
+        '';
+
+      item.response =
+        item.response ||
+        item.Response ||
+        item.customerResponse ||
+        item.CustomerResponse ||
+        '';
+
+      item.notionUrl =
+        item.notionUrl ||
+        item.NotionUrl ||
+        item.notion ||
+        '';
+
+      item.createdBy =
+        item.createdBy ||
+        item.CreatedBy ||
+        '';
+
+      item.createdAt =
+        item.createdAt ||
+        item.CreatedAt ||
+        '';
+
+      item.updatedBy =
+        item.updatedBy ||
+        item.UpdatedBy ||
+        '';
+
+      item.updatedAt =
+        item.updatedAt ||
+        item.UpdatedAt ||
+        '';
+
+      return item;
+
+    }
+
+
+    /* =========================================================
+       INCIDENT FILTERING
+    ========================================================== */
+
+    function getFilteredIncidents() {
+
+      const search =
+        (
+          document.getElementById(
+            'incidentSearch'
+          )?.value || ''
+        )
+        .trim()
+        .toLowerCase();
+
+      const platform =
+        document.getElementById(
+          'platformFilter'
+        )?.value || '';
+
+      const category =
+        document.getElementById(
+          'categoryFilter'
+        )?.value || '';
+
+      return incidents
+        .map(normalizeIncident)
+        .filter(incident => {
+
+          const searchable =
+            [
+              incident.title,
+              incident.platform,
+              incident.category,
+              incident.severity,
+              incident.status,
+              incident.affected,
+              incident.description,
+              incident.agentAction,
+              incident.whatToCheck,
+              incident.instructions,
+              incident.response
+            ]
+              .join(' ')
+              .toLowerCase();
+
+          if (
+            search &&
+            !searchable.includes(search)
+          ) {
+            return false;
+          }
+
+          if (
+            platform &&
+            incident.platform !== platform
+          ) {
+            return false;
+          }
+
+          if (
+            category &&
+            incident.category !== category
+          ) {
+            return false;
+          }
+
+          return true;
+
+        });
+
+    }
+
+
+    /* =========================================================
+       INCIDENT RENDER
+    ========================================================== */
+
+    function renderIncidents() {
+
+      const filtered =
+        getFilteredIncidents();
+
+      const active =
+        filtered.filter(
+          incident =>
+            incident.status !== 'RESOLVED'
+        );
+
+      const resolved =
+        filtered.filter(
+          incident =>
+            incident.status === 'RESOLVED'
+        );
+
+      const count =
+        document.getElementById(
+          'activeIncidentCount'
+        );
+
+      if (count) {
+        count.textContent =
+          active.length;
+      }
+
+      const list =
+        document.getElementById(
+          'incidentList'
+        );
+
+      const resolvedList =
+        document.getElementById(
+          'resolvedList'
+        );
+
+      if (list) {
+
+        if (!active.length) {
+
+          list.innerHTML =
+            emptyIncidentHTML(
+              'No active incidents',
+              'There are no matching active incidents.'
+            );
+
+        } else {
+
+          list.innerHTML =
+            active
+              .map(incidentCardHTML)
+              .join('');
+
+        }
+
+      }
+
+      if (resolvedList) {
+
+        if (!resolved.length) {
+
+          resolvedList.innerHTML =
+            `
+              <div class="rounded-xl border border-dashed border-slate-300 p-5 text-center dark:border-slate-700">
+                <p class="text-xs text-slate-400">
+                  No matching resolved incidents.
+                </p>
+              </div>
+            `;
+
+        } else {
+
+          resolvedList.innerHTML =
+            resolved
+              .sort(
+                (a, b) =>
+                  new Date(
+                    b.updatedAt || b.createdAt || 0
+                  ) -
+                  new Date(
+                    a.updatedAt || a.createdAt || 0
+                  )
+              )
+              .map(resolvedIncidentHTML)
+              .join('');
+
+        }
+
+      }
+
+    }
+
+
+    function incidentCardHTML(incident) {
+
+      const statusClass =
+        incident.status === 'MONITORING'
+          ? 'badge-monitoring'
+          : 'badge-active';
+
+      const severityClass =
+        incident.severity === 'HIGH'
+          ? 'badge-high'
+          : incident.severity === 'LOW'
+            ? 'badge-low'
+            : 'badge-medium';
+
+      const action =
+        incident.agentAction ||
+        incident.instructions ||
+        'Review the incident instructions.';
+
+      return `
+        <button
+          onclick="openIncident('${escapeAttribute(incident.id)}')"
+          class="incident-card app-card w-full text-left"
+        >
+
+          <div class="p-4">
+
+            <div class="mb-3 flex flex-wrap items-center gap-1.5">
+
+              <span class="badge ${statusClass}">
+                <i class="fa-solid fa-circle text-[7px]"></i>
+                ${escapeHTML(incident.status)}
+              </span>
+
+              <span class="badge ${severityClass}">
+                ${escapeHTML(incident.severity)}
+              </span>
+
+              <span class="badge platform-badge">
+                <i class="fa-solid fa-layer-group"></i>
+                ${escapeHTML(incident.platform)}
+              </span>
+
+              <span class="badge category-badge">
+                ${escapeHTML(incident.category)}
+              </span>
+
+            </div>
+
+
+            <h3
+              class="line-clamp-2 text-base font-black text-slate-900 dark:text-white"
+            >
+              ${escapeHTML(incident.title)}
+            </h3>
+
+
+            ${
+              incident.affected
+                ? `
+                  <p class="mt-1 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                    ${escapeHTML(incident.affected)}
+                  </p>
+                `
+                : ''
+            }
+
+
+            <div
+              class="mt-3 rounded-xl bg-slate-50 p-3 dark:bg-slate-950"
+            >
+
+              <div
+                class="mb-1 text-[10px] font-black uppercase tracking-wider text-blue-500"
+              >
+                Agent Action
+              </div>
+
+              <p
+                class="line-clamp-3 text-xs leading-5 text-slate-600 dark:text-slate-300"
+              >
+                ${escapeHTML(action)}
+              </p>
+
+            </div>
+
+
+            <div
+              class="mt-3 flex items-center justify-between"
+            >
+
+              <span class="text-[10px] text-slate-400">
+                ${formatIncidentDate(
+                  incident.updatedAt ||
+                  incident.createdAt
+                )}
+              </span>
+
+              <span
+                class="text-xs font-bold text-slate-500 dark:text-slate-400"
+              >
+                View playbook
+                <i class="fa-solid fa-arrow-right ml-1"></i>
+              </span>
+
+            </div>
+
+          </div>
+
+        </button>
+      `;
+
+    }
+
+
+    function resolvedIncidentHTML(incident) {
+
+      return `
+        <button
+          onclick="openIncident('${escapeAttribute(incident.id)}')"
+          class="app-card flex w-full items-center justify-between gap-4 px-4 py-3 text-left hover:bg-slate-50 dark:hover:bg-slate-800/50"
+        >
+
+          <div class="min-w-0">
+
+            <div class="mb-1 flex flex-wrap gap-1.5">
+
+              <span class="badge badge-resolved">
+                <i class="fa-solid fa-check"></i>
+                RESOLVED
+              </span>
+
+              <span class="badge platform-badge">
+                ${escapeHTML(incident.platform)}
+              </span>
+
+              <span class="badge category-badge">
+                ${escapeHTML(incident.category)}
+              </span>
+
+            </div>
+
+            <p
+              class="truncate text-sm font-bold text-slate-800 dark:text-slate-200"
+            >
+              ${escapeHTML(incident.title)}
+            </p>
+
+          </div>
+
+          <i class="fa-solid fa-chevron-right shrink-0 text-xs text-slate-400"></i>
+
+        </button>
+      `;
+
+    }
+
+
+    function emptyIncidentHTML(title, text) {
+
+      return `
+        <div class="app-card empty-state flex items-center justify-center md:col-span-2 xl:col-span-3">
+
+          <div class="text-center">
+
+            <div class="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-100 text-slate-400 dark:bg-slate-800">
+              <i class="fa-solid fa-circle-check"></i>
+            </div>
+
+            <p class="font-bold text-slate-700 dark:text-slate-300">
+              ${escapeHTML(title)}
+            </p>
+
+            <p class="mt-1 text-xs text-slate-400">
+              ${escapeHTML(text)}
+            </p>
+
+          </div>
+
+        </div>
+      `;
+
+    }
+
+
+    /* =========================================================
+       DETAIL MODAL
+    ========================================================== */
+
+    function openIncident(id) {
+
+      const incident =
+        incidents
+          .map(normalizeIncident)
+          .find(
+            item =>
+              String(item.id) === String(id)
+          );
+
+      if (!incident) return;
+
+      document.getElementById(
+        'detailTitle'
+      ).textContent =
+        incident.title;
+
+      document.getElementById(
+        'detailMeta'
+      ).textContent =
+        [
+          incident.affected,
+          formatIncidentDate(
+            incident.updatedAt ||
+            incident.createdAt
+          )
+        ]
+        .filter(Boolean)
+        .join(' · ');
+
+
+      document.getElementById(
+        'detailBadges'
+      ).innerHTML = `
+
+        <span class="badge ${
+          incident.status === 'RESOLVED'
+            ? 'badge-resolved'
+            : incident.status === 'MONITORING'
+              ? 'badge-monitoring'
+              : 'badge-active'
+        }">
+          ${escapeHTML(incident.status)}
+        </span>
+
+        <span class="badge ${
+          incident.severity === 'HIGH'
+            ? 'badge-high'
+            : incident.severity === 'LOW'
+              ? 'badge-low'
+              : 'badge-medium'
+        }">
+          ${escapeHTML(incident.severity)}
+        </span>
+
+        <span class="badge platform-badge">
+          <i class="fa-solid fa-layer-group"></i>
+          ${escapeHTML(incident.platform)}
+        </span>
+
+        <span class="badge category-badge">
+          ${escapeHTML(incident.category)}
+        </span>
+
+      `;
+
+
+      document.getElementById(
+        'detailDescription'
+      ).textContent =
+        incident.description ||
+        'No issue description provided.';
+
+
+      document.getElementById(
+        'detailAgentAction'
+      ).textContent =
+        incident.agentAction ||
+        incident.instructions ||
+        'No specific agent action provided.';
+
+
+      document.getElementById(
+        'detailWhatToCheck'
+      ).textContent =
+        incident.whatToCheck ||
+        'No specific checks provided.';
+
+
+      document.getElementById(
+        'detailInstructions'
+      ).textContent =
+        incident.instructions ||
+        'No step-by-step procedure provided.';
+
+
+      document.getElementById(
+        'detailResponse'
+      ).textContent =
+        incident.response ||
+        'No customer response provided.';
+
+
+      const notionWrapper =
+        document.getElementById(
+          'detailNotionWrapper'
+        );
+
+      const notion =
+        document.getElementById(
+          'detailNotion'
+        );
+
+      if (incident.notionUrl) {
+
+        notion.href =
+          incident.notionUrl;
+
+        notionWrapper.classList.remove(
+          'hidden'
+        );
+
+      } else {
+
+        notionWrapper.classList.add(
+          'hidden'
+        );
+
+      }
+
+
+      showModal('incidentModal');
+
+    }
+
+
+    /* =========================================================
+       ADMIN
+    ========================================================== */
+
+    function openAdmin() {
+
+      if (
+        !['TL', 'QA', 'MA'].includes(role)
+      ) {
+
+        showModal('loginModal');
+
+        return;
+      }
+
+      document.getElementById(
+        'adminRoleText'
+      ).textContent =
+        `Signed in as ${
+          roleLabels[role] || role
+        }`;
+
+      renderAdminIncidentList();
+      renderIncidentEditor();
+
+      showModal('adminModal');
+
+    }
+
+
+    function renderAdminIncidentList() {
+
+      const container =
+        document.getElementById(
+          'adminIncidentList'
+        );
+
+      if (!container) return;
+
+      const sorted =
+        incidents
+          .map(normalizeIncident)
+          .sort(
+            (a, b) => {
+
+              if (
+                a.status !== 'RESOLVED' &&
+                b.status === 'RESOLVED'
+              ) return -1;
+
+              if (
+                a.status === 'RESOLVED' &&
+                b.status !== 'RESOLVED'
+              ) return 1;
+
+              return (
+                new Date(
+                  b.updatedAt ||
+                  b.createdAt ||
+                  0
+                ) -
+                new Date(
+                  a.updatedAt ||
+                  a.createdAt ||
+                  0
+                )
+              );
+
+            }
+          );
+
+
+      if (!sorted.length) {
+
+        container.innerHTML =
+          `
+            <div class="rounded-xl border border-dashed border-slate-300 p-4 text-center dark:border-slate-700">
+              <p class="text-xs text-slate-400">
+                No incidents found.
+              </p>
+            </div>
+          `;
+
+        return;
+
+      }
+
+
+      container.innerHTML =
+        sorted
+          .map(incident => {
+
+            const selected =
+              String(
+                incident.id
+              ) === String(
+                selectedIncidentId
+              );
+
+            return `
+              <button
+                onclick="selectIncident('${escapeAttribute(incident.id)}')"
+                class="w-full rounded-xl border px-3 py-2.5 text-left transition ${
+                  selected
+                    ? 'border-slate-400 bg-slate-100 dark:border-slate-600 dark:bg-slate-800'
+                    : 'border-transparent hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                }"
+              >
+
+                <div class="mb-1 flex flex-wrap gap-1">
+
+                  <span class="text-[9px] font-black uppercase ${
+                    incident.status === 'RESOLVED'
+                      ? 'text-slate-400'
+                      : incident.status === 'MONITORING'
+                        ? 'text-amber-600 dark:text-amber-400'
+                        : 'text-emerald-600 dark:text-emerald-400'
+                  }">
+                    ${escapeHTML(incident.status)}
+                  </span>
+
+                  <span class="text-[9px] font-black text-purple-500">
+                    ${escapeHTML(incident.platform)}
+                  </span>
+
+                </div>
+
+                <p class="line-clamp-2 text-xs font-bold text-slate-700 dark:text-slate-200">
+                  ${escapeHTML(incident.title)}
+                </p>
+
+              </button>
+            `;
+
+          })
+          .join('');
+
+    }
+
+
+    function selectIncident(id) {
+
+      creatingNewIncident = false;
+
+      selectedIncidentId = id;
+
+      renderAdminIncidentList();
+      renderIncidentEditor();
+
+    }
+
+
+    function startNewIncident() {
+
+      creatingNewIncident = true;
+
+      selectedIncidentId = null;
+
+      document.getElementById(
+        'editorEmpty'
+      ).classList.add('hidden');
+
+      document.getElementById(
+        'incidentEditor'
+      ).classList.remove('hidden');
+
+      document.getElementById(
+        'editorHeading'
+      ).textContent =
+        'Create New Incident';
+
+      document.getElementById(
+        'deleteIncidentButton'
+      ).classList.add('hidden');
+
+      clearEditor();
+
+      document.getElementById(
+        'editorPlatform'
+      ).value =
+        'Fortune Purple';
+
+      document.getElementById(
+        'editorStatus'
+      ).value =
+        'ACTIVE';
+
+      document.getElementById(
+        'editorSeverity'
+      ).value =
+        'MEDIUM';
+
+      document.getElementById(
+        'editorCategory'
+      ).value =
+        'Technical';
+
+      document.getElementById(
+        'editorTitle'
+      ).focus();
+
+    }
+
+
+    function renderIncidentEditor() {
+
+      const empty =
+        document.getElementById(
+          'editorEmpty'
+        );
+
+      const editor =
+        document.getElementById(
+          'incidentEditor'
+        );
+
+      if (
+        creatingNewIncident
+      ) {
+        empty.classList.add('hidden');
+        editor.classList.remove('hidden');
+        return;
+      }
+
+
+      const incident =
+        incidents
+          .map(normalizeIncident)
+          .find(
+            item =>
+              String(item.id) ===
+              String(selectedIncidentId)
+          );
+
+
+      if (!incident) {
+
+        empty.classList.remove('hidden');
+        editor.classList.add('hidden');
+
+        return;
+
+      }
+
+
+      empty.classList.add('hidden');
+      editor.classList.remove('hidden');
+
+
+      document.getElementById(
+        'editorHeading'
+      ).textContent =
+        'Edit Incident';
+
+
+      document.getElementById(
+        'deleteIncidentButton'
+      ).classList.remove('hidden');
+
+
+      document.getElementById(
+        'editorPlatform'
+      ).value =
+        incident.platform ||
+        'All Platforms';
+
+
+      document.getElementById(
+        'editorStatus'
+      ).value =
+        incident.status ||
+        'ACTIVE';
+
+
+      document.getElementById(
+        'editorSeverity'
+      ).value =
+        incident.severity ||
+        'MEDIUM';
+
+
+      document.getElementById(
+        'editorCategory'
+      ).value =
+        incident.category ||
+        'Other';
+
+
+      document.getElementById(
+        'editorTitle'
+      ).value =
+        incident.title ||
+        '';
+
+
+      document.getElementById(
+        'editorAffected'
+      ).value =
+        incident.affected ||
+        '';
+
+
+      document.getElementById(
+        'editorDescription'
+      ).value =
+        incident.description ||
+        '';
+
+
+      document.getElementById(
+        'editorAgentAction'
+      ).value =
+        incident.agentAction ||
+        '';
+
+
+      document.getElementById(
+        'editorWhatToCheck'
+      ).value =
+        incident.whatToCheck ||
+        '';
+
+
+      document.getElementById(
+        'editorInstructions'
+      ).value =
+        incident.instructions ||
+        '';
+
+
+      document.getElementById(
+        'editorResponse'
+      ).value =
+        incident.response ||
+        '';
+
+
+      document.getElementById(
+        'editorNotionUrl'
+      ).value =
+        incident.notionUrl ||
+        '';
+
+
+      clearEditorMessage();
+
+    }
+
+
+    function clearEditor() {
+
+      [
+        'editorTitle',
+        'editorAffected',
+        'editorDescription',
+        'editorAgentAction',
+        'editorWhatToCheck',
+        'editorInstructions',
+        'editorResponse',
+        'editorNotionUrl'
+      ]
+        .forEach(id => {
+
+          const element =
+            document.getElementById(id);
+
+          if (element) {
+            element.value = '';
+          }
+
+        });
+
+      clearEditorMessage();
+
+    }
+
+
+    function clearEditorMessage() {
+
+      const element =
+        document.getElementById(
+          'editorMessage'
+        );
+
+      if (element) {
+        element.textContent = '';
+        element.className =
+          'text-xs';
+      }
+
+    }
+
+
+    /* =========================================================
+       SAVE INCIDENT
+    ========================================================== */
+
+    async function saveIncident() {
+
+      if (
+        !['TL', 'QA', 'MA'].includes(role)
+      ) {
+
+        showToast(
+          'Management login required.',
+          'error'
+        );
+
+        return;
+
+      }
+
+
+      const title =
+        document.getElementById(
+          'editorTitle'
+        ).value.trim();
+
+
+      if (!title) {
+
+        setEditorMessage(
+          'Incident title is required.',
+          'error'
+        );
+
+        return;
+
+      }
+
+
+      const incidentData = {
+
+        platform:
+          document.getElementById(
+            'editorPlatform'
+          ).value,
+
+        status:
+          document.getElementById(
+            'editorStatus'
+          ).value,
+
+        severity:
+          document.getElementById(
+            'editorSeverity'
+          ).value,
+
+        category:
+          document.getElementById(
+            'editorCategory'
+          ).value,
+
+        title,
+
+        affected:
+          document.getElementById(
+            'editorAffected'
+          ).value.trim(),
+
+        description:
+          document.getElementById(
+            'editorDescription'
+          ).value.trim(),
+
+        agentAction:
+          document.getElementById(
+            'editorAgentAction'
+          ).value.trim(),
+
+        whatToCheck:
+          document.getElementById(
+            'editorWhatToCheck'
+          ).value.trim(),
+
+        instructions:
+          document.getElementById(
+            'editorInstructions'
+          ).value.trim(),
+
+        response:
+          document.getElementById(
+            'editorResponse'
+          ).value.trim(),
+
+        notionUrl:
+          document.getElementById(
+            'editorNotionUrl'
+          ).value.trim()
+
+      };
+
+
+      const button =
+        document.getElementById(
+          'saveIncidentButton'
+        );
+
+
+      button.disabled = true;
+
+      button.innerHTML =
+        `
+          <i class="fa-solid fa-spinner loading-spinner mr-1"></i>
+          Saving...
+        `;
+
+
+      try {
+
+        if (creatingNewIncident) {
+
+          const result =
+            await api(
+              'create',
+              incidentData
+            );
+
+          const created =
+            normalizeIncident(
+              result.incident ||
+              result.data ||
+              result
+            );
+
+          if (created.id) {
+
+            incidents.push(
+              created
+            );
+
+            selectedIncidentId =
+              created.id;
+
+          }
+
+          creatingNewIncident =
+            false;
+
+          setEditorMessage(
+            'Incident created successfully.',
+            'success'
+          );
+
+          showToast(
+            'Incident created.'
+          );
+
+        } else {
+
+          const result =
+            await api(
+              'update',
+              {
+                id:
+                  selectedIncidentId,
+                ...incidentData
+              }
+            );
+
+          const index =
+            incidents.findIndex(
+              incident =>
+                String(
+                  normalizeIncident(
+                    incident
+                  ).id
+                ) ===
+                String(
+                  selectedIncidentId
+                )
+            );
+
+
+          const returned =
+            normalizeIncident(
+              result.incident ||
+              result.data ||
+              incidentData
+            );
+
+
+          if (index >= 0) {
+
+            incidents[index] = {
+              ...incidents[index],
+              ...returned,
+              ...incidentData,
+              id:
+                selectedIncidentId
+            };
+
+          }
+
+
+          setEditorMessage(
+            'Incident updated successfully.',
+            'success'
+          );
+
+          showToast(
+            'Incident updated.'
+          );
+
+        }
+
+
+        renderIncidents();
+        renderAdminIncidentList();
+        renderIncidentEditor();
+
+
+      } catch (error) {
+
+        console.error(
+          'Save error:',
+          error
+        );
+
+        setEditorMessage(
+          error.message ||
+          'Unable to save incident.',
+          'error'
+        );
+
+        showToast(
+          error.message ||
+          'Unable to save incident.',
+          'error'
+        );
+
+      } finally {
+
+        button.disabled = false;
+
+        button.innerHTML =
+          `
+            <i class="fa-solid fa-floppy-disk mr-1"></i>
+            Save Incident
+          `;
+
+      }
+
+    }
+
+
+    /* =========================================================
+       DELETE
+    ========================================================== */
+
+    async function deleteSelectedIncident() {
+
+      if (
+        !selectedIncidentId ||
+        creatingNewIncident
+      ) {
+        return;
+      }
+
+
+      const incident =
+        incidents
+          .map(normalizeIncident)
+          .find(
+            item =>
+              String(item.id) ===
+              String(selectedIncidentId)
+          );
+
+
+      if (!incident) return;
+
+
+      const confirmed =
+        window.confirm(
+          `Delete "${incident.title}"?\n\nThis action cannot be undone.`
+        );
+
+
+      if (!confirmed) return;
+
+
+      try {
+
+        await api(
+          'delete',
+          {
+            id:
+              selectedIncidentId
           }
         );
 
 
-      showToast(
-        'Incident created.'
-      );
-
-
-      creatingNewIncident =
-        false;
-
-
-      selectedIncidentId =
-        response.incident?.id ||
-        null;
-
-    } else {
-
-      await api(
-        'update',
-        {
-          token:
-            adminToken,
-
-          role,
-
-          id:
-            selectedIncidentId,
-
-          ...data
-        }
-      );
-
-
-      showToast(
-        'Incident updated.'
-      );
-
-    }
-
-
-    await loadIncidents();
-
-
-    renderAdminIncidentList();
-
-
-    renderIncidentEditor();
-
-  } catch (error) {
-
-    handleApiError(
-      error
-    );
-
-  }
-
-}
-
-
-/* ============================================================
-   DELETE INCIDENT
-============================================================ */
-
-async function deleteIncident() {
-
-  if (
-    !selectedIncidentId
-  ) {
-
-    return;
-
-  }
-
-
-  const confirmed =
-    confirm(
-      'Delete this incident?'
-    );
-
-
-  if (!confirmed) {
-    return;
-  }
-
-
-  try {
-
-    await api(
-      'delete',
-      {
-        token:
-          adminToken,
-
-        role,
-
-        id:
-          selectedIncidentId
-      }
-    );
-
-
-    showToast(
-      'Incident deleted.'
-    );
-
-
-    selectedIncidentId =
-      null;
-
-
-    await loadIncidents();
-
-
-    renderAdminIncidentList();
-
-
-    renderIncidentEditor();
-
-  } catch (error) {
-
-    handleApiError(
-      error
-    );
-
-  }
-
-}
-
-
-/* ============================================================
-   LOGIN
-============================================================ */
-
-async function login() {
-
-  const selectedRole =
-    document.getElementById(
-      'loginRole'
-    ).value
-      .toUpperCase();
-
-
-  const pin =
-    document.getElementById(
-      'loginPin'
-    ).value
-      .trim();
-
-
-  const errorBox =
-    document.getElementById(
-      'loginError'
-    );
-
-
-  errorBox.classList.add(
-    'hidden'
-  );
-
-
-  if (!pin) {
-
-    errorBox.textContent =
-      'Please enter your PIN.';
-
-    errorBox.classList.remove(
-      'hidden'
-    );
-
-    return;
-
-  }
-
-
-  try {
-
-    const response =
-      await api(
-        'login',
-        {
-          role:
-            selectedRole,
-
-          pin
-        }
-      );
-
-
-    const normalizedRole =
-      String(
-        response.role ||
-        selectedRole
-      ).toUpperCase();
-
-
-    if (
-      ![
-        'TL',
-        'QA',
-        'MA'
-      ].includes(
-        normalizedRole
-      )
-    ) {
-
-      throw new Error(
-        'Invalid management role returned by server.'
-      );
-
-    }
-
-
-    adminToken =
-      response.token ||
-      response.adminToken ||
-      '';
-
-
-    role =
-      normalizedRole;
-
-
-    sessionStorage.setItem(
-      'support_admin_token',
-      adminToken
-    );
-
-
-    sessionStorage.setItem(
-      'support_admin_role',
-      role
-    );
-
-
-    hideModal(
-      'loginModal'
-    );
-
-
-    document.getElementById(
-      'loginPin'
-    ).value = '';
-
-
-    openAdmin();
-
-  } catch (error) {
-
-    errorBox.textContent =
-      error.message;
-
-
-    errorBox.classList.remove(
-      'hidden'
-    );
-
-  }
-
-}
-
-
-/* ============================================================
-   OPEN ADMIN
-============================================================ */
-
-function openAdmin() {
-
-  if (
-    !adminToken ||
-    ![
-      'TL',
-      'QA',
-      'MA'
-    ].includes(role)
-  ) {
-
-    showModal(
-      'loginModal'
-    );
-
-    return;
-
-  }
-
-
-  document.getElementById(
-    'adminRoleText'
-  ).textContent =
-    `Signed in as ${
-      roleLabels[role] ||
-      role
-    }`;
-
-
-  renderAdminIncidentList();
-
-
-  renderIncidentEditor();
-
-
-  showModal(
-    'adminModal'
-  );
-
-}
-
-
-/* ============================================================
-   LOGOUT
-============================================================ */
-
-function logout() {
-
-  adminToken =
-    '';
-
-  role =
-    '';
-
-  selectedIncidentId =
-    null;
-
-
-  sessionStorage.removeItem(
-    'support_admin_token'
-  );
-
-
-  sessionStorage.removeItem(
-    'support_admin_role'
-  );
-
-
-  hideModal(
-    'adminModal'
-  );
-
-
-  showToast(
-    'Logged out.'
-  );
-
-}
-
-
-/* ============================================================
-   API ERROR
-============================================================ */
-
-function handleApiError(
-  error
-) {
-
-  console.error(
-    error
-  );
-
-
-  const message =
-    error?.message ||
-    'Something went wrong.';
-
-
-  if (
-    /unauthorized|invalid token|expired|forbidden/i
-      .test(message)
-  ) {
-
-    logout();
-
-  }
-
-
-  showToast(
-    message,
-    'error'
-  );
-
-}
-
-
-/* ============================================================
-   HTML SAFETY
-============================================================ */
-
-function escapeHtml(
-  value
-) {
-
-  return String(
-    value ?? ''
-  ).replace(
-    /[&<>"']/g,
-    character => ({
-
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#39;'
-
-    }[character])
-  );
-
-}
-
-
-function escapeAttr(
-  value
-) {
-
-  return escapeHtml(
-    value
-  ).replace(
-    /`/g,
-    '&#96;'
-  );
-
-}
-
-
-/* ============================================================
-   MODALS
-============================================================ */
-
-function showModal(
-  id
-) {
-
-  const element =
-    document.getElementById(
-      id
-    );
-
-
-  element.classList.remove(
-    'hidden'
-  );
-
-
-  element.classList.add(
-    'flex'
-  );
-
-}
-
-
-function hideModal(
-  id
-) {
-
-  const element =
-    document.getElementById(
-      id
-    );
-
-
-  element.classList.add(
-    'hidden'
-  );
-
-
-  element.classList.remove(
-    'flex'
-  );
-
-}
-
-
-/* ============================================================
-   TOAST
-============================================================ */
-
-let toastTimer =
-  null;
-
-
-function showToast(
-  message,
-  type = 'success'
-) {
-
-  const toast =
-    document.getElementById(
-      'toast'
-    );
-
-
-  toast.textContent =
-    message;
-
-
-  toast.className = `
-
-    fixed
-    bottom-5
-    right-5
-    z-[60]
-    rounded-xl
-    px-4
-    py-3
-    text-sm
-    font-semibold
-    text-white
-    shadow-xl
-
-    ${
-      type === 'error'
-        ? 'bg-red-600'
-        : 'bg-slate-900 dark:bg-white dark:text-slate-900'
-    }
-
-  `;
-
-
-  toast.classList.remove(
-    'hidden'
-  );
-
-
-  clearTimeout(
-    toastTimer
-  );
-
-
-  toastTimer =
-    setTimeout(
-      () => {
-
-        toast.classList.add(
-          'hidden'
-        );
-
-      },
-      3500
-    );
-
-}
-
-
-/* ============================================================
-   THEME
-============================================================ */
-
-function applyTheme() {
-
-  const dark =
-    document.documentElement
-      .classList
-      .contains('dark');
-
-
-  document.getElementById(
-    'themeIcon'
-  ).className =
-    'fa-solid ' +
-    (
-      dark
-        ? 'fa-sun'
-        : 'fa-moon'
-    );
-
-
-  document.getElementById(
-    'themeText'
-  ).textContent =
-    dark
-      ? 'Light'
-      : 'Dark';
-
-}
-
-
-function toggleTheme() {
-
-  document.documentElement
-    .classList
-    .toggle('dark');
-
-
-  localStorage.setItem(
-    'support_theme',
-    document.documentElement
-      .classList
-      .contains('dark')
-      ? 'dark'
-      : 'light'
-  );
-
-
-  applyTheme();
-
-}
-
-
-/* ============================================================
-   TAB SWITCHING
-============================================================ */
-
-document
-  .querySelectorAll(
-    '.tab-btn'
-  )
-  .forEach(
-    button => {
-
-      button.addEventListener(
-        'click',
-        () => {
-
-          document
-            .querySelectorAll(
-              '.tab-btn'
-            )
-            .forEach(
-              item => {
-
-                item.classList.remove(
-                  'tab-active'
-                );
-
-              }
-            );
-
-
-          button.classList.add(
-            'tab-active'
+        incidents =
+          incidents.filter(
+            item =>
+              String(
+                normalizeIncident(
+                  item
+                ).id
+              ) !==
+              String(
+                selectedIncidentId
+              )
           );
 
 
-          const showTime =
-            button.dataset.tab ===
-            'time';
+        selectedIncidentId =
+          null;
 
+        creatingNewIncident =
+          false;
 
-          document
-            .getElementById(
-              'timeSection'
-            )
-            .classList
-            .toggle(
-              'hidden',
-              !showTime
-            );
+        renderIncidents();
+        renderAdminIncidentList();
+        renderIncidentEditor();
 
-
-          document
-            .getElementById(
-              'incidentSection'
-            )
-            .classList
-            .toggle(
-              'hidden',
-              showTime
-            );
-
-        }
-      );
-
-    }
-  );
-
-
-/* ============================================================
-   TIME EVENTS
-============================================================ */
-
-document
-  .getElementById(
-    'timezoneSearch'
-  )
-  .addEventListener(
-    'input',
-    filterTimezones
-  );
-
-
-document
-  .getElementById(
-    'showSeconds'
-  )
-  .addEventListener(
-    'change',
-    updateTimes
-  );
-
-
-/* ============================================================
-   INCIDENT EVENTS
-============================================================ */
-
-document
-  .getElementById(
-    'incidentSearch'
-  )
-  .addEventListener(
-    'input',
-    renderIncidents
-  );
-
-
-document
-  .getElementById(
-    'categoryFilter'
-  )
-  .addEventListener(
-    'change',
-    renderIncidents
-  );
-
-
-document
-  .getElementById(
-    'refreshIncidents'
-  )
-  .addEventListener(
-    'click',
-    loadIncidents
-  );
-
-
-/* ============================================================
-   THEME EVENT
-============================================================ */
-
-document
-  .getElementById(
-    'themeBtn'
-  )
-  .addEventListener(
-    'click',
-    toggleTheme
-  );
-
-
-/* ============================================================
-   MANAGEMENT EVENT
-============================================================ */
-
-document
-  .getElementById(
-    'managementBtn'
-  )
-  .addEventListener(
-    'click',
-    openAdmin
-  );
-
-
-/* ============================================================
-   ACTIVE INCIDENT EVENT DELEGATION
-============================================================ */
-
-document
-  .getElementById(
-    'activeGrid'
-  )
-  .addEventListener(
-    'click',
-    event => {
-
-      const card =
-        event.target.closest(
-          '[data-incident-id]'
+        showToast(
+          'Incident deleted.'
         );
 
 
-      if (!card) {
-        return;
-      }
+      } catch (error) {
 
-
-      openIncidentDetails(
-        card.dataset.incidentId
-      );
-
-    }
-  );
-
-
-/* ============================================================
-   HISTORY EVENT DELEGATION
-============================================================ */
-
-document
-  .getElementById(
-    'historyList'
-  )
-  .addEventListener(
-    'click',
-    event => {
-
-      const card =
-        event.target.closest(
-          '[data-incident-id]'
+        console.error(
+          'Delete error:',
+          error
         );
 
+        showToast(
+          error.message ||
+          'Unable to delete incident.',
+          'error'
+        );
 
-      if (!card) {
-        return;
       }
 
-
-      openIncidentDetails(
-        card.dataset.incidentId
-      );
-
     }
-  );
 
 
-/* ============================================================
-   ADMIN LIST EVENT DELEGATION
-============================================================ */
+    /* =========================================================
+       LOGIN
+    ========================================================== */
 
-document
-  .getElementById(
-    'adminIncidentList'
-  )
-  .addEventListener(
-    'click',
-    event => {
+    async function login() {
+
+      const selectedRole =
+        document.getElementById(
+          'loginRole'
+        ).value
+          .trim()
+          .toUpperCase();
+
+
+      const pin =
+        document.getElementById(
+          'loginPin'
+        ).value
+          .trim();
+
+
+      const errorBox =
+        document.getElementById(
+          'loginError'
+        );
+
 
       const button =
-        event.target.closest(
-          '[data-admin-incident-id]'
+        document.getElementById(
+          'loginSubmitButton'
         );
 
 
-      if (!button) {
+      errorBox.classList.add(
+        'hidden'
+      );
+
+      errorBox.textContent = '';
+
+
+      if (!pin) {
+
+        errorBox.textContent =
+          'Please enter your PIN.';
+
+        errorBox.classList.remove(
+          'hidden'
+        );
+
         return;
+
       }
 
 
-      selectedIncidentId =
-        button.dataset
-          .adminIncidentId;
+      button.disabled = true;
 
+      button.innerHTML =
+        `
+          <i class="fa-solid fa-spinner loading-spinner"></i>
+          Logging in...
+        `;
+
+
+      try {
+
+        const body =
+          new URLSearchParams();
+
+
+        body.set(
+          'payload',
+          JSON.stringify({
+            action: 'login',
+            role: selectedRole,
+            pin
+          })
+        );
+
+
+        const response =
+          await fetch(
+            API_URL,
+            {
+              method: 'POST',
+              body
+            }
+          );
+
+
+        const text =
+          await response.text();
+
+
+        console.log(
+          'LOGIN RAW RESPONSE:',
+          text
+        );
+
+
+        let result;
+
+
+        try {
+
+          result =
+            JSON.parse(text);
+
+        } catch (error) {
+
+          throw new Error(
+            'The Apps Script login did not return valid JSON.'
+          );
+
+        }
+
+
+        console.log(
+          'LOGIN RESPONSE:',
+          result
+        );
+
+
+        if (
+          !response.ok ||
+          result.success === false
+        ) {
+
+          throw new Error(
+            result.message ||
+            result.error ||
+            'Invalid PIN or login failed.'
+          );
+
+        }
+
+
+        adminToken =
+          result.token ||
+          result.sessionToken ||
+          result.adminToken ||
+          result.authToken ||
+          '';
+
+
+        role =
+          String(
+            result.role ||
+            selectedRole
+          ).toUpperCase();
+
+
+        adminPin =
+          pin;
+
+
+        if (
+          !['TL', 'QA', 'MA'].includes(
+            role
+          )
+        ) {
+
+          throw new Error(
+            'The server returned an invalid management role.'
+          );
+
+        }
+
+
+        if (adminToken) {
+
+          sessionStorage.setItem(
+            'support_admin_token',
+            adminToken
+          );
+
+        }
+
+
+        sessionStorage.setItem(
+          'support_admin_role',
+          role
+        );
+
+
+        document.getElementById(
+          'loginPin'
+        ).value = '';
+
+
+        hideModal(
+          'loginModal'
+        );
+
+
+        openAdmin();
+
+
+        showToast(
+          `Logged in as ${
+            roleLabels[role] ||
+            role
+          }.`
+        );
+
+
+      } catch (error) {
+
+        console.error(
+          'LOGIN ERROR:',
+          error
+        );
+
+
+        errorBox.textContent =
+          error.message ||
+          'Login failed.';
+
+
+        errorBox.classList.remove(
+          'hidden'
+        );
+
+
+      } finally {
+
+        button.disabled = false;
+
+        button.innerHTML =
+          `
+            <i class="fa-solid fa-right-to-bracket"></i>
+            Login
+          `;
+
+      }
+
+    }
+
+
+    /* =========================================================
+       LOGOUT
+    ========================================================== */
+
+    function logout() {
+
+      adminToken = '';
+      adminPin = '';
+      role = '';
+
+      selectedIncidentId =
+        null;
 
       creatingNewIncident =
         false;
 
 
-      renderAdminIncidentList();
-
-
-      renderIncidentEditor();
-
-    }
-  );
-
-
-/* ============================================================
-   DETAIL COPY BUTTON
-============================================================ */
-
-document
-  .getElementById(
-    'detailContent'
-  )
-  .addEventListener(
-    'click',
-    event => {
-
-      const button =
-        event.target.closest(
-          '[data-copy-response]'
-        );
-
-
-      if (!button) {
-        return;
-      }
-
-
-      copyResponse(
-        button.dataset
-          .copyResponse
+      sessionStorage.removeItem(
+        'support_admin_token'
       );
 
-    }
-  );
-
-
-/* ============================================================
-   HISTORY TOGGLE
-============================================================ */
-
-document
-  .getElementById(
-    'historyToggle'
-  )
-  .addEventListener(
-    'click',
-    () => {
-
-      const history =
-        document.getElementById(
-          'historyList'
-        );
-
-
-      const hidden =
-        history.classList.toggle(
-          'hidden'
-        );
-
-
-      document.getElementById(
-        'historyIcon'
-      ).className =
-        'fa-solid ' +
-        (
-          hidden
-            ? 'fa-chevron-down'
-            : 'fa-chevron-up'
-        );
-
-    }
-  );
-
-
-/* ============================================================
-   LOGIN EVENTS
-============================================================ */
-
-document
-  .getElementById(
-    'loginForm'
-  )
-  .addEventListener(
-    'submit',
-    event => {
-
-      event.preventDefault();
-
-      login();
-
-    }
-  );
-
-
-document
-  .getElementById(
-    'closeLogin'
-  )
-  .addEventListener(
-    'click',
-    () => {
-
-      hideModal(
-        'loginModal'
+      sessionStorage.removeItem(
+        'support_admin_role'
       );
 
-    }
-  );
-
-
-/* ============================================================
-   ADMIN EVENTS
-============================================================ */
-
-document
-  .getElementById(
-    'closeAdmin'
-  )
-  .addEventListener(
-    'click',
-    () => {
 
       hideModal(
         'adminModal'
       );
 
-    }
-  );
 
-
-document
-  .getElementById(
-    'logoutBtn'
-  )
-  .addEventListener(
-    'click',
-    logout
-  );
-
-
-document
-  .getElementById(
-    'newIncidentBtn'
-  )
-  .addEventListener(
-    'click',
-    createNewIncident
-  );
-
-
-/* ============================================================
-   DETAIL EVENT
-============================================================ */
-
-document
-  .getElementById(
-    'closeDetail'
-  )
-  .addEventListener(
-    'click',
-    () => {
-
-      hideModal(
-        'detailModal'
+      showToast(
+        'Logged out.'
       );
 
     }
-  );
 
 
-/* ============================================================
-   CLICK OUTSIDE MODALS
-============================================================ */
+    /* =========================================================
+       MODALS
+    ========================================================== */
 
-[
-  'loginModal',
-  'adminModal',
-  'detailModal'
-].forEach(
-  modalId => {
+    function showModal(id) {
 
-    document
-      .getElementById(
-        modalId
-      )
-      .addEventListener(
-        'click',
-        event => {
+      const modal =
+        document.getElementById(id);
 
-          if (
-            event.target.id ===
-            modalId
-          ) {
+      if (!modal) return;
 
-            hideModal(
-              modalId
-            );
+      modal.classList.remove(
+        'hidden'
+      );
 
-          }
+      modal.classList.add(
+        'flex'
+      );
+
+      document.body.style.overflow =
+        'hidden';
+
+    }
+
+
+    function hideModal(id) {
+
+      const modal =
+        document.getElementById(id);
+
+      if (!modal) return;
+
+      modal.classList.add(
+        'hidden'
+      );
+
+      modal.classList.remove(
+        'flex'
+      );
+
+      document.body.style.overflow =
+        '';
+
+    }
+
+
+    /* Close modal by clicking backdrop */
+
+    document.addEventListener(
+      'click',
+      event => {
+
+        if (
+          event.target.classList.contains(
+            'modal-backdrop'
+          )
+        ) {
+
+          hideModal(
+            event.target.id
+          );
 
         }
-      );
 
-  }
-);
+      }
+    );
 
 
-/* ============================================================
-   ESC KEY
-============================================================ */
+    /* Escape */
 
-document.addEventListener(
-  'keydown',
-  event => {
+    document.addEventListener(
+      'keydown',
+      event => {
 
-    if (
-      event.key !== 'Escape'
-    ) {
+        if (
+          event.key !== 'Escape'
+        ) return;
 
-      return;
+
+        [
+          'incidentModal',
+          'loginModal',
+          'adminModal'
+        ]
+          .forEach(id => {
+
+            const modal =
+              document.getElementById(id);
+
+            if (
+              modal &&
+              !modal.classList.contains(
+                'hidden'
+              )
+            ) {
+              hideModal(id);
+            }
+
+          });
+
+      }
+    );
+
+
+    /* =========================================================
+       HELPERS
+    ========================================================== */
+
+    function escapeHTML(value) {
+
+      return String(
+        value ?? ''
+      )
+        .replace(
+          /&/g,
+          '&amp;'
+        )
+        .replace(
+          /</g,
+          '&lt;'
+        )
+        .replace(
+          />/g,
+          '&gt;'
+        )
+        .replace(
+          /"/g,
+          '&quot;'
+        )
+        .replace(
+          /'/g,
+          '&#039;'
+        );
 
     }
 
 
-    hideModal(
-      'loginModal'
-    );
+    function escapeAttribute(value) {
 
-    hideModal(
-      'adminModal'
-    );
+      return escapeHTML(value);
 
-    hideModal(
-      'detailModal'
-    );
-
-  }
-);
+    }
 
 
-/* ============================================================
-   INITIALIZE THEME
-============================================================ */
+    function formatIncidentDate(value) {
 
-if (
-  localStorage.getItem(
-    'support_theme'
-  ) === 'light'
-) {
+      if (!value) return '';
 
-  document.documentElement
-    .classList
-    .remove('dark');
+      const date =
+        new Date(value);
 
-}
+      if (
+        Number.isNaN(
+          date.getTime()
+        )
+      ) {
+        return '';
+      }
 
+      return new Intl.DateTimeFormat(
+        'en-US',
+        {
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        }
+      ).format(date);
 
-applyTheme();
-
-
-/* ============================================================
-   INITIALIZE TIME DASHBOARD
-============================================================ */
-
-buildTimeDashboard();
-
-filterTimezones();
-
-updateTimes();
+    }
 
 
-/*
-  Time updates are completely client-side.
-  This means the incident API does not need to be
-  contacted every second.
-*/
+    function setEditorMessage(
+      message,
+      type = 'info'
+    ) {
 
-setInterval(
-  updateTimes,
-  1000
-);
+      const element =
+        document.getElementById(
+          'editorMessage'
+        );
 
-
-/* ============================================================
-   VALIDATE SAVED ADMIN SESSION
-============================================================ */
-
-if (
-  adminToken &&
-  ![
-    'TL',
-    'QA',
-    'MA'
-  ].includes(role)
-) {
-
-  adminToken =
-    '';
-
-  role =
-    '';
-
-  sessionStorage.removeItem(
-    'support_admin_token'
-  );
-
-  sessionStorage.removeItem(
-    'support_admin_role'
-  );
-
-}
+      if (!element) return;
 
 
-/* ============================================================
-   INITIAL INCIDENT LOAD
-============================================================ */
-
-loadIncidents();
+      element.textContent =
+        message;
 
 
-/*
-  Incident data refreshes every 60 seconds.
-  The time dashboard remains independent.
-*/
+      if (type === 'error') {
 
-setInterval(
-  loadIncidents,
-  60000
-);
+        element.className =
+          'text-xs font-semibold text-red-600 dark:text-red-400';
 
-</script>
+      } else if (
+        type === 'success'
+      ) {
+
+        element.className =
+          'text-xs font-semibold text-emerald-600 dark:text-emerald-400';
+
+      } else {
+
+        element.className =
+          'text-xs text-slate-500 dark:text-slate-400';
+
+      }
+
+    }
+
+
+    function showToast(
+      message,
+      type = 'success'
+    ) {
+
+      const container =
+        document.getElementById(
+          'toastContainer'
+        );
+
+      if (!container) return;
+
+
+      const toast =
+        document.createElement(
+          'div'
+        );
+
+
+      const icon =
+        type === 'error'
+          ? 'fa-circle-exclamation'
+          : 'fa-circle-check';
+
+
+      const colors =
+        type === 'error'
+          ? 'border-red-200 bg-red-50 text-red-700 dark:border-red-900 dark:bg-red-950/50 dark:text-red-300'
+          : 'border-slate-200 bg-white text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200';
+
+
+      toast.className =
+        `toast pointer-events-auto flex max-w-sm items-center gap-2 rounded-xl border px-4 py-3 text-xs font-semibold shadow-lg ${colors}`;
+
+
+      toast.innerHTML =
+        `
+          <i class="fa-solid ${icon}"></i>
+          <span>${escapeHTML(message)}</span>
+        `;
+
+
+      container.appendChild(
+        toast
+      );
+
+
+      setTimeout(
+        () => {
+          toast.remove();
+        },
+        3900
+      );
+
+    }
+
+
+    /* =========================================================
+       INITIALIZATION
+    ========================================================== */
+
+    async function initialize() {
+
+      initTheme();
+
+      renderTimezones();
+
+      updateTbilisiClock();
+
+      /*
+       * Load incidents immediately so the
+       * Current Incidents tab is ready.
+       */
+      await loadIncidents();
+
+      /*
+       * Refresh incidents every 60 seconds.
+       */
+      setInterval(
+        loadIncidents,
+        60000
+      );
+
+      /*
+       * Update clocks every second.
+       */
+      setInterval(
+        updateLiveTimeDisplays,
+        1000
+      );
+
+    }
+
+
+    initialize();
+
+  </script>
 
 </body>
 </html>
