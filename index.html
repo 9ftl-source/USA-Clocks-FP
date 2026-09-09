@@ -4238,107 +4238,99 @@
        API
     ========================================================== */
 
-    async function api(
-      action,
-      data = {}
+    async function api(action, data = {}) {
+  if (API_URL.includes('PASTE_YOUR_')) {
+    throw new Error('Apps Script API URL is not configured.');
+  }
+
+  const requestData = {
+    action,
+    ...data
+  };
+
+  if (adminToken) {
+    requestData.token = adminToken;
+  }
+
+  if (role) {
+    requestData.role = role;
+  }
+
+  const body = new URLSearchParams();
+  body.set('payload', JSON.stringify(requestData));
+
+  let response;
+
+  try {
+    response = await fetch(API_URL, {
+      method: 'POST',
+      body: body,
+      redirect: 'follow',
+      cache: 'no-store'
+    });
+  } catch (error) {
+    console.error('API fetch failed:', error);
+
+    throw new Error(
+      'Unable to connect to the Support Operations server. ' +
+      'Please check the Apps Script deployment.'
+    );
+  }
+
+  const text = await response.text();
+
+  console.log('Apps Script HTTP status:', response.status);
+  console.log('Apps Script raw response:', text);
+
+  let json;
+
+  try {
+    json = JSON.parse(text);
+  } catch (error) {
+    console.error('Invalid Apps Script response:', text);
+
+    throw new Error(
+      `Server returned an invalid response (${response.status}).`
+    );
+  }
+
+  if (
+    !response.ok ||
+    json.ok === false ||
+    json.success === false
+  ) {
+    const message =
+      json.error ||
+      json.message ||
+      `Request failed (${response.status}).`;
+
+    /*
+     * If the management session expired,
+     * automatically clear the local session.
+     */
+    if (
+      message.toLowerCase().includes('session expired') ||
+      message.toLowerCase().includes('management session required') ||
+      message.toLowerCase().includes('invalid management session')
     ) {
+      adminToken = '';
+      adminPin = '';
+      role = '';
 
-      if (
-        API_URL.includes(
-          "PASTE_YOUR_"
-        )
-      ) {
-
-        throw new Error(
-          "Apps Script API URL is not configured."
-        );
-
-      }
-
-      const requestData = {
-        action,
-        ...data
-      };
-
-      if (adminToken) {
-        requestData.token =
-          adminToken;
-      }
-
-      if (adminPin) {
-        requestData.pin =
-          adminPin;
-      }
-
-      if (role) {
-        requestData.role =
-          role;
-      }
-
-      const body =
-        new URLSearchParams();
-
-      body.set(
-        "payload",
-        JSON.stringify(
-          requestData
-        )
+      sessionStorage.removeItem(
+        'support_admin_token'
       );
 
-      const response =
-        await fetch(
-          API_URL,
-          {
-            method: "POST",
-            body
-          }
-        );
-
-      const text =
-        await response.text();
-
-      let json;
-
-      try {
-
-        json =
-          JSON.parse(text);
-
-      } catch (error) {
-
-        console.error(
-          "Raw Apps Script response:",
-          text
-        );
-
-        throw new Error(
-          `Apps Script returned an invalid response (${response.status}).`
-        );
-
-      }
-
-      console.log(
-        "Apps Script response:",
-        json
+      sessionStorage.removeItem(
+        'support_admin_role'
       );
-
-      if (
-        !response.ok ||
-        json.ok === false ||
-        json.success === false
-      ) {
-
-        throw new Error(
-          json.error ||
-          json.message ||
-          `Request failed (${response.status}).`
-        );
-
-      }
-
-      return json;
-
     }
+
+    throw new Error(message);
+  }
+
+  return json;
+}
 
 
     /* =========================================================
