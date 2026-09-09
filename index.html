@@ -4,54 +4,56 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>US States Time Dashboard</title>
+  <title>Support Operations Dashboard</title>
 
-  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- FontAwesome -->
-  <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-  <!-- Inter -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
 
   <script>
     tailwind.config = {
       darkMode: 'class',
-
       theme: {
         extend: {
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-          },
-
           colors: {
             notion: {
               bgDark: '#191919',
               cardDark: '#202020',
               borderDark: '#2f2f2f',
-
               bgLight: '#fcfbf9',
               cardLight: '#ffffff',
               borderLight: '#e9e9e8',
-
               accent: '#2eaadc',
-              georgiaRed: '#e03e3e',
+              georgiaRed: '#e03e3e'
             }
           }
         }
       }
-    }
+    };
   </script>
 
-  <style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+  >
+
+  <style>
     * {
       box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Inter, sans-serif;
     }
 
     ::-webkit-scrollbar {
@@ -59,1143 +61,1393 @@
       height: 8px;
     }
 
+    ::-webkit-scrollbar-thumb {
+      background: #777;
+      border-radius: 10px;
+    }
+
     ::-webkit-scrollbar-track {
       background: transparent;
     }
 
-    ::-webkit-scrollbar-thumb {
-      background: rgba(128,128,128,0.35);
-      border-radius: 4px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(128,128,128,0.6);
-    }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      user-select: none;
-    }
-
     .clock-font {
       font-variant-numeric: tabular-nums;
-      letter-spacing: -0.04em;
+      letter-spacing: -0.045em;
     }
 
-    .tbilisi-glow {
-      box-shadow:
-        0 0 0 1px rgba(224,62,62,0.2),
-        0 0 35px rgba(224,62,62,0.18);
-    }
-
-    .dark .tbilisi-glow {
-      box-shadow:
-        0 0 0 1px rgba(224,62,62,0.3),
-        0 0 45px rgba(224,62,62,0.22);
-    }
-
-    .state-card {
+    .card-hover {
       transition:
-        transform 0.18s ease,
-        border-color 0.18s ease,
-        box-shadow 0.18s ease;
+        transform 0.16s ease,
+        border-color 0.16s ease,
+        box-shadow 0.16s ease;
     }
 
-    .state-card:hover {
-      transform: translateY(-2px);
+    .card-hover:hover {
+      transform: translateY(-1px);
     }
 
-    .section-line {
-      height: 1px;
-      background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(128,128,128,0.25),
-        transparent
-      );
+    .state-row {
+      transition:
+        background 0.15s ease,
+        transform 0.15s ease;
     }
 
-    .live-dot {
-      animation: pulseDot 2s infinite;
+    .state-row:hover {
+      background: rgba(128, 128, 128, 0.08);
     }
 
-    @keyframes pulseDot {
-      0%, 100% {
-        opacity: 1;
-      }
-
-      50% {
-        opacity: 0.35;
-      }
+    .hero-panel {
+      background:
+        linear-gradient(
+          135deg,
+          rgba(46, 170, 220, 0.10),
+          transparent 60%
+        );
     }
 
-    .hidden-card {
+    .dark .hero-panel {
+      background:
+        linear-gradient(
+          135deg,
+          rgba(46, 170, 220, 0.12),
+          transparent 60%
+        );
+    }
+
+    .tab-active {
+      background: #2eaadc !important;
+      color: #ffffff !important;
+      box-shadow: 0 4px 15px rgba(46, 170, 220, 0.25);
+    }
+
+    .modal-backdrop {
+      background: rgba(0, 0, 0, 0.62);
+      backdrop-filter: blur(5px);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      min-width: 8px;
+      border-radius: 999px;
+      display: inline-block;
+    }
+
+    input,
+    textarea,
+    select {
+      outline: none;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      box-shadow: 0 0 0 2px rgba(46, 170, 220, 0.35);
+    }
+
+    button {
+      transition: all 0.15s ease;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .line-clamp-3 {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .hidden-section {
       display: none !important;
     }
-
   </style>
 </head>
 
-<body class="bg-notion-bgLight dark:bg-notion-bgDark
-             text-neutral-800 dark:text-neutral-200
-             min-h-screen p-4 sm:p-6 lg:p-8">
+<body
+  class="min-h-screen bg-notion-bgLight text-slate-900 dark:bg-notion-bgDark dark:text-slate-100"
+>
 
-  <main class="max-w-[1600px] mx-auto">
+<!-- ============================================================
+     HEADER
+============================================================ -->
 
-    <!-- ========================================================= -->
-    <!-- HEADER -->
-    <!-- ========================================================= -->
+<header
+  class="sticky top-0 z-40 border-b border-notion-borderLight/80
+         bg-notion-bgLight/95 backdrop-blur
+         dark:border-notion-borderDark dark:bg-notion-bgDark/95"
+>
+  <div class="mx-auto max-w-[1600px] px-4 py-3 lg:px-6">
 
-    <header class="
-      bg-notion-cardLight
-      dark:bg-notion-cardDark
-      border border-notion-borderLight
-      dark:border-notion-borderDark
-      rounded-2xl
-      px-5 py-4
-      shadow-sm
-      mb-6
-    ">
+    <div class="flex flex-wrap items-center gap-3">
 
-      <div class="
-        flex flex-col
-        xl:flex-row
-        xl:items-center
-        xl:justify-between
-        gap-4
-      ">
+      <!-- LOGO / TITLE -->
 
-        <!-- TITLE -->
+      <div class="mr-auto flex items-center gap-3">
 
-        <div class="flex items-center gap-3">
-
-          <div class="
-            w-11 h-11
-            rounded-xl
-            bg-red-500/10
-            dark:bg-red-500/15
-            flex items-center justify-center
-            text-red-500
-          ">
-            <i class="fa-solid fa-earth-americas text-lg"></i>
-          </div>
-
-          <div>
-
-            <div class="flex items-center gap-2 flex-wrap">
-
-              <h1 class="
-                text-lg sm:text-xl
-                font-bold
-                tracking-tight
-                text-neutral-900
-                dark:text-white
-              ">
-                US States Time Dashboard
-              </h1>
-
-              <span class="
-                px-2.5 py-1
-                rounded-full
-                text-[10px]
-                font-bold
-                uppercase
-                tracking-wider
-                bg-red-100
-                dark:bg-red-950/60
-                text-red-700
-                dark:text-red-300
-                border
-                border-red-200
-                dark:border-red-900
-              ">
-                Tbilisi Anchor
-              </span>
-
-            </div>
-
-            <p class="
-              text-xs
-              text-neutral-500
-              dark:text-neutral-400
-              mt-0.5
-            ">
-              Live comparison of US state times against Tbilisi
-            </p>
-
-          </div>
-
+        <div
+          class="flex h-10 w-10 items-center justify-center
+                 rounded-xl bg-notion-accent text-white shadow"
+        >
+          <i class="fa-solid fa-headset"></i>
         </div>
 
+        <div>
+          <h1 class="text-base font-bold sm:text-lg">
+            Support Operations Dashboard
+          </h1>
 
-        <!-- CONTROLS -->
-
-        <div class="flex flex-wrap items-center gap-3">
-
-          <!-- SEARCH -->
-
-          <div class="relative">
-
-            <i class="
-              fa-solid fa-magnifying-glass
-              absolute left-3 top-1/2
-              -translate-y-1/2
-              text-neutral-400
-              text-xs
-            "></i>
-
-            <input
-              id="searchInput"
-              type="text"
-              placeholder="Search state..."
-              class="
-                w-44 sm:w-52
-                pl-8 pr-3
-                py-2
-                rounded-xl
-                border
-                border-notion-borderLight
-                dark:border-notion-borderDark
-                bg-neutral-50
-                dark:bg-neutral-900
-                text-xs
-                outline-none
-                focus:border-blue-400
-                transition
-              "
-            >
-
-          </div>
-
-
-          <!-- SECONDS -->
-
-          <label class="
-            flex items-center
-            gap-2
-            cursor-pointer
-            text-xs
-            font-medium
-            bg-neutral-100
-            dark:bg-neutral-800
-            px-3 py-2
-            rounded-xl
-            border
-            border-notion-borderLight
-            dark:border-notion-borderDark
-          ">
-
-            <input
-              type="checkbox"
-              id="toggleSeconds"
-              class="sr-only peer"
-              checked
-            >
-
-            <div class="
-              w-8 h-4
-              bg-gray-300
-              dark:bg-gray-700
-              rounded-full
-              relative
-              after:content-['']
-              after:absolute
-              after:top-[2px]
-              after:left-[2px]
-              after:bg-white
-              after:h-3
-              after:w-3
-              after:rounded-full
-              after:transition-all
-              peer-checked:after:translate-x-full
-              peer-checked:bg-blue-600
-            "></div>
-
-            <span class="text-neutral-600 dark:text-neutral-300">
-              Seconds
-            </span>
-
-          </label>
-
-
-          <!-- THEME -->
-
-          <button
-            id="themeToggleBtn"
-            class="
-              px-3 py-2
-              rounded-xl
-              border
-              border-notion-borderLight
-              dark:border-notion-borderDark
-              hover:bg-neutral-100
-              dark:hover:bg-neutral-800
-              text-xs
-              flex items-center
-              gap-2
-              transition
-              font-medium
-            "
-          >
-
-            <i class="fa-solid fa-moon dark:hidden text-gray-600"></i>
-            <i class="fa-solid fa-sun hidden dark:block text-amber-400"></i>
-
-            <span id="themeLabel">
-              Dark Theme
-            </span>
-
-          </button>
-
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            US time reference & live support incidents
+          </p>
         </div>
 
       </div>
 
-    </header>
+      <!-- TBILISI HEADER CLOCK -->
+
+      <div
+        class="hidden items-center gap-2 rounded-xl
+               border border-notion-borderLight bg-white px-3 py-2
+               sm:flex
+               dark:border-notion-borderDark dark:bg-notion-cardDark"
+      >
+        <span class="status-dot animate-pulse bg-emerald-500"></span>
+
+        <span class="text-xs font-bold">
+          TBILISI
+        </span>
+
+        <span
+          id="headerTbilisi"
+          class="clock-font text-sm font-bold"
+        >
+          --:--
+        </span>
+      </div>
+
+      <!-- THEME -->
+
+      <button
+        id="themeBtn"
+        class="rounded-xl border border-notion-borderLight
+               px-3 py-2 text-sm
+               hover:bg-slate-100
+               dark:border-notion-borderDark
+               dark:hover:bg-white/5"
+        title="Toggle theme"
+      >
+        <i id="themeIcon" class="fa-solid fa-sun"></i>
+
+        <span
+          id="themeText"
+          class="ml-1 hidden sm:inline"
+        >
+          Light
+        </span>
+      </button>
+
+      <!-- MANAGEMENT -->
+
+      <button
+        id="managementBtn"
+        class="rounded-xl bg-slate-900
+               px-3 py-2 text-sm font-semibold text-white
+               hover:opacity-90
+               dark:bg-white dark:text-slate-900"
+      >
+        <i class="fa-solid fa-users-gear mr-1"></i>
+        TL / QA / MA
+      </button>
+
+    </div>
+
+    <!-- NAVIGATION -->
+
+    <nav class="mt-3 flex gap-2 overflow-x-auto">
+
+      <button
+        data-tab="time"
+        class="tab-btn tab-active shrink-0 rounded-xl
+               px-4 py-2 text-sm font-semibold"
+      >
+        <i class="fa-solid fa-earth-americas mr-2"></i>
+        US TIME
+      </button>
+
+      <button
+        data-tab="incidents"
+        class="tab-btn shrink-0 rounded-xl
+               px-4 py-2 text-sm font-semibold
+               text-slate-600
+               hover:bg-slate-100
+               dark:text-slate-300
+               dark:hover:bg-white/5"
+      >
+        <i class="fa-solid fa-triangle-exclamation mr-2"></i>
+
+        CURRENT INCIDENTS
+
+        <span
+          id="headerIncidentCount"
+          class="ml-1 rounded-full bg-red-500
+                 px-1.5 py-0.5 text-[10px] text-white"
+        >
+          0
+        </span>
+      </button>
+
+    </nav>
+
+  </div>
+</header>
 
 
-    <!-- ========================================================= -->
-    <!-- TBILISI MASTER CLOCK -->
-    <!-- ========================================================= -->
+<!-- ============================================================
+     MAIN
+============================================================ -->
 
-    <section class="
-      bg-notion-cardLight
-      dark:bg-notion-cardDark
-      rounded-2xl
-      border
-      border-red-300/70
-      dark:border-red-900/70
-      p-5 sm:p-6
-      mb-7
-      tbilisi-glow
-    ">
-
-      <div class="
-        flex flex-col
-        md:flex-row
-        md:items-center
-        md:justify-between
-        gap-5
-      ">
-
-        <div class="flex items-center gap-4">
-
-          <div class="text-4xl sm:text-5xl">
-            🇬🇪
-          </div>
-
-          <div>
-
-            <div class="
-              text-[11px]
-              font-bold
-              uppercase
-              tracking-[0.2em]
-              text-red-500
-              mb-1
-            ">
-              Home / Reference Time
-            </div>
-
-            <div class="
-              text-xl
-              sm:text-2xl
-              font-extrabold
-              text-neutral-900
-              dark:text-white
-            ">
-              Tbilisi, Georgia
-            </div>
-
-            <div class="
-              text-xs
-              text-neutral-500
-              dark:text-neutral-400
-              mt-1
-            ">
-              Asia/Tbilisi · UTC+4
-            </div>
-
-          </div>
-
-        </div>
+<main class="mx-auto max-w-[1600px] px-4 py-5 lg:px-6">
 
 
-        <div class="text-left md:text-right">
+<!-- ============================================================
+     US TIME SECTION
+============================================================ -->
+
+<section id="timeSection">
+
+  <!-- TOP AREA -->
+
+  <div class="grid gap-4 lg:grid-cols-[1.35fr_.65fr]">
+
+    <!-- TBILISI MASTER -->
+
+    <div
+      class="rounded-2xl border border-red-200 bg-white p-5 shadow-sm
+             dark:border-red-900/40 dark:bg-notion-cardDark"
+    >
+
+      <div class="flex flex-wrap items-center justify-between gap-3">
+
+        <div>
 
           <div
-            id="clock-georgia"
-            class="
-              clock-font
-              text-5xl
-              sm:text-6xl
-              lg:text-7xl
-              font-bold
-              text-neutral-900
-              dark:text-white
-            "
+            class="mb-1 flex items-center gap-2
+                   text-xs font-bold uppercase tracking-wider
+                   text-red-500"
           >
-            --:--:--
+            <span class="status-dot bg-red-500"></span>
+
+            Reference Time
           </div>
 
-          <div
-            id="date-georgia"
-            class="
-              text-sm
-              font-medium
-              text-neutral-500
-              dark:text-neutral-400
-              mt-1
-            "
-          >
-            ---
-          </div>
+          <h2 class="text-sm font-semibold text-slate-500 dark:text-slate-400">
+            Tbilisi, Georgia
+          </h2>
 
         </div>
 
-      </div>
-
-    </section>
-
-
-    <!-- ========================================================= -->
-    <!-- DASHBOARD -->
-    <!-- ========================================================= -->
-
-    <div id="timezoneContainer"></div>
-
-
-    <!-- ========================================================= -->
-    <!-- FOOTER -->
-    <!-- ========================================================= -->
-
-    <footer class="
-      mt-8
-      pt-4
-      border-t
-      border-notion-borderLight
-      dark:border-notion-borderDark
-      flex
-      flex-col
-      sm:flex-row
-      sm:items-center
-      sm:justify-between
-      gap-2
-      text-[11px]
-      text-neutral-400
-      dark:text-neutral-500
-    ">
-
-      <div>
-        Times are automatically synchronized using the browser's
-        IANA timezone database.
-      </div>
-
-      <div class="flex items-center gap-2">
-
-        <span class="
-          w-2 h-2
-          rounded-full
-          bg-emerald-500
-          live-dot
-        "></span>
-
-        <span>
-          Live
+        <span
+          id="tbilisiDate"
+          class="text-xs text-slate-500"
+        >
+          --
         </span>
 
       </div>
 
-    </footer>
+      <div
+        id="masterClock"
+        class="clock-font mt-2 text-5xl font-extrabold sm:text-6xl"
+      >
+        --:--:--
+      </div>
 
-  </main>
+      <div class="mt-2 text-xs text-slate-500">
+        Asia/Tbilisi · UTC+4
+      </div>
+
+    </div>
+
+
+    <!-- TIMEZONE SUMMARY -->
+
+    <div
+      class="rounded-2xl border border-notion-borderLight
+             bg-white p-5
+             dark:border-notion-borderDark
+             dark:bg-notion-cardDark"
+    >
+
+      <div class="flex items-center justify-between">
+
+        <div>
+          <h2 class="font-bold">
+            US Time Zones
+          </h2>
+
+          <p class="text-xs text-slate-500">
+            Quick operational view
+          </p>
+        </div>
+
+        <label class="flex items-center gap-2 text-xs">
+
+          <input
+            id="showSeconds"
+            type="checkbox"
+            checked
+            class="h-4 w-4 accent-sky-500"
+          >
+
+          Seconds
+
+        </label>
+
+      </div>
+
+      <div
+        id="timezoneSummary"
+        class="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-2"
+      ></div>
+
+    </div>
+
+  </div>
+
+
+  <!-- TIME SEARCH -->
+
+  <div
+    class="mt-4 flex flex-col gap-3
+           rounded-2xl border border-notion-borderLight
+           bg-white p-4
+           sm:flex-row sm:items-center
+           dark:border-notion-borderDark
+           dark:bg-notion-cardDark"
+  >
+
+    <div class="relative flex-1">
+
+      <i
+        class="fa-solid fa-magnifying-glass
+               absolute left-3 top-1/2
+               -translate-y-1/2 text-slate-400"
+      ></i>
+
+      <input
+        id="timezoneSearch"
+        class="w-full rounded-xl
+               border border-notion-borderLight
+               bg-transparent py-2.5 pl-9 pr-3 text-sm
+               dark:border-notion-borderDark"
+        placeholder="Search state or city..."
+      >
+
+    </div>
+
+    <div class="text-xs text-slate-500">
+      <span id="visibleStateCount">0</span>
+      locations shown
+    </div>
+
+  </div>
+
+
+  <!-- TIMEZONE GROUPS -->
+
+  <div
+    id="timezoneSections"
+    class="mt-5 space-y-5"
+  ></div>
+
+</section>
+
+
+<!-- ============================================================
+     INCIDENT SECTION
+============================================================ -->
+
+<section
+  id="incidentSection"
+  class="hidden"
+>
+
+  <!-- INCIDENT HEADER -->
+
+  <div class="flex flex-col gap-4 lg:flex-row lg:items-end">
+
+    <div class="mr-auto">
+
+      <h2 class="text-2xl font-extrabold">
+        Current Incidents
+      </h2>
+
+      <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        Live support information for CS, TL, QA & MA
+      </p>
+
+    </div>
+
+    <button
+      id="refreshIncidents"
+      class="rounded-xl border
+             border-notion-borderLight
+             px-4 py-2 text-sm font-semibold
+             hover:bg-slate-100
+             dark:border-notion-borderDark
+             dark:hover:bg-white/5"
+    >
+      <i class="fa-solid fa-rotate mr-2"></i>
+      Refresh
+    </button>
+
+  </div>
+
+
+  <!-- SEARCH -->
+
+  <div class="mt-4 grid gap-3 sm:grid-cols-[1fr_220px]">
+
+    <div class="relative">
+
+      <i
+        class="fa-solid fa-magnifying-glass
+               absolute left-3 top-1/2
+               -translate-y-1/2 text-slate-400"
+      ></i>
+
+      <input
+        id="incidentSearch"
+        class="w-full rounded-xl
+               border border-notion-borderLight
+               bg-white py-3 pl-9 pr-3 text-sm
+               dark:border-notion-borderDark
+               dark:bg-notion-cardDark"
+        placeholder="Search incidents..."
+      >
+
+    </div>
+
+    <select
+      id="categoryFilter"
+      class="rounded-xl
+             border border-notion-borderLight
+             bg-white px-3 py-3 text-sm
+             dark:border-notion-borderDark
+             dark:bg-notion-cardDark"
+    >
+      <option value="">All categories</option>
+      <option>Payments</option>
+      <option>Withdrawals</option>
+      <option>Deposits</option>
+      <option>Games</option>
+      <option>KYC</option>
+      <option>Account</option>
+      <option>Promotions</option>
+      <option>Technical</option>
+      <option>Other</option>
+    </select>
+
+  </div>
+
+
+  <!-- ACTIVE -->
+
+  <div class="mt-5 flex items-center gap-2">
+
+    <span class="text-sm font-bold">
+      Active incidents
+    </span>
+
+    <span
+      id="activeCount"
+      class="rounded-full bg-red-500
+             px-2 py-0.5 text-xs font-bold text-white"
+    >
+      0
+    </span>
+
+  </div>
+
+  <div
+    id="activeGrid"
+    class="mt-3 grid gap-4 md:grid-cols-2 xl:grid-cols-3"
+  ></div>
+
+
+  <!-- EMPTY -->
+
+  <div
+    id="emptyActive"
+    class="hidden rounded-2xl
+           border border-dashed
+           border-notion-borderLight
+           p-10 text-center
+           dark:border-notion-borderDark"
+  >
+
+    <i
+      class="fa-solid fa-circle-check
+             text-3xl text-emerald-500"
+    ></i>
+
+    <p class="mt-3 font-bold">
+      No active incidents
+    </p>
+
+    <p class="mt-1 text-sm text-slate-500">
+      Everything looks clear right now.
+    </p>
+
+  </div>
+
+
+  <!-- HISTORY -->
+
+  <button
+    id="historyToggle"
+    class="mt-8 flex w-full items-center
+           justify-between rounded-xl
+           border border-notion-borderLight
+           bg-white px-4 py-3
+           text-sm font-bold
+           dark:border-notion-borderDark
+           dark:bg-notion-cardDark"
+  >
+
+    <span>
+      <i class="fa-solid fa-clock-rotate-left mr-2"></i>
+      Incident history
+    </span>
+
+    <i
+      id="historyIcon"
+      class="fa-solid fa-chevron-down"
+    ></i>
+
+  </button>
+
+  <div
+    id="historyList"
+    class="mt-3 hidden space-y-3"
+  ></div>
+
+</section>
+
+</main>
+
+
+<!-- ============================================================
+     LOGIN MODAL
+============================================================ -->
+
+<div
+  id="loginModal"
+  class="modal-backdrop fixed inset-0 z-50
+         hidden items-center justify-center p-4"
+>
+
+  <div
+    class="w-full max-w-sm rounded-2xl
+           border border-notion-borderLight
+           bg-white p-6 shadow-2xl
+           dark:border-notion-borderDark
+           dark:bg-notion-cardDark"
+  >
+
+    <h3 class="text-xl font-extrabold">
+      Management Login
+    </h3>
+
+    <p class="mt-1 text-xs text-slate-500">
+      TL, QA and MA access
+    </p>
+
+    <form
+      id="loginForm"
+      class="mt-5 space-y-4"
+    >
+
+      <select
+        id="loginRole"
+        class="w-full rounded-xl
+               border border-notion-borderLight
+               bg-transparent px-3 py-3 text-sm
+               dark:border-notion-borderDark"
+      >
+        <option value="TL">
+          TL — Team Lead
+        </option>
+
+        <option value="QA">
+          QA
+        </option>
+
+        <option value="MA">
+          MA — Management
+        </option>
+      </select>
+
+
+      <input
+        id="loginPin"
+        type="password"
+        inputmode="numeric"
+        autocomplete="off"
+        class="w-full rounded-xl
+               border border-notion-borderLight
+               bg-transparent px-3 py-3 text-sm
+               dark:border-notion-borderDark"
+        placeholder="PIN"
+      >
+
+
+      <div
+        id="loginError"
+        class="hidden rounded-xl
+               bg-red-50 p-3
+               text-xs font-semibold text-red-600
+               dark:bg-red-950/30
+               dark:text-red-400"
+      ></div>
+
+
+      <div class="flex gap-2">
+
+        <button
+          type="button"
+          id="closeLogin"
+          class="flex-1 rounded-xl
+                 border border-notion-borderLight
+                 px-4 py-2.5
+                 text-sm font-semibold
+                 dark:border-notion-borderDark"
+        >
+          Cancel
+        </button>
+
+        <button
+          type="submit"
+          class="flex-1 rounded-xl
+                 bg-notion-accent
+                 px-4 py-2.5
+                 text-sm font-bold text-white"
+        >
+          Login
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+
+<!-- ============================================================
+     ADMIN MODAL
+============================================================ -->
+
+<div
+  id="adminModal"
+  class="modal-backdrop fixed inset-0 z-50
+         hidden items-center justify-center p-3 sm:p-5"
+>
+
+  <div
+    class="flex max-h-[94vh] w-full max-w-6xl
+           flex-col overflow-hidden rounded-2xl
+           border border-notion-borderLight
+           bg-white shadow-2xl
+           dark:border-notion-borderDark
+           dark:bg-notion-cardDark"
+  >
+
+    <!-- ADMIN HEADER -->
+
+    <div
+      class="flex items-center gap-3
+             border-b border-notion-borderLight
+             p-4
+             dark:border-notion-borderDark"
+    >
+
+      <div class="mr-auto">
+
+        <h3 class="font-extrabold">
+          Incident Management
+        </h3>
+
+        <p
+          id="adminRoleText"
+          class="text-xs text-slate-500"
+        ></p>
+
+      </div>
+
+
+      <button
+        id="newIncidentBtn"
+        class="rounded-xl bg-notion-accent
+               px-3 py-2
+               text-xs font-bold text-white"
+      >
+        <i class="fa-solid fa-plus mr-1"></i>
+        New incident
+      </button>
+
+
+      <button
+        id="logoutBtn"
+        class="rounded-xl
+               border border-notion-borderLight
+               px-3 py-2
+               text-xs font-bold
+               dark:border-notion-borderDark"
+      >
+        Logout
+      </button>
+
+
+      <button
+        id="closeAdmin"
+        class="rounded-xl p-2 text-slate-500
+               hover:bg-slate-100
+               dark:hover:bg-white/5"
+      >
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+    </div>
+
+
+    <!-- ADMIN CONTENT -->
+
+    <div
+      class="grid min-h-0 flex-1
+             md:grid-cols-[300px_1fr]"
+    >
+
+      <!-- INCIDENT LIST -->
+
+      <div
+        id="adminIncidentList"
+        class="max-h-[30vh]
+               overflow-auto
+               border-b border-notion-borderLight
+               p-3
+               dark:border-notion-borderDark
+               md:max-h-none
+               md:border-b-0
+               md:border-r"
+      ></div>
+
+
+      <!-- EDITOR -->
+
+      <div
+        id="editorPane"
+        class="overflow-auto p-5"
+      >
+
+        <div
+          class="py-16 text-center
+                 text-sm text-slate-500"
+        >
+          Select an incident or create a new one.
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ============================================================
+     DETAIL MODAL
+============================================================ -->
+
+<div
+  id="detailModal"
+  class="modal-backdrop fixed inset-0 z-50
+         hidden items-center justify-center p-4"
+>
+
+  <div
+    class="max-h-[90vh] w-full max-w-2xl
+           overflow-auto rounded-2xl
+           border border-notion-borderLight
+           bg-white p-6 shadow-2xl
+           dark:border-notion-borderDark
+           dark:bg-notion-cardDark"
+  >
+
+    <div class="flex items-center gap-3">
+
+      <h3
+        id="detailTitle"
+        class="mr-auto text-xl font-extrabold"
+      ></h3>
+
+      <button
+        id="closeDetail"
+        class="rounded-xl p-2 text-slate-500
+               hover:bg-slate-100
+               dark:hover:bg-white/5"
+      >
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+    </div>
+
+    <div
+      id="detailContent"
+      class="mt-5"
+    ></div>
+
+  </div>
+
+</div>
+
+
+<!-- ============================================================
+     TOAST
+============================================================ -->
+
+<div
+  id="toast"
+  class="fixed bottom-5 right-5 z-[60]
+         hidden rounded-xl
+         bg-slate-900
+         px-4 py-3
+         text-sm font-semibold text-white
+         shadow-xl
+         dark:bg-white
+         dark:text-slate-900"
+></div>
 
 
 <script>
 
-  /* ============================================================
-     CONFIGURATION
-     ============================================================ */
+/* ============================================================
+   CONFIG
+============================================================ */
 
-  const STATES = [
+/*
+  IMPORTANT:
+  Put your existing Google Apps Script Web App URL here.
 
-    /* EASTERN */
+  Example:
+
+  const API_URL =
+    'https://script.google.com/macros/s/AKfycbx4tSUdnFm6oSrGqK06eQ6INHyc9JA_W6TGYbfulqv5WBvB9XLDEtTLx5qSe3U4cW9DwA/exec';
+
+  Do NOT put TL/QA/MA PINs here.
+*/
+
+const API_URL =
+  'https://script.google.com/macros/s/AKfycbx4tSUdnFm6oSrGqK06eQ6INHyc9JA_W6TGYbfulqv5WBvB9XLDEtTLx5qSe3U4cW9DwA/exec';
+
+
+/* ============================================================
+   TIMEZONE GROUPS
+============================================================ */
+
+const GROUPS = [
+
+  {
+    key: 'Eastern',
+    title: 'Eastern Time',
+    code: 'ET',
+    icon: 'fa-sun',
+    accent: 'sky'
+  },
+
+  {
+    key: 'Central',
+    title: 'Central Time',
+    code: 'CT',
+    icon: 'fa-cloud-sun',
+    accent: 'cyan'
+  },
+
+  {
+    key: 'Mountain',
+    title: 'Mountain Time',
+    code: 'MT',
+    icon: 'fa-mountain-sun',
+    accent: 'amber'
+  },
+
+  {
+    key: 'Arizona',
+    title: 'Arizona',
+    code: 'MST',
+    icon: 'fa-sun',
+    accent: 'orange'
+  },
+
+  {
+    key: 'Pacific',
+    title: 'Pacific Time',
+    code: 'PT',
+    icon: 'fa-water',
+    accent: 'purple'
+  },
+
+  {
+    key: 'Alaska',
+    title: 'Alaska Time',
+    code: 'AKT',
+    icon: 'fa-snowflake',
+    accent: 'sky'
+  },
+
+  {
+    key: 'Hawaii',
+    title: 'Hawaii Time',
+    code: 'HST',
+    icon: 'fa-umbrella-beach',
+    accent: 'emerald'
+  }
+
+];
+
+
+/* ============================================================
+   STATE DATA
+============================================================ */
+
+const STATES = [
+
+  ['AL', 'Alabama', 'Birmingham', 'America/Chicago', 'Central'],
+
+  ['FL', 'Florida', 'Miami', 'America/New_York', 'Eastern'],
+  ['GA', 'Georgia', 'Atlanta', 'America/New_York', 'Eastern'],
+  ['KY', 'Kentucky', 'Louisville', 'America/New_York', 'Eastern'],
+  ['MD', 'Maryland', 'Baltimore', 'America/New_York', 'Eastern'],
+  ['MA', 'Massachusetts', 'Boston', 'America/New_York', 'Eastern'],
+  ['NH', 'New Hampshire', 'Concord', 'America/New_York', 'Eastern'],
+  ['NC', 'North Carolina', 'Charlotte', 'America/New_York', 'Eastern'],
+  ['OH', 'Ohio', 'Columbus', 'America/New_York', 'Eastern'],
+  ['PA', 'Pennsylvania', 'Philadelphia', 'America/New_York', 'Eastern'],
+  ['RI', 'Rhode Island', 'Providence', 'America/New_York', 'Eastern'],
+  ['SC', 'South Carolina', 'Columbia', 'America/New_York', 'Eastern'],
+  ['VT', 'Vermont', 'Burlington', 'America/New_York', 'Eastern'],
+  ['VA', 'Virginia', 'Richmond', 'America/New_York', 'Eastern'],
+
+  ['AR', 'Arkansas', 'Little Rock', 'America/Chicago', 'Central'],
+  ['KS', 'Kansas', 'Wichita', 'America/Chicago', 'Central'],
+  ['MN', 'Minnesota', 'Minneapolis', 'America/Chicago', 'Central'],
+  ['MO', 'Missouri', 'St. Louis', 'America/Chicago', 'Central'],
+  ['NE', 'Nebraska', 'Omaha', 'America/Chicago', 'Central'],
+  ['ND', 'North Dakota', 'Fargo', 'America/Chicago', 'Central'],
+  ['OK', 'Oklahoma', 'Oklahoma City', 'America/Chicago', 'Central'],
+  ['SD', 'South Dakota', 'Sioux Falls', 'America/Chicago', 'Central'],
+  ['TX', 'Texas', 'Dallas', 'America/Chicago', 'Central'],
+  ['WI', 'Wisconsin', 'Milwaukee', 'America/Chicago', 'Central'],
+
+  ['CO', 'Colorado', 'Denver', 'America/Denver', 'Mountain'],
+  ['NM', 'New Mexico', 'Albuquerque', 'America/Denver', 'Mountain'],
+  ['UT', 'Utah', 'Salt Lake City', 'America/Denver', 'Mountain'],
+  ['WY', 'Wyoming', 'Cheyenne', 'America/Denver', 'Mountain'],
+
+  ['AZ', 'Arizona', 'Phoenix', 'America/Phoenix', 'Arizona'],
+
+  ['OR', 'Oregon', 'Portland', 'America/Los_Angeles', 'Pacific'],
+
+  ['AK', 'Alaska', 'Anchorage', 'America/Anchorage', 'Alaska'],
+
+  ['HI', 'Hawaii', 'Honolulu', 'Pacific/Honolulu', 'Hawaii']
+
+].map(row => ({
+
+  state: row[0],
+  name: row[1],
+  city: row[2],
+  tz: row[3],
+  group: row[4]
+
+}));
+
+
+/* ============================================================
+   TIME HELPERS
+============================================================ */
+
+function getParts(date, timeZone) {
+
+  return new Intl.DateTimeFormat(
+    'en-US',
     {
-      state: "AL",
-      name: "Alabama",
-      city: "Eastern Alabama",
-      zone: "America/Chicago",
-      group: "Central"
-    },
-
-    {
-      state: "FL",
-      name: "Florida",
-      city: "Miami",
-      zone: "America/New_York",
-      group: "Eastern"
-    },
-
-    {
-      state: "GA",
-      name: "Georgia",
-      city: "Atlanta",
-      zone: "America/New_York",
-      group: "Eastern"
-    },
-
-    {
-      state: "KY",
-      name: "Kentucky",
-      city: "Louisville",
-      zone: "America/New_York",
-      group: "Eastern"
-    },
-
-    {
-      state: "MD",
-      name: "Maryland",
-      city: "Baltimore",
-      zone: "America/New_York",
-      group: "Eastern"
-    },
-
-    {
-      state: "MA",
-      name: "Massachusetts",
-      city: "Boston",
-      zone: "America/New_York",
-      group: "Eastern"
-    },
-
-    {
-      state: "NH",
-      name: "New Hampshire",
-      city: "Concord",
-      zone: "America/New_York",
-      group: "Eastern"
-    },
-
-    {
-      state: "NC",
-      name: "North Carolina",
-      city: "Charlotte",
-      zone: "America/New_York",
-      group: "Eastern"
-    },
-
-    {
-      state: "OH",
-      name: "Ohio",
-      city: "Columbus",
-      zone: "America/New_York",
-      group: "Eastern"
-    },
-
-    {
-      state: "PA",
-      name: "Pennsylvania",
-      city: "Philadelphia",
-      zone: "America/New_York",
-      group: "Eastern"
-    },
-
-    {
-      state: "RI",
-      name: "Rhode Island",
-      city: "Providence",
-      zone: "America/New_York",
-      group: "Eastern"
-    },
-
-    {
-      state: "SC",
-      name: "South Carolina",
-      city: "Columbia",
-      zone: "America/New_York",
-      group: "Eastern"
-    },
-
-    {
-      state: "VT",
-      name: "Vermont",
-      city: "Burlington",
-      zone: "America/New_York",
-      group: "Eastern"
-    },
-
-    {
-      state: "VA",
-      name: "Virginia",
-      city: "Richmond",
-      zone: "America/New_York",
-      group: "Eastern"
-    },
-
-
-    /* CENTRAL */
-
-    {
-      state: "AR",
-      name: "Arkansas",
-      city: "Little Rock",
-      zone: "America/Chicago",
-      group: "Central"
-    },
-
-    {
-      state: "KS",
-      name: "Kansas",
-      city: "Wichita",
-      zone: "America/Chicago",
-      group: "Central"
-    },
-
-    {
-      state: "MN",
-      name: "Minnesota",
-      city: "Minneapolis",
-      zone: "America/Chicago",
-      group: "Central"
-    },
-
-    {
-      state: "MO",
-      name: "Missouri",
-      city: "St. Louis",
-      zone: "America/Chicago",
-      group: "Central"
-    },
-
-    {
-      state: "NE",
-      name: "Nebraska",
-      city: "Omaha",
-      zone: "America/Chicago",
-      group: "Central"
-    },
-
-    {
-      state: "ND",
-      name: "North Dakota",
-      city: "Fargo",
-      zone: "America/Chicago",
-      group: "Central"
-    },
-
-    {
-      state: "OK",
-      name: "Oklahoma",
-      city: "Oklahoma City",
-      zone: "America/Chicago",
-      group: "Central"
-    },
-
-    {
-      state: "SD",
-      name: "South Dakota",
-      city: "Sioux Falls",
-      zone: "America/Chicago",
-      group: "Central"
-    },
-
-    {
-      state: "TX",
-      name: "Texas",
-      city: "Dallas",
-      zone: "America/Chicago",
-      group: "Central"
-    },
-
-    {
-      state: "WI",
-      name: "Wisconsin",
-      city: "Milwaukee",
-      zone: "America/Chicago",
-      group: "Central"
-    },
-
-
-    /* MOUNTAIN */
-
-    {
-      state: "CO",
-      name: "Colorado",
-      city: "Denver",
-      zone: "America/Denver",
-      group: "Mountain"
-    },
-
-    {
-      state: "NM",
-      name: "New Mexico",
-      city: "Albuquerque",
-      zone: "America/Denver",
-      group: "Mountain"
-    },
-
-    {
-      state: "UT",
-      name: "Utah",
-      city: "Salt Lake City",
-      zone: "America/Denver",
-      group: "Mountain"
-    },
-
-    {
-      state: "WY",
-      name: "Wyoming",
-      city: "Cheyenne",
-      zone: "America/Denver",
-      group: "Mountain"
-    },
-
-
-    /* ARIZONA */
-
-    {
-      state: "AZ",
-      name: "Arizona",
-      city: "Phoenix",
-      zone: "America/Phoenix",
-      group: "Arizona"
-    },
-
-
-    /* PACIFIC */
-
-    {
-      state: "OR",
-      name: "Oregon",
-      city: "Portland",
-      zone: "America/Los_Angeles",
-      group: "Pacific"
-    },
-
-
-    /* ALASKA */
-
-    {
-      state: "AK",
-      name: "Alaska",
-      city: "Anchorage",
-      zone: "America/Anchorage",
-      group: "Alaska"
-    },
-
-
-    /* HAWAII */
-
-    {
-      state: "HI",
-      name: "Hawaii",
-      city: "Honolulu",
-      zone: "Pacific/Honolulu",
-      group: "Hawaii"
+      timeZone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
     }
+  )
+    .formatToParts(date)
+    .reduce((result, part) => {
 
-  ];
+      result[part.type] = part.value;
+
+      return result;
+
+    }, {});
+
+}
 
 
-  /* ============================================================
-     GROUP CONFIGURATION
-     ============================================================ */
+function getOffsetHours(date, timeZone) {
 
-  const GROUPS = [
+  const parts = getParts(date, timeZone);
 
+  const hour =
+    parts.hour === '24'
+      ? 0
+      : Number(parts.hour);
+
+  const utc =
+    Date.UTC(
+      Number(parts.year),
+      Number(parts.month) - 1,
+      Number(parts.day),
+      hour,
+      Number(parts.minute),
+      Number(parts.second)
+    );
+
+  return (utc - date.getTime()) / 3600000;
+
+}
+
+
+function getZoneName(date, timeZone) {
+
+  const parts =
+    new Intl.DateTimeFormat(
+      'en-US',
+      {
+        timeZone,
+        timeZoneName: 'short'
+      }
+    ).formatToParts(date);
+
+  const part =
+    parts.find(x => x.type === 'timeZoneName');
+
+  return part ? part.value : '';
+
+}
+
+
+function formatClock(
+  date,
+  timeZone,
+  seconds = true
+) {
+
+  const parts =
+    getParts(date, timeZone);
+
+  return (
+    parts.hour +
+    ':' +
+    parts.minute +
+    (
+      seconds
+        ? ':' + parts.second
+        : ''
+    )
+  );
+
+}
+
+
+function formatDate(
+  date,
+  timeZone
+) {
+
+  return new Intl.DateTimeFormat(
+    'en-US',
     {
-      id: "Eastern",
-      title: "Eastern Time",
-      subtitle: "ET · EST / EDT",
-      icon: "fa-sun",
-      color: "blue"
-    },
-
-    {
-      id: "Central",
-      title: "Central Time",
-      subtitle: "CT · CST / CDT",
-      icon: "fa-cloud-sun",
-      color: "cyan"
-    },
-
-    {
-      id: "Mountain",
-      title: "Mountain Time",
-      subtitle: "MT · MST / MDT",
-      icon: "fa-mountain-sun",
-      color: "amber"
-    },
-
-    {
-      id: "Arizona",
-      title: "Arizona",
-      subtitle: "MST · No DST",
-      icon: "fa-sun",
-      color: "orange"
-    },
-
-    {
-      id: "Pacific",
-      title: "Pacific Time",
-      subtitle: "PT · PST / PDT",
-      icon: "fa-water",
-      color: "purple"
-    },
-
-    {
-      id: "Alaska",
-      title: "Alaska Time",
-      subtitle: "AKT · AKST / AKDT",
-      icon: "fa-snowflake",
-      color: "sky"
-    },
-
-    {
-      id: "Hawaii",
-      title: "Hawaii Time",
-      subtitle: "HST · No DST",
-      icon: "fa-umbrella-beach",
-      color: "emerald"
+      timeZone,
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric'
     }
+  ).format(date);
 
-  ];
-
-
-  /* ============================================================
-     STATE
-     ============================================================ */
-
-  let showSeconds = true;
+}
 
 
-  /* ============================================================
-     COLOR HELPERS
-     ============================================================ */
+function formatDifference(hours) {
 
-  const COLORS = {
+  if (Math.abs(hours) < 0.01) {
+    return 'Same as Tbilisi';
+  }
 
-    blue: {
-      icon: "text-blue-500",
-      border: "hover:border-blue-400",
-      badge: "bg-blue-500/10 text-blue-600 dark:text-blue-400"
-    },
+  const sign =
+    hours > 0
+      ? '+'
+      : '−';
 
-    cyan: {
-      icon: "text-cyan-500",
-      border: "hover:border-cyan-400",
-      badge: "bg-cyan-500/10 text-cyan-600 dark:text-cyan-400"
-    },
+  const amount =
+    Number.isInteger(Math.abs(hours))
+      ? Math.abs(hours)
+      : Math.abs(hours).toFixed(1);
 
-    amber: {
-      icon: "text-amber-500",
-      border: "hover:border-amber-400",
-      badge: "bg-amber-500/10 text-amber-600 dark:text-amber-400"
-    },
+  return sign + amount + 'h vs Tbilisi';
 
-    orange: {
-      icon: "text-orange-500",
-      border: "hover:border-orange-400",
-      badge: "bg-orange-500/10 text-orange-600 dark:text-orange-400"
-    },
-
-    purple: {
-      icon: "text-purple-500",
-      border: "hover:border-purple-400",
-      badge: "bg-purple-500/10 text-purple-600 dark:text-purple-400"
-    },
-
-    sky: {
-      icon: "text-sky-500",
-      border: "hover:border-sky-400",
-      badge: "bg-sky-500/10 text-sky-600 dark:text-sky-400"
-    },
-
-    emerald: {
-      icon: "text-emerald-500",
-      border: "hover:border-emerald-400",
-      badge: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-    }
-
-  };
+}
 
 
-  /* ============================================================
-     CREATE DASHBOARD
-     ============================================================ */
+function getWorkingStatus(
+  date,
+  timeZone
+) {
 
-  function buildDashboard() {
+  const parts =
+    getParts(date, timeZone);
 
-    const container =
-      document.getElementById("timezoneContainer");
+  const hour =
+    Number(parts.hour);
 
-    container.innerHTML = "";
+  /*
+    Operational working-hours window:
+    08:00 - 18:00 local time.
+  */
 
-    GROUPS.forEach(group => {
+  if (hour >= 8 && hour < 18) {
 
-      const states =
-        STATES.filter(s => s.group === group.id);
-
-      if (!states.length) return;
-
-      const colors =
-        COLORS[group.color];
-
-      const section =
-        document.createElement("section");
-
-      section.className = "timezone-section mb-8";
-
-      section.dataset.group = group.id;
-
-      section.innerHTML = `
-
-        <div class="
-          flex items-center
-          justify-between
-          mb-3
-          px-1
-        ">
-
-          <div class="flex items-center gap-2.5">
-
-            <div class="
-              w-8 h-8
-              rounded-lg
-              bg-neutral-100
-              dark:bg-neutral-800
-              flex items-center
-              justify-center
-            ">
-
-              <i class="
-                fa-solid
-                ${group.icon}
-                ${colors.icon}
-                text-sm
-              "></i>
-
-            </div>
-
-            <div>
-
-              <h2 class="
-                text-sm
-                font-bold
-                text-neutral-900
-                dark:text-neutral-100
-              ">
-                ${group.title}
-              </h2>
-
-              <p class="
-                text-[10px]
-                uppercase
-                tracking-wider
-                text-neutral-400
-                dark:text-neutral-500
-              ">
-                ${group.subtitle}
-              </p>
-
-            </div>
-
-          </div>
-
-          <span class="
-            text-[10px]
-            font-medium
-            text-neutral-400
-            dark:text-neutral-500
-          ">
-            ${states.length} state${states.length !== 1 ? "s" : ""}
-          </span>
-
-        </div>
-
-
-        <div class="
-          grid
-          grid-cols-1
-          sm:grid-cols-2
-          lg:grid-cols-3
-          xl:grid-cols-4
-          2xl:grid-cols-5
-          gap-3
-        ">
-
-          ${states.map(state => createCard(state, colors)).join("")}
-
-        </div>
-
-      `;
-
-      container.appendChild(section);
-
-    });
+    return {
+      label: 'Working hours',
+      dot: 'bg-emerald-500',
+      text: 'text-emerald-600 dark:text-emerald-400'
+    };
 
   }
 
+  return {
+    label: 'Outside hours',
+    dot: 'bg-red-500',
+    text: 'text-red-500'
+  };
 
-  /* ============================================================
-     CREATE STATE CARD
-     ============================================================ */
+}
 
-  function createCard(state, colors) {
 
-    return `
+/* ============================================================
+   BUILD TIME DASHBOARD
+============================================================ */
+
+function buildTimeDashboard() {
+
+  const container =
+    document.getElementById(
+      'timezoneSections'
+    );
+
+  container.innerHTML = '';
+
+
+  GROUPS.forEach(group => {
+
+    const states =
+      STATES.filter(
+        state => state.group === group.key
+      );
+
+    if (!states.length) {
+      return;
+    }
+
+
+    const timeZone =
+      states[0].tz;
+
+
+    const section =
+      document.createElement('section');
+
+    section.className =
+      'timezone-section';
+
+    section.dataset.group =
+      group.key;
+
+
+    section.innerHTML = `
 
       <div
         class="
-          state-card
-          state-card-${state.state}
-          bg-neutral-50
-          dark:bg-neutral-900/70
-          rounded-xl
+          hero-panel
+          overflow-hidden
+          rounded-2xl
           border
           border-notion-borderLight
+          bg-white
           dark:border-notion-borderDark
-          ${colors.border}
-          p-4
+          dark:bg-notion-cardDark
         "
-        data-state="${state.state}"
-        data-name="${state.name.toLowerCase()}"
       >
 
-        <!-- TOP -->
+        <div
+          class="
+            grid
+            lg:grid-cols-[330px_1fr]
+          "
+        >
 
-        <div class="
-          flex
-          items-start
-          justify-between
-          gap-2
-        ">
+          <!-- HERO CLOCK -->
 
-          <div class="flex items-center gap-2.5">
+          <div
+            class="
+              border-b
+              border-notion-borderLight
+              p-5
+              dark:border-notion-borderDark
+              lg:border-b-0
+              lg:border-r
+            "
+          >
 
-            <div class="
-              w-9 h-9
-              rounded-lg
-              bg-white
-              dark:bg-neutral-800
-              border
-              border-neutral-200
-              dark:border-neutral-700
-              flex items-center
-              justify-center
-              font-extrabold
-              text-[11px]
-              text-neutral-700
-              dark:text-neutral-200
-            ">
-              ${state.state}
-            </div>
-
-            <div>
-
-              <div class="
+            <div
+              class="
+                flex
+                items-center
+                gap-2
                 text-xs
                 font-bold
-                text-neutral-900
-                dark:text-neutral-100
-              ">
-                ${state.name}
-              </div>
+                uppercase
+                tracking-wider
+                text-${group.accent}-500
+              "
+            >
 
-              <div class="
-                text-[10px]
-                text-neutral-400
-                dark:text-neutral-500
-                mt-0.5
-              ">
-                ${state.city}
-              </div>
+              <i
+                class="fa-solid ${group.icon}"
+              ></i>
 
+              ${group.title}
+
+            </div>
+
+
+            <div
+              id="heroClock-${group.key}"
+              class="
+                clock-font
+                mt-3
+                text-4xl
+                font-extrabold
+              "
+            >
+              --:--
+            </div>
+
+
+            <div
+              id="heroDate-${group.key}"
+              class="
+                mt-1
+                text-xs
+                text-slate-500
+              "
+            >
+              --
+            </div>
+
+
+            <div
+              id="heroStatus-${group.key}"
+              class="
+                mt-4
+                flex
+                items-center
+                gap-2
+                text-xs
+                font-bold
+              "
+            ></div>
+
+
+            <div
+              id="heroDiff-${group.key}"
+              class="
+                mt-1
+                text-xs
+                text-slate-500
+              "
+            >
+              --
             </div>
 
           </div>
 
 
-          <!-- OFFSET -->
+          <!-- STATE LIST -->
 
-          <span
-            id="offset-${state.state}"
-            class="
-              offset-badge
-              px-2
-              py-1
-              rounded-md
-              ${colors.badge}
-              text-[10px]
-              font-bold
-              font-mono
-              whitespace-nowrap
-            "
-          >
-            --h
-          </span>
+          <div class="p-3 sm:p-4">
 
-        </div>
+            <div
+              class="
+                mb-2
+                flex
+                items-center
+                justify-between
+                px-2
+              "
+            >
 
+              <span
+                class="
+                  text-xs
+                  font-bold
+                  uppercase
+                  tracking-wider
+                  text-slate-400
+                "
+              >
+                States & cities
+              </span>
 
-        <!-- CLOCK -->
+              <span
+                class="
+                  text-[11px]
+                  text-slate-400
+                "
+              >
+                ${states.length}
+                location${states.length === 1 ? '' : 's'}
+              </span>
 
-        <div
-          id="clock-${state.state}"
-          class="
-            clock-font
-            text-3xl
-            sm:text-4xl
-            font-bold
-            text-neutral-900
-            dark:text-white
-            text-center
-            mt-5
-            mb-3
-          "
-        >
-          --:--:--
-        </div>
+            </div>
 
 
-        <!-- FOOTER -->
+            <div
+              id="stateList-${group.key}"
+              class="
+                grid
+                gap-1
+                sm:grid-cols-2
+                xl:grid-cols-3
+              "
+            ></div>
 
-        <div class="
-          pt-2.5
-          border-t
-          border-neutral-200
-          dark:border-neutral-800
-          flex
-          items-center
-          justify-between
-          gap-2
-        ">
-
-          <span
-            id="date-${state.state}"
-            class="
-              text-[10px]
-              font-medium
-              text-neutral-500
-              dark:text-neutral-400
-              truncate
-            "
-          >
-            ---
-          </span>
-
-          <span
-            id="code-${state.state}"
-            class="
-              text-[10px]
-              font-mono
-              font-bold
-              text-neutral-400
-              dark:text-neutral-500
-            "
-          >
-            ---
-          </span>
+          </div>
 
         </div>
 
@@ -1203,399 +1455,3404 @@
 
     `;
 
-  }
+
+    container.appendChild(section);
 
 
-  /* ============================================================
-     GET TIMEZONE OFFSET
-     ============================================================ */
+    const stateList =
+      section.querySelector(
+        `#stateList-${group.key}`
+      );
 
-  function getTimezoneOffsetHours(date, timeZone) {
 
-    const parts =
-      new Intl.DateTimeFormat(
-        "en-US",
-        {
-          timeZone,
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-          hourCycle: "h23"
-        }
-      ).formatToParts(date);
+    states.forEach(state => {
 
-    const values = {};
+      const row =
+        document.createElement('div');
 
-    parts.forEach(part => {
+      row.className =
+        'state-row rounded-xl p-3';
 
-      if (part.type !== "literal") {
-        values[part.type] = Number(part.value);
-      }
+      row.dataset.state =
+        state.state;
+
+      row.dataset.search =
+        (
+          state.name +
+          ' ' +
+          state.city +
+          ' ' +
+          state.state
+        ).toLowerCase();
+
+
+      row.innerHTML = `
+
+        <div
+          class="
+            flex
+            items-center
+            gap-3
+          "
+        >
+
+          <div
+            class="
+              flex
+              h-9
+              w-9
+              shrink-0
+              items-center
+              justify-center
+              rounded-lg
+              bg-slate-100
+              text-xs
+              font-extrabold
+              dark:bg-white/5
+            "
+          >
+            ${state.state}
+          </div>
+
+
+          <div
+            class="
+              min-w-0
+              flex-1
+            "
+          >
+
+            <div
+              class="
+                truncate
+                text-xs
+                font-bold
+              "
+            >
+              ${state.name}
+            </div>
+
+            <div
+              class="
+                truncate
+                text-[11px]
+                text-slate-500
+              "
+            >
+              ${state.city}
+            </div>
+
+          </div>
+
+
+          <div class="text-right">
+
+            <div
+              id="clock-${state.state}"
+              class="
+                clock-font
+                text-sm
+                font-bold
+              "
+            >
+              --:--
+            </div>
+
+            <div
+              id="code-${state.state}"
+              class="
+                text-[10px]
+                text-slate-400
+              "
+            >
+              --
+            </div>
+
+          </div>
+
+        </div>
+
+      `;
+
+
+      stateList.appendChild(row);
 
     });
 
-    const localAsUTC =
-      Date.UTC(
-        values.year,
-        values.month - 1,
-        values.day,
-        values.hour,
-        values.minute,
-        values.second
-      );
+  });
 
-    const actualUTC =
-      Date.UTC(
-        date.getUTCFullYear(),
-        date.getUTCMonth(),
-        date.getUTCDate(),
-        date.getUTCHours(),
-        date.getUTCMinutes(),
-        date.getUTCSeconds()
-      );
+}
 
-    return Math.round(
-      (localAsUTC - actualUTC) / 3600000
+
+/* ============================================================
+   UPDATE CLOCKS
+============================================================ */
+
+function updateTimes() {
+
+  const now =
+    new Date();
+
+  const showSeconds =
+    document.getElementById(
+      'showSeconds'
+    ).checked;
+
+
+  const tbilisi =
+    'Asia/Tbilisi';
+
+
+  document.getElementById(
+    'masterClock'
+  ).textContent =
+    formatClock(
+      now,
+      tbilisi,
+      showSeconds
     );
 
-  }
+
+  document.getElementById(
+    'headerTbilisi'
+  ).textContent =
+    formatClock(
+      now,
+      tbilisi,
+      false
+    );
 
 
-  /* ============================================================
-     FORMAT OFFSET
-     ============================================================ */
+  document.getElementById(
+    'tbilisiDate'
+  ).textContent =
+    formatDate(
+      now,
+      tbilisi
+    );
 
-  function formatDifference(hours) {
 
-    if (hours === 0) {
-      return "Same";
+  GROUPS.forEach(group => {
+
+    const firstState =
+      STATES.find(
+        state =>
+          state.group === group.key
+      );
+
+
+    if (!firstState) {
+      return;
     }
 
-    return hours > 0
-      ? `+${hours}h`
-      : `${hours}h`;
 
-  }
+    const zone =
+      firstState.tz;
 
 
-  /* ============================================================
-     UPDATE CLOCKS
-     ============================================================ */
-
-  function updateClocks() {
-
-    const now = new Date();
-
-    /* ---------------- Tbilisi ---------------- */
-
-    const tbilisiOptions = {
-
-      timeZone: "Asia/Tbilisi",
-
-      hour: "2-digit",
-      minute: "2-digit",
-
-      ...(showSeconds
-        ? { second: "2-digit" }
-        : {}),
-
-      hour12: false
-
-    };
-
-    document.getElementById("clock-georgia").textContent =
-      new Intl.DateTimeFormat(
-        "en-GB",
-        tbilisiOptions
-      ).format(now);
-
-
-    document.getElementById("date-georgia").textContent =
-      new Intl.DateTimeFormat(
-        "en-US",
-        {
-          timeZone: "Asia/Tbilisi",
-          weekday: "long",
-          month: "long",
-          day: "numeric",
-          year: "numeric"
-        }
-      ).format(now);
-
-
-    /* ---------------- US STATES ---------------- */
-
-    const tbilisiOffset =
-      getTimezoneOffsetHours(
+    const difference =
+      getOffsetHours(
         now,
-        "Asia/Tbilisi"
+        zone
+      ) -
+      getOffsetHours(
+        now,
+        tbilisi
       );
 
 
-    STATES.forEach(state => {
-
-      const timeElement =
-        document.getElementById(
-          `clock-${state.state}`
-        );
-
-      const dateElement =
-        document.getElementById(
-          `date-${state.state}`
-        );
-
-      const offsetElement =
-        document.getElementById(
-          `offset-${state.state}`
-        );
-
-      const codeElement =
-        document.getElementById(
-          `code-${state.state}`
-        );
+    const working =
+      getWorkingStatus(
+        now,
+        zone
+      );
 
 
-      if (!timeElement) return;
+    const heroClock =
+      document.getElementById(
+        `heroClock-${group.key}`
+      );
+
+    const heroDate =
+      document.getElementById(
+        `heroDate-${group.key}`
+      );
+
+    const heroStatus =
+      document.getElementById(
+        `heroStatus-${group.key}`
+      );
+
+    const heroDiff =
+      document.getElementById(
+        `heroDiff-${group.key}`
+      );
 
 
-      /* TIME */
-
-      const timeOptions = {
-
-        timeZone: state.zone,
-
-        hour: "2-digit",
-        minute: "2-digit",
-
-        ...(showSeconds
-          ? { second: "2-digit" }
-          : {}),
-
-        hour12: false
-
-      };
-
-      timeElement.textContent =
-        new Intl.DateTimeFormat(
-          "en-GB",
-          timeOptions
-        ).format(now);
+    heroClock.textContent =
+      formatClock(
+        now,
+        zone,
+        showSeconds
+      );
 
 
-      /* DATE */
-
-      dateElement.textContent =
-        new Intl.DateTimeFormat(
-          "en-US",
-          {
-            timeZone: state.zone,
-            weekday: "short",
-            month: "short",
-            day: "numeric"
-          }
-        ).format(now);
+    heroDate.textContent =
+      formatDate(
+        now,
+        zone
+      ) +
+      ' · ' +
+      getZoneName(
+        now,
+        zone
+      );
 
 
-      /* OFFSET */
+    heroStatus.innerHTML = `
 
-      const stateOffset =
-        getTimezoneOffsetHours(
+      <span
+        class="status-dot ${working.dot}"
+      ></span>
+
+      <span
+        class="${working.text}"
+      >
+        ${working.label}
+      </span>
+
+    `;
+
+
+    heroDiff.textContent =
+      formatDifference(
+        difference
+      );
+
+
+    STATES
+      .filter(
+        state =>
+          state.group === group.key
+      )
+      .forEach(state => {
+
+        const clock =
+          document.getElementById(
+            `clock-${state.state}`
+          );
+
+        const code =
+          document.getElementById(
+            `code-${state.state}`
+          );
+
+
+        clock.textContent =
+          formatClock(
+            now,
+            state.tz,
+            showSeconds
+          );
+
+
+        code.textContent =
+          getZoneName(
+            now,
+            state.tz
+          );
+
+      });
+
+  });
+
+
+  updateTimezoneSummary(now);
+
+}
+
+
+/* ============================================================
+   TIMEZONE SUMMARY
+============================================================ */
+
+function updateTimezoneSummary(
+  now
+) {
+
+  const container =
+    document.getElementById(
+      'timezoneSummary'
+    );
+
+  container.innerHTML = '';
+
+
+  GROUPS.forEach(group => {
+
+    const state =
+      STATES.find(
+        item =>
+          item.group === group.key
+      );
+
+
+    if (!state) {
+      return;
+    }
+
+
+    const working =
+      getWorkingStatus(
+        now,
+        state.tz
+      );
+
+
+    const difference =
+      getOffsetHours(
+        now,
+        state.tz
+      ) -
+      getOffsetHours(
+        now,
+        'Asia/Tbilisi'
+      );
+
+
+    const card =
+      document.createElement(
+        'button'
+      );
+
+
+    card.className = `
+      summary-card
+      rounded-xl
+      border
+      border-notion-borderLight
+      p-2.5
+      text-left
+      hover:border-notion-accent
+      dark:border-notion-borderDark
+    `;
+
+
+    let differenceText =
+      'Same';
+
+
+    if (Math.abs(difference) >= 0.01) {
+
+      differenceText =
+        (
+          difference > 0
+            ? '+'
+            : '−'
+        ) +
+        Math.abs(difference) +
+        'h';
+
+    }
+
+
+    card.innerHTML = `
+
+      <div
+        class="
+          flex
+          items-center
+          justify-between
+        "
+      >
+
+        <span
+          class="
+            text-[10px]
+            font-bold
+            uppercase
+            text-slate-400
+          "
+        >
+          ${group.code}
+        </span>
+
+        <span
+          class="
+            status-dot
+            ${working.dot}
+          "
+        ></span>
+
+      </div>
+
+
+      <div
+        class="
+          clock-font
+          mt-1
+          text-lg
+          font-extrabold
+        "
+      >
+        ${formatClock(
           now,
-          state.zone
-        );
-
-      const difference =
-        stateOffset - tbilisiOffset;
-
-      offsetElement.textContent =
-        formatDifference(difference);
+          state.tz,
+          false
+        )}
+      </div>
 
 
-      /* TIMEZONE CODE */
+      <div
+        class="
+          text-[10px]
+          text-slate-500
+        "
+      >
+        ${differenceText}
+      </div>
 
-      const codeFormatter =
-        new Intl.DateTimeFormat(
-          "en-US",
-          {
-            timeZone: state.zone,
-            timeZoneName: "short"
-          }
-        );
+    `;
 
-      const parts =
-        codeFormatter.formatToParts(now);
 
-      const zonePart =
-        parts.find(
-          p => p.type === "timeZoneName"
-        );
+    card.addEventListener(
+      'click',
+      () => {
 
-      if (zonePart) {
-        codeElement.textContent =
-          zonePart.value;
+        const section =
+          document.querySelector(
+            `[data-group="${group.key}"]`
+          );
+
+
+        if (section) {
+
+          section.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+
+        }
+
       }
+    );
+
+
+    container.appendChild(card);
+
+  });
+
+}
+
+
+/* ============================================================
+   TIME SEARCH
+============================================================ */
+
+function filterTimezones() {
+
+  const query =
+    document
+      .getElementById(
+        'timezoneSearch'
+      )
+      .value
+      .trim()
+      .toLowerCase();
+
+
+  let visibleCount = 0;
+
+
+  document
+    .querySelectorAll(
+      '.timezone-section'
+    )
+    .forEach(section => {
+
+      let sectionVisible =
+        0;
+
+
+      section
+        .querySelectorAll(
+          '.state-row'
+        )
+        .forEach(row => {
+
+          const matches =
+            !query ||
+            row.dataset.search.includes(
+              query
+            );
+
+
+          row.classList.toggle(
+            'hidden',
+            !matches
+          );
+
+
+          if (matches) {
+            sectionVisible++;
+          }
+
+        });
+
+
+      section.classList.toggle(
+        'hidden-section',
+        query &&
+        sectionVisible === 0
+      );
+
+
+      visibleCount +=
+        sectionVisible;
 
     });
 
-  }
+
+  document.getElementById(
+    'visibleStateCount'
+  ).textContent =
+    visibleCount;
+
+}
 
 
-  /* ============================================================
-     SEARCH
-     ============================================================ */
+/* ============================================================
+   INCIDENT SYSTEM STATE
+============================================================ */
 
-  function setupSearch() {
+let incidents = [];
 
-    const input =
-      document.getElementById("searchInput");
+let adminToken =
+  sessionStorage.getItem(
+    'support_admin_token'
+  ) || '';
 
-    input.addEventListener(
-      "input",
-      function () {
+let role =
+  (
+    sessionStorage.getItem(
+      'support_admin_role'
+    ) || ''
+  ).toUpperCase();
 
-        const query =
-          this.value
-            .trim()
-            .toLowerCase();
+let selectedIncidentId =
+  null;
 
-        document
-          .querySelectorAll(".state-card")
-          .forEach(card => {
-
-            const state =
-              card.dataset.state.toLowerCase();
-
-            const name =
-              card.dataset.name;
-
-            const match =
-              !query ||
-              state.includes(query) ||
-              name.includes(query);
-
-            card.classList.toggle(
-              "hidden-card",
-              !match
-            );
-
-          });
+let creatingNewIncident =
+  false;
 
 
-        /* Hide empty sections */
+const roleLabels = {
 
-        document
-          .querySelectorAll(".timezone-section")
-          .forEach(section => {
+  TL: 'Team Lead',
 
-            const visibleCards =
-              section.querySelectorAll(
-                ".state-card:not(.hidden-card)"
-              );
+  QA: 'QA',
 
-            section.style.display =
-              visibleCards.length
-                ? ""
-                : "none";
+  MA: 'Management'
 
-          });
+};
 
-      }
+
+/* ============================================================
+   API
+============================================================ */
+
+async function api(
+  action,
+  data = {}
+) {
+
+  if (
+    API_URL.includes(
+      'PASTE_YOUR_'
+    )
+  ) {
+
+    throw new Error(
+      'Apps Script API URL is not configured.'
     );
 
   }
 
 
-  /* ============================================================
-     THEME
-     ============================================================ */
-
-  function setupTheme() {
-
-    const button =
-      document.getElementById(
-        "themeToggleBtn"
-      );
-
-    const label =
-      document.getElementById(
-        "themeLabel"
-      );
+  const payload =
+    JSON.stringify({
+      action,
+      ...data
+    });
 
 
-    button.addEventListener(
-      "click",
-      () => {
+  const body =
+    new URLSearchParams();
 
-        const isDark =
-          document.documentElement
-            .classList
-            .toggle("dark");
 
-        label.textContent =
-          isDark
-            ? "Dark Theme"
-            : "Light Theme";
+  body.set(
+    'payload',
+    payload
+  );
 
+
+  const response =
+    await fetch(
+      API_URL,
+      {
+        method: 'POST',
+        body
       }
+    );
+
+
+  const text =
+    await response.text();
+
+
+  let json;
+
+
+  try {
+
+    json =
+      JSON.parse(text);
+
+  } catch (error) {
+
+    throw new Error(
+      `Server returned an invalid response (${response.status}).`
     );
 
   }
 
 
-  /* ============================================================
-     SECONDS
-     ============================================================ */
+  if (
+    !response.ok ||
+    json.success === false
+  ) {
 
-  function setupSeconds() {
-
-    const checkbox =
-      document.getElementById(
-        "toggleSeconds"
-      );
-
-    checkbox.addEventListener(
-      "change",
-      event => {
-
-        showSeconds =
-          event.target.checked;
-
-        updateClocks();
-
-      }
+    throw new Error(
+      json.message ||
+      `Request failed (${response.status}).`
     );
 
   }
 
 
-  /* ============================================================
-     INITIALIZATION
-     ============================================================ */
+  return json;
 
-  window.addEventListener(
-    "load",
-    () => {
+}
 
-      buildDashboard();
 
-      setupSearch();
+/* ============================================================
+   INCIDENT NORMALIZATION
+============================================================ */
 
-      setupTheme();
+function normalizeIncidents(
+  data
+) {
 
-      setupSeconds();
+  const list =
+    Array.isArray(data)
+      ? data
+      : Array.isArray(
+          data?.incidents
+        )
+        ? data.incidents
+        : Array.isArray(
+            data?.data
+          )
+          ? data.data
+          : [];
 
-      updateClocks();
 
-      setInterval(
-        updateClocks,
-        1000
+  return list.map(
+    incident => ({
+
+      ...incident,
+
+      id: String(
+        incident.id || ''
+      ),
+
+      status:
+        String(
+          incident.status ||
+          'ACTIVE'
+        ).toUpperCase(),
+
+      severity:
+        String(
+          incident.severity ||
+          'MEDIUM'
+        ).toUpperCase(),
+
+      category:
+        incident.category ||
+        'Other'
+
+    })
+  );
+
+}
+
+
+/* ============================================================
+   LOAD INCIDENTS
+============================================================ */
+
+async function loadIncidents() {
+
+  try {
+
+    const response =
+      await api(
+        'list'
+      );
+
+
+    incidents =
+      normalizeIncidents(
+        response
+      );
+
+
+    renderIncidents();
+
+
+    if (
+      document
+        .getElementById(
+          'adminModal'
+        )
+        .classList
+        .contains('flex')
+    ) {
+
+      renderAdminIncidentList();
+
+
+      if (
+        selectedIncidentId ||
+        creatingNewIncident
+      ) {
+
+        renderIncidentEditor();
+
+      }
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      error
+    );
+
+    showToast(
+      error.message,
+      'error'
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   INCIDENT FILTERING
+============================================================ */
+
+function activeIncidents() {
+
+  return incidents.filter(
+    incident =>
+      incident.status === 'ACTIVE' ||
+      incident.status === 'MONITORING'
+  );
+
+}
+
+
+function incidentMatches(
+  incident
+) {
+
+  const query =
+    document
+      .getElementById(
+        'incidentSearch'
+      )
+      .value
+      .trim()
+      .toLowerCase();
+
+
+  const category =
+    document
+      .getElementById(
+        'categoryFilter'
+      )
+      .value;
+
+
+  if (
+    category &&
+    incident.category !== category
+  ) {
+
+    return false;
+
+  }
+
+
+  if (!query) {
+    return true;
+  }
+
+
+  const searchable =
+    [
+      incident.title,
+      incident.description,
+      incident.instructions,
+      incident.response,
+      incident.category,
+      incident.affected
+    ]
+      .join(' ')
+      .toLowerCase();
+
+
+  return searchable.includes(
+    query
+  );
+
+}
+
+
+/* ============================================================
+   RENDER INCIDENTS
+============================================================ */
+
+function renderIncidents() {
+
+  const active =
+    activeIncidents()
+      .filter(
+        incidentMatches
+      );
+
+
+  const resolved =
+    incidents
+      .filter(
+        incident =>
+          incident.status === 'RESOLVED'
+      )
+      .filter(
+        incidentMatches
+      );
+
+
+  document.getElementById(
+    'activeCount'
+  ).textContent =
+    active.length;
+
+
+  document.getElementById(
+    'headerIncidentCount'
+  ).textContent =
+    activeIncidents().length;
+
+
+  const grid =
+    document.getElementById(
+      'activeGrid'
+    );
+
+
+  grid.innerHTML = '';
+
+
+  active.forEach(
+    incident => {
+
+      grid.appendChild(
+        createIncidentCard(
+          incident
+        )
       );
 
     }
   );
+
+
+  document
+    .getElementById(
+      'emptyActive'
+    )
+    .classList
+    .toggle(
+      'hidden',
+      active.length !== 0
+    );
+
+
+  const history =
+    document.getElementById(
+      'historyList'
+    );
+
+
+  history.innerHTML = '';
+
+
+  resolved.forEach(
+    incident => {
+
+      history.appendChild(
+        createHistoryCard(
+          incident
+        )
+      );
+
+    }
+  );
+
+}
+
+
+/* ============================================================
+   SEVERITY STYLING
+============================================================ */
+
+function severityClass(
+  severity
+) {
+
+  if (
+    severity === 'HIGH'
+  ) {
+
+    return `
+      bg-red-100
+      text-red-700
+      dark:bg-red-950/40
+      dark:text-red-300
+    `;
+
+  }
+
+
+  if (
+    severity === 'MEDIUM'
+  ) {
+
+    return `
+      bg-amber-100
+      text-amber-700
+      dark:bg-amber-950/40
+      dark:text-amber-300
+    `;
+
+  }
+
+
+  return `
+    bg-slate-100
+    text-slate-600
+    dark:bg-white/5
+    dark:text-slate-300
+  `;
+
+}
+
+
+/* ============================================================
+   INCIDENT CARD
+============================================================ */
+
+function createIncidentCard(
+  incident
+) {
+
+  const card =
+    document.createElement(
+      'article'
+    );
+
+
+  card.className = `
+    card-hover
+    cursor-pointer
+    rounded-2xl
+    border
+    border-notion-borderLight
+    bg-white
+    p-5
+    shadow-sm
+    dark:border-notion-borderDark
+    dark:bg-notion-cardDark
+  `;
+
+
+  card.dataset.incidentId =
+    incident.id;
+
+
+  card.innerHTML = `
+
+    <div
+      class="
+        flex
+        items-start
+        gap-3
+      "
+    >
+
+      <div class="mr-auto">
+
+        <div
+          class="
+            mb-2
+            flex
+            flex-wrap
+            gap-2
+          "
+        >
+
+          <span
+            class="
+              rounded-full
+              px-2
+              py-1
+              text-[10px]
+              font-extrabold
+              ${severityClass(
+                incident.severity
+              )}
+            "
+          >
+            ${escapeHtml(
+              incident.severity
+            )}
+          </span>
+
+
+          <span
+            class="
+              rounded-full
+              bg-slate-100
+              px-2
+              py-1
+              text-[10px]
+              font-bold
+              text-slate-600
+              dark:bg-white/5
+              dark:text-slate-300
+            "
+          >
+            ${escapeHtml(
+              incident.category
+            )}
+          </span>
+
+        </div>
+
+
+        <h3 class="font-extrabold">
+          ${escapeHtml(
+            incident.title ||
+            'Untitled incident'
+          )}
+        </h3>
+
+      </div>
+
+
+      <span
+        class="
+          status-dot
+          mt-1
+          ${
+            incident.status === 'ACTIVE'
+              ? 'bg-red-500'
+              : 'bg-amber-500'
+          }
+        "
+      ></span>
+
+    </div>
+
+
+    <p
+      class="
+        line-clamp-3
+        mt-3
+        text-sm
+        text-slate-600
+        dark:text-slate-300
+      "
+    >
+      ${escapeHtml(
+        incident.description ||
+        ''
+      )}
+    </p>
+
+
+    <div
+      class="
+        mt-4
+        flex
+        items-center
+        justify-between
+        text-xs
+        text-slate-500
+      "
+    >
+
+      <span>
+        ${escapeHtml(
+          incident.affected ||
+          ''
+        )}
+      </span>
+
+      <span>
+        View details
+        <i
+          class="
+            fa-solid
+            fa-arrow-right
+            ml-1
+          "
+        ></i>
+      </span>
+
+    </div>
+
+  `;
+
+
+  return card;
+
+}
+
+
+/* ============================================================
+   HISTORY CARD
+============================================================ */
+
+function createHistoryCard(
+  incident
+) {
+
+  const card =
+    document.createElement(
+      'div'
+    );
+
+
+  card.className = `
+    rounded-xl
+    border
+    border-notion-borderLight
+    bg-white
+    p-4
+    dark:border-notion-borderDark
+    dark:bg-notion-cardDark
+  `;
+
+
+  card.dataset.incidentId =
+    incident.id;
+
+
+  card.innerHTML = `
+
+    <div
+      class="
+        flex
+        items-center
+        gap-3
+      "
+    >
+
+      <div class="mr-auto">
+
+        <div
+          class="
+            text-sm
+            font-bold
+          "
+        >
+          ${escapeHtml(
+            incident.title ||
+            'Untitled'
+          )}
+        </div>
+
+
+        <div
+          class="
+            mt-1
+            text-xs
+            text-slate-500
+          "
+        >
+          ${escapeHtml(
+            incident.category
+          )}
+          · Resolved
+        </div>
+
+      </div>
+
+
+      <i
+        class="
+          fa-solid
+          fa-chevron-right
+          text-xs
+          text-slate-400
+        "
+      ></i>
+
+    </div>
+
+  `;
+
+
+  return card;
+
+}
+
+
+/* ============================================================
+   DETAIL MODAL
+============================================================ */
+
+function detailBlock(
+  label,
+  value
+) {
+
+  if (!value) {
+    return '';
+  }
+
+
+  return `
+
+    <div class="mb-4">
+
+      <div
+        class="
+          text-[10px]
+          font-extrabold
+          uppercase
+          tracking-wider
+          text-slate-400
+        "
+      >
+        ${label}
+      </div>
+
+
+      <div
+        class="
+          mt-1
+          whitespace-pre-wrap
+          text-sm
+        "
+      >
+        ${escapeHtml(
+          value
+        )}
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+function openIncidentDetails(
+  id
+) {
+
+  const incident =
+    incidents.find(
+      item =>
+        item.id === id
+    );
+
+
+  if (!incident) {
+    return;
+  }
+
+
+  document.getElementById(
+    'detailTitle'
+  ).textContent =
+    incident.title ||
+    'Incident';
+
+
+  document.getElementById(
+    'detailContent'
+  ).innerHTML = `
+
+    ${detailBlock(
+      'Status',
+      incident.status
+    )}
+
+    ${detailBlock(
+      'Severity',
+      incident.severity
+    )}
+
+    ${detailBlock(
+      'Category',
+      incident.category
+    )}
+
+    ${detailBlock(
+      'Affected',
+      incident.affected
+    )}
+
+    ${detailBlock(
+      'Description',
+      incident.description
+    )}
+
+    ${detailBlock(
+      'Instructions for CS',
+      incident.instructions
+    )}
+
+
+    <div
+      class="
+        mt-4
+        rounded-xl
+        border
+        border-notion-accent/30
+        bg-sky-50
+        p-4
+        dark:bg-sky-950/20
+      "
+    >
+
+      <div
+        class="
+          mb-2
+          text-xs
+          font-extrabold
+          uppercase
+          text-sky-600
+          dark:text-sky-400
+        "
+      >
+        Suggested customer response
+      </div>
+
+
+      <div
+        class="
+          whitespace-pre-wrap
+          text-sm
+        "
+      >
+        ${escapeHtml(
+          incident.response ||
+          ''
+        )}
+      </div>
+
+
+      <button
+        data-copy-response="${escapeAttr(
+          incident.id
+        )}"
+        class="
+          mt-3
+          rounded-lg
+          bg-notion-accent
+          px-3
+          py-2
+          text-xs
+          font-bold
+          text-white
+        "
+      >
+        Copy response
+      </button>
+
+    </div>
+
+
+    ${
+      incident.notionUrl
+        ? `
+          <a
+            class="
+              mt-4
+              inline-block
+              text-sm
+              font-bold
+              text-notion-accent
+              hover:underline
+            "
+            href="${escapeAttr(
+              incident.notionUrl
+            )}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open Notion
+            <i
+              class="
+                fa-solid
+                fa-arrow-up-right-from-square
+                ml-1
+              "
+            ></i>
+          </a>
+        `
+        : ''
+    }
+
+  `;
+
+
+  showModal(
+    'detailModal'
+  );
+
+}
+
+
+/* ============================================================
+   COPY RESPONSE
+============================================================ */
+
+async function copyResponse(
+  id
+) {
+
+  const incident =
+    incidents.find(
+      item =>
+        item.id === id
+    );
+
+
+  if (!incident) {
+    return;
+  }
+
+
+  try {
+
+    await navigator.clipboard.writeText(
+      incident.response || ''
+    );
+
+
+    showToast(
+      'Response copied.'
+    );
+
+  } catch (error) {
+
+    showToast(
+      'Could not copy response.',
+      'error'
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   ADMIN INCIDENT LIST
+============================================================ */
+
+function renderAdminIncidentList() {
+
+  const container =
+    document.getElementById(
+      'adminIncidentList'
+    );
+
+
+  container.innerHTML = '';
+
+
+  if (!incidents.length) {
+
+    container.innerHTML = `
+
+      <div
+        class="
+          p-5
+          text-center
+          text-xs
+          text-slate-500
+        "
+      >
+        No incidents.
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  incidents.forEach(
+    incident => {
+
+      const button =
+        document.createElement(
+          'button'
+        );
+
+
+      button.className = `
+
+        mb-2
+        w-full
+        rounded-xl
+        border
+        p-3
+        text-left
+
+        ${
+          selectedIncidentId === incident.id
+            ? `
+              border-notion-accent
+              bg-sky-50
+              dark:bg-sky-950/20
+            `
+            : `
+              border-notion-borderLight
+              dark:border-notion-borderDark
+            `
+        }
+
+      `;
+
+
+      button.dataset.adminIncidentId =
+        incident.id;
+
+
+      button.innerHTML = `
+
+        <div
+          class="
+            truncate
+            text-xs
+            font-bold
+          "
+        >
+          ${escapeHtml(
+            incident.title ||
+            'Untitled'
+          )}
+        </div>
+
+
+        <div
+          class="
+            mt-1
+            text-[10px]
+            text-slate-500
+          "
+        >
+          ${escapeHtml(
+            incident.status
+          )}
+          ·
+          ${escapeHtml(
+            incident.category
+          )}
+        </div>
+
+      `;
+
+
+      container.appendChild(
+        button
+      );
+
+    }
+  );
+
+}
+
+
+/* ============================================================
+   ADMIN NEW INCIDENT
+============================================================ */
+
+function createNewIncident() {
+
+  selectedIncidentId =
+    null;
+
+  creatingNewIncident =
+    true;
+
+
+  renderAdminIncidentList();
+
+
+  renderIncidentEditor({
+
+    status: 'ACTIVE',
+
+    severity: 'MEDIUM',
+
+    category: 'Technical',
+
+    title: '',
+
+    affected: '',
+
+    description: '',
+
+    instructions: '',
+
+    response: '',
+
+    notionUrl: ''
+
+  });
+
+}
+
+
+/* ============================================================
+   ADMIN FIELD
+============================================================ */
+
+function editorField(
+  name,
+  label,
+  value = '',
+  type = 'input'
+) {
+
+  const id =
+    'incidentField_' +
+    name;
+
+
+  if (type === 'textarea') {
+
+    return `
+
+      <label class="block">
+
+        <span
+          class="
+            mb-1.5
+            block
+            text-xs
+            font-bold
+          "
+        >
+          ${label}
+        </span>
+
+
+        <textarea
+          id="${id}"
+          rows="4"
+          class="
+            w-full
+            rounded-xl
+            border
+            border-notion-borderLight
+            bg-transparent
+            px-3
+            py-2.5
+            text-sm
+            dark:border-notion-borderDark
+          "
+        >${escapeHtml(
+          value
+        )}</textarea>
+
+      </label>
+
+    `;
+
+  }
+
+
+  if (type === 'select') {
+
+    const options = {
+
+      status: [
+        'ACTIVE',
+        'MONITORING',
+        'RESOLVED'
+      ],
+
+      severity: [
+        'HIGH',
+        'MEDIUM',
+        'LOW'
+      ],
+
+      category: [
+        'Payments',
+        'Withdrawals',
+        'Deposits',
+        'Games',
+        'KYC',
+        'Account',
+        'Promotions',
+        'Technical',
+        'Other'
+      ]
+
+    }[name] || [];
+
+
+    return `
+
+      <label class="block">
+
+        <span
+          class="
+            mb-1.5
+            block
+            text-xs
+            font-bold
+          "
+        >
+          ${label}
+        </span>
+
+
+        <select
+          id="${id}"
+          class="
+            w-full
+            rounded-xl
+            border
+            border-notion-borderLight
+            bg-transparent
+            px-3
+            py-2.5
+            text-sm
+            dark:border-notion-borderDark
+          "
+        >
+
+          ${options
+            .map(
+              option => `
+                <option
+                  ${
+                    option === value
+                      ? 'selected'
+                      : ''
+                  }
+                >
+                  ${option}
+                </option>
+              `
+            )
+            .join('')}
+
+        </select>
+
+      </label>
+
+    `;
+
+  }
+
+
+  return `
+
+    <label class="block">
+
+      <span
+        class="
+          mb-1.5
+          block
+          text-xs
+          font-bold
+        "
+      >
+        ${label}
+      </span>
+
+
+      <input
+        id="${id}"
+        value="${escapeAttr(
+          value
+        )}"
+        class="
+          w-full
+          rounded-xl
+          border
+          border-notion-borderLight
+          bg-transparent
+          px-3
+          py-2.5
+          text-sm
+          dark:border-notion-borderDark
+        "
+      >
+
+    </label>
+
+  `;
+
+}
+
+
+/* ============================================================
+   ADMIN EDITOR
+============================================================ */
+
+function renderIncidentEditor(
+  data = null
+) {
+
+  const incident =
+    data ||
+    incidents.find(
+      item =>
+        item.id ===
+        selectedIncidentId
+    );
+
+
+  const pane =
+    document.getElementById(
+      'editorPane'
+    );
+
+
+  if (!incident) {
+
+    pane.innerHTML = `
+
+      <div
+        class="
+          py-16
+          text-center
+          text-sm
+          text-slate-500
+        "
+      >
+        Select an incident or create a new one.
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  pane.innerHTML = `
+
+    <div
+      class="
+        flex
+        items-center
+        gap-3
+      "
+    >
+
+      <div class="mr-auto">
+
+        <h4
+          class="
+            text-lg
+            font-extrabold
+          "
+        >
+          ${
+            creatingNewIncident
+              ? 'Create incident'
+              : 'Edit incident'
+          }
+        </h4>
+
+
+        <p
+          class="
+            text-xs
+            text-slate-500
+          "
+        >
+          Changes are saved to the backend.
+        </p>
+
+      </div>
+
+
+      ${
+        !creatingNewIncident
+          ? `
+            <button
+              id="deleteIncidentBtn"
+              class="
+                rounded-xl
+                border
+                border-red-200
+                px-3
+                py-2
+                text-xs
+                font-bold
+                text-red-600
+                dark:border-red-900/50
+              "
+            >
+              Delete
+            </button>
+          `
+          : ''
+      }
+
+    </div>
+
+
+    <div
+      class="
+        mt-5
+        grid
+        gap-4
+        sm:grid-cols-2
+      "
+    >
+
+      ${editorField(
+        'title',
+        'Title',
+        incident.title
+      )}
+
+      ${editorField(
+        'affected',
+        'Affected',
+        incident.affected
+      )}
+
+      ${editorField(
+        'status',
+        'Status',
+        incident.status,
+        'select'
+      )}
+
+      ${editorField(
+        'severity',
+        'Severity',
+        incident.severity,
+        'select'
+      )}
+
+      ${editorField(
+        'category',
+        'Category',
+        incident.category,
+        'select'
+      )}
+
+      ${editorField(
+        'notionUrl',
+        'Notion URL',
+        incident.notionUrl
+      )}
+
+    </div>
+
+
+    <div
+      class="
+        mt-4
+        space-y-4
+      "
+    >
+
+      ${editorField(
+        'description',
+        'Description',
+        incident.description,
+        'textarea'
+      )}
+
+      ${editorField(
+        'instructions',
+        'Instructions for CS',
+        incident.instructions,
+        'textarea'
+      )}
+
+      ${editorField(
+        'response',
+        'Suggested customer response',
+        incident.response,
+        'textarea'
+      )}
+
+    </div>
+
+
+    <div
+      class="
+        mt-5
+        flex
+        justify-end
+      "
+    >
+
+      <button
+        id="saveIncidentBtn"
+        class="
+          rounded-xl
+          bg-notion-accent
+          px-5
+          py-2.5
+          text-sm
+          font-bold
+          text-white
+        "
+      >
+        ${
+          creatingNewIncident
+            ? 'Create'
+            : 'Save changes'
+        }
+      </button>
+
+    </div>
+
+  `;
+
+
+  document
+    .getElementById(
+      'saveIncidentBtn'
+    )
+    .addEventListener(
+      'click',
+      saveIncident
+    );
+
+
+  const deleteButton =
+    document.getElementById(
+      'deleteIncidentBtn'
+    );
+
+
+  if (deleteButton) {
+
+    deleteButton.addEventListener(
+      'click',
+      deleteIncident
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   READ ADMIN EDITOR
+============================================================ */
+
+function readIncidentEditor() {
+
+  const get =
+    name => {
+
+      const element =
+        document.getElementById(
+          'incidentField_' +
+          name
+        );
+
+      return element
+        ? element.value
+        : '';
+
+    };
+
+
+  return {
+
+    title:
+      get('title'),
+
+    affected:
+      get('affected'),
+
+    status:
+      get('status'),
+
+    severity:
+      get('severity'),
+
+    category:
+      get('category'),
+
+    notionUrl:
+      get('notionUrl'),
+
+    description:
+      get('description'),
+
+    instructions:
+      get('instructions'),
+
+    response:
+      get('response')
+
+  };
+
+}
+
+
+/* ============================================================
+   SAVE INCIDENT
+============================================================ */
+
+async function saveIncident() {
+
+  try {
+
+    const data =
+      readIncidentEditor();
+
+
+    if (
+      !data.title.trim()
+    ) {
+
+      throw new Error(
+        'Title is required.'
+      );
+
+    }
+
+
+    if (creatingNewIncident) {
+
+      const response =
+        await api(
+          'create',
+          {
+            token:
+              adminToken,
+
+            role,
+
+            ...data
+          }
+        );
+
+
+      showToast(
+        'Incident created.'
+      );
+
+
+      creatingNewIncident =
+        false;
+
+
+      selectedIncidentId =
+        response.incident?.id ||
+        null;
+
+    } else {
+
+      await api(
+        'update',
+        {
+          token:
+            adminToken,
+
+          role,
+
+          id:
+            selectedIncidentId,
+
+          ...data
+        }
+      );
+
+
+      showToast(
+        'Incident updated.'
+      );
+
+    }
+
+
+    await loadIncidents();
+
+
+    renderAdminIncidentList();
+
+
+    renderIncidentEditor();
+
+  } catch (error) {
+
+    handleApiError(
+      error
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   DELETE INCIDENT
+============================================================ */
+
+async function deleteIncident() {
+
+  if (
+    !selectedIncidentId
+  ) {
+
+    return;
+
+  }
+
+
+  const confirmed =
+    confirm(
+      'Delete this incident?'
+    );
+
+
+  if (!confirmed) {
+    return;
+  }
+
+
+  try {
+
+    await api(
+      'delete',
+      {
+        token:
+          adminToken,
+
+        role,
+
+        id:
+          selectedIncidentId
+      }
+    );
+
+
+    showToast(
+      'Incident deleted.'
+    );
+
+
+    selectedIncidentId =
+      null;
+
+
+    await loadIncidents();
+
+
+    renderAdminIncidentList();
+
+
+    renderIncidentEditor();
+
+  } catch (error) {
+
+    handleApiError(
+      error
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   LOGIN
+============================================================ */
+
+async function login() {
+
+  const selectedRole =
+    document.getElementById(
+      'loginRole'
+    ).value
+      .toUpperCase();
+
+
+  const pin =
+    document.getElementById(
+      'loginPin'
+    ).value
+      .trim();
+
+
+  const errorBox =
+    document.getElementById(
+      'loginError'
+    );
+
+
+  errorBox.classList.add(
+    'hidden'
+  );
+
+
+  if (!pin) {
+
+    errorBox.textContent =
+      'Please enter your PIN.';
+
+    errorBox.classList.remove(
+      'hidden'
+    );
+
+    return;
+
+  }
+
+
+  try {
+
+    const response =
+      await api(
+        'login',
+        {
+          role:
+            selectedRole,
+
+          pin
+        }
+      );
+
+
+    const normalizedRole =
+      String(
+        response.role ||
+        selectedRole
+      ).toUpperCase();
+
+
+    if (
+      ![
+        'TL',
+        'QA',
+        'MA'
+      ].includes(
+        normalizedRole
+      )
+    ) {
+
+      throw new Error(
+        'Invalid management role returned by server.'
+      );
+
+    }
+
+
+    adminToken =
+      response.token ||
+      response.adminToken ||
+      '';
+
+
+    role =
+      normalizedRole;
+
+
+    sessionStorage.setItem(
+      'support_admin_token',
+      adminToken
+    );
+
+
+    sessionStorage.setItem(
+      'support_admin_role',
+      role
+    );
+
+
+    hideModal(
+      'loginModal'
+    );
+
+
+    document.getElementById(
+      'loginPin'
+    ).value = '';
+
+
+    openAdmin();
+
+  } catch (error) {
+
+    errorBox.textContent =
+      error.message;
+
+
+    errorBox.classList.remove(
+      'hidden'
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   OPEN ADMIN
+============================================================ */
+
+function openAdmin() {
+
+  if (
+    !adminToken ||
+    ![
+      'TL',
+      'QA',
+      'MA'
+    ].includes(role)
+  ) {
+
+    showModal(
+      'loginModal'
+    );
+
+    return;
+
+  }
+
+
+  document.getElementById(
+    'adminRoleText'
+  ).textContent =
+    `Signed in as ${
+      roleLabels[role] ||
+      role
+    }`;
+
+
+  renderAdminIncidentList();
+
+
+  renderIncidentEditor();
+
+
+  showModal(
+    'adminModal'
+  );
+
+}
+
+
+/* ============================================================
+   LOGOUT
+============================================================ */
+
+function logout() {
+
+  adminToken =
+    '';
+
+  role =
+    '';
+
+  selectedIncidentId =
+    null;
+
+
+  sessionStorage.removeItem(
+    'support_admin_token'
+  );
+
+
+  sessionStorage.removeItem(
+    'support_admin_role'
+  );
+
+
+  hideModal(
+    'adminModal'
+  );
+
+
+  showToast(
+    'Logged out.'
+  );
+
+}
+
+
+/* ============================================================
+   API ERROR
+============================================================ */
+
+function handleApiError(
+  error
+) {
+
+  console.error(
+    error
+  );
+
+
+  const message =
+    error?.message ||
+    'Something went wrong.';
+
+
+  if (
+    /unauthorized|invalid token|expired|forbidden/i
+      .test(message)
+  ) {
+
+    logout();
+
+  }
+
+
+  showToast(
+    message,
+    'error'
+  );
+
+}
+
+
+/* ============================================================
+   HTML SAFETY
+============================================================ */
+
+function escapeHtml(
+  value
+) {
+
+  return String(
+    value ?? ''
+  ).replace(
+    /[&<>"']/g,
+    character => ({
+
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+
+    }[character])
+  );
+
+}
+
+
+function escapeAttr(
+  value
+) {
+
+  return escapeHtml(
+    value
+  ).replace(
+    /`/g,
+    '&#96;'
+  );
+
+}
+
+
+/* ============================================================
+   MODALS
+============================================================ */
+
+function showModal(
+  id
+) {
+
+  const element =
+    document.getElementById(
+      id
+    );
+
+
+  element.classList.remove(
+    'hidden'
+  );
+
+
+  element.classList.add(
+    'flex'
+  );
+
+}
+
+
+function hideModal(
+  id
+) {
+
+  const element =
+    document.getElementById(
+      id
+    );
+
+
+  element.classList.add(
+    'hidden'
+  );
+
+
+  element.classList.remove(
+    'flex'
+  );
+
+}
+
+
+/* ============================================================
+   TOAST
+============================================================ */
+
+let toastTimer =
+  null;
+
+
+function showToast(
+  message,
+  type = 'success'
+) {
+
+  const toast =
+    document.getElementById(
+      'toast'
+    );
+
+
+  toast.textContent =
+    message;
+
+
+  toast.className = `
+
+    fixed
+    bottom-5
+    right-5
+    z-[60]
+    rounded-xl
+    px-4
+    py-3
+    text-sm
+    font-semibold
+    text-white
+    shadow-xl
+
+    ${
+      type === 'error'
+        ? 'bg-red-600'
+        : 'bg-slate-900 dark:bg-white dark:text-slate-900'
+    }
+
+  `;
+
+
+  toast.classList.remove(
+    'hidden'
+  );
+
+
+  clearTimeout(
+    toastTimer
+  );
+
+
+  toastTimer =
+    setTimeout(
+      () => {
+
+        toast.classList.add(
+          'hidden'
+        );
+
+      },
+      3500
+    );
+
+}
+
+
+/* ============================================================
+   THEME
+============================================================ */
+
+function applyTheme() {
+
+  const dark =
+    document.documentElement
+      .classList
+      .contains('dark');
+
+
+  document.getElementById(
+    'themeIcon'
+  ).className =
+    'fa-solid ' +
+    (
+      dark
+        ? 'fa-sun'
+        : 'fa-moon'
+    );
+
+
+  document.getElementById(
+    'themeText'
+  ).textContent =
+    dark
+      ? 'Light'
+      : 'Dark';
+
+}
+
+
+function toggleTheme() {
+
+  document.documentElement
+    .classList
+    .toggle('dark');
+
+
+  localStorage.setItem(
+    'support_theme',
+    document.documentElement
+      .classList
+      .contains('dark')
+      ? 'dark'
+      : 'light'
+  );
+
+
+  applyTheme();
+
+}
+
+
+/* ============================================================
+   TAB SWITCHING
+============================================================ */
+
+document
+  .querySelectorAll(
+    '.tab-btn'
+  )
+  .forEach(
+    button => {
+
+      button.addEventListener(
+        'click',
+        () => {
+
+          document
+            .querySelectorAll(
+              '.tab-btn'
+            )
+            .forEach(
+              item => {
+
+                item.classList.remove(
+                  'tab-active'
+                );
+
+              }
+            );
+
+
+          button.classList.add(
+            'tab-active'
+          );
+
+
+          const showTime =
+            button.dataset.tab ===
+            'time';
+
+
+          document
+            .getElementById(
+              'timeSection'
+            )
+            .classList
+            .toggle(
+              'hidden',
+              !showTime
+            );
+
+
+          document
+            .getElementById(
+              'incidentSection'
+            )
+            .classList
+            .toggle(
+              'hidden',
+              showTime
+            );
+
+        }
+      );
+
+    }
+  );
+
+
+/* ============================================================
+   TIME EVENTS
+============================================================ */
+
+document
+  .getElementById(
+    'timezoneSearch'
+  )
+  .addEventListener(
+    'input',
+    filterTimezones
+  );
+
+
+document
+  .getElementById(
+    'showSeconds'
+  )
+  .addEventListener(
+    'change',
+    updateTimes
+  );
+
+
+/* ============================================================
+   INCIDENT EVENTS
+============================================================ */
+
+document
+  .getElementById(
+    'incidentSearch'
+  )
+  .addEventListener(
+    'input',
+    renderIncidents
+  );
+
+
+document
+  .getElementById(
+    'categoryFilter'
+  )
+  .addEventListener(
+    'change',
+    renderIncidents
+  );
+
+
+document
+  .getElementById(
+    'refreshIncidents'
+  )
+  .addEventListener(
+    'click',
+    loadIncidents
+  );
+
+
+/* ============================================================
+   THEME EVENT
+============================================================ */
+
+document
+  .getElementById(
+    'themeBtn'
+  )
+  .addEventListener(
+    'click',
+    toggleTheme
+  );
+
+
+/* ============================================================
+   MANAGEMENT EVENT
+============================================================ */
+
+document
+  .getElementById(
+    'managementBtn'
+  )
+  .addEventListener(
+    'click',
+    openAdmin
+  );
+
+
+/* ============================================================
+   ACTIVE INCIDENT EVENT DELEGATION
+============================================================ */
+
+document
+  .getElementById(
+    'activeGrid'
+  )
+  .addEventListener(
+    'click',
+    event => {
+
+      const card =
+        event.target.closest(
+          '[data-incident-id]'
+        );
+
+
+      if (!card) {
+        return;
+      }
+
+
+      openIncidentDetails(
+        card.dataset.incidentId
+      );
+
+    }
+  );
+
+
+/* ============================================================
+   HISTORY EVENT DELEGATION
+============================================================ */
+
+document
+  .getElementById(
+    'historyList'
+  )
+  .addEventListener(
+    'click',
+    event => {
+
+      const card =
+        event.target.closest(
+          '[data-incident-id]'
+        );
+
+
+      if (!card) {
+        return;
+      }
+
+
+      openIncidentDetails(
+        card.dataset.incidentId
+      );
+
+    }
+  );
+
+
+/* ============================================================
+   ADMIN LIST EVENT DELEGATION
+============================================================ */
+
+document
+  .getElementById(
+    'adminIncidentList'
+  )
+  .addEventListener(
+    'click',
+    event => {
+
+      const button =
+        event.target.closest(
+          '[data-admin-incident-id]'
+        );
+
+
+      if (!button) {
+        return;
+      }
+
+
+      selectedIncidentId =
+        button.dataset
+          .adminIncidentId;
+
+
+      creatingNewIncident =
+        false;
+
+
+      renderAdminIncidentList();
+
+
+      renderIncidentEditor();
+
+    }
+  );
+
+
+/* ============================================================
+   DETAIL COPY BUTTON
+============================================================ */
+
+document
+  .getElementById(
+    'detailContent'
+  )
+  .addEventListener(
+    'click',
+    event => {
+
+      const button =
+        event.target.closest(
+          '[data-copy-response]'
+        );
+
+
+      if (!button) {
+        return;
+      }
+
+
+      copyResponse(
+        button.dataset
+          .copyResponse
+      );
+
+    }
+  );
+
+
+/* ============================================================
+   HISTORY TOGGLE
+============================================================ */
+
+document
+  .getElementById(
+    'historyToggle'
+  )
+  .addEventListener(
+    'click',
+    () => {
+
+      const history =
+        document.getElementById(
+          'historyList'
+        );
+
+
+      const hidden =
+        history.classList.toggle(
+          'hidden'
+        );
+
+
+      document.getElementById(
+        'historyIcon'
+      ).className =
+        'fa-solid ' +
+        (
+          hidden
+            ? 'fa-chevron-down'
+            : 'fa-chevron-up'
+        );
+
+    }
+  );
+
+
+/* ============================================================
+   LOGIN EVENTS
+============================================================ */
+
+document
+  .getElementById(
+    'loginForm'
+  )
+  .addEventListener(
+    'submit',
+    event => {
+
+      event.preventDefault();
+
+      login();
+
+    }
+  );
+
+
+document
+  .getElementById(
+    'closeLogin'
+  )
+  .addEventListener(
+    'click',
+    () => {
+
+      hideModal(
+        'loginModal'
+      );
+
+    }
+  );
+
+
+/* ============================================================
+   ADMIN EVENTS
+============================================================ */
+
+document
+  .getElementById(
+    'closeAdmin'
+  )
+  .addEventListener(
+    'click',
+    () => {
+
+      hideModal(
+        'adminModal'
+      );
+
+    }
+  );
+
+
+document
+  .getElementById(
+    'logoutBtn'
+  )
+  .addEventListener(
+    'click',
+    logout
+  );
+
+
+document
+  .getElementById(
+    'newIncidentBtn'
+  )
+  .addEventListener(
+    'click',
+    createNewIncident
+  );
+
+
+/* ============================================================
+   DETAIL EVENT
+============================================================ */
+
+document
+  .getElementById(
+    'closeDetail'
+  )
+  .addEventListener(
+    'click',
+    () => {
+
+      hideModal(
+        'detailModal'
+      );
+
+    }
+  );
+
+
+/* ============================================================
+   CLICK OUTSIDE MODALS
+============================================================ */
+
+[
+  'loginModal',
+  'adminModal',
+  'detailModal'
+].forEach(
+  modalId => {
+
+    document
+      .getElementById(
+        modalId
+      )
+      .addEventListener(
+        'click',
+        event => {
+
+          if (
+            event.target.id ===
+            modalId
+          ) {
+
+            hideModal(
+              modalId
+            );
+
+          }
+
+        }
+      );
+
+  }
+);
+
+
+/* ============================================================
+   ESC KEY
+============================================================ */
+
+document.addEventListener(
+  'keydown',
+  event => {
+
+    if (
+      event.key !== 'Escape'
+    ) {
+
+      return;
+
+    }
+
+
+    hideModal(
+      'loginModal'
+    );
+
+    hideModal(
+      'adminModal'
+    );
+
+    hideModal(
+      'detailModal'
+    );
+
+  }
+);
+
+
+/* ============================================================
+   INITIALIZE THEME
+============================================================ */
+
+if (
+  localStorage.getItem(
+    'support_theme'
+  ) === 'light'
+) {
+
+  document.documentElement
+    .classList
+    .remove('dark');
+
+}
+
+
+applyTheme();
+
+
+/* ============================================================
+   INITIALIZE TIME DASHBOARD
+============================================================ */
+
+buildTimeDashboard();
+
+filterTimezones();
+
+updateTimes();
+
+
+/*
+  Time updates are completely client-side.
+  This means the incident API does not need to be
+  contacted every second.
+*/
+
+setInterval(
+  updateTimes,
+  1000
+);
+
+
+/* ============================================================
+   VALIDATE SAVED ADMIN SESSION
+============================================================ */
+
+if (
+  adminToken &&
+  ![
+    'TL',
+    'QA',
+    'MA'
+  ].includes(role)
+) {
+
+  adminToken =
+    '';
+
+  role =
+    '';
+
+  sessionStorage.removeItem(
+    'support_admin_token'
+  );
+
+  sessionStorage.removeItem(
+    'support_admin_role'
+  );
+
+}
+
+
+/* ============================================================
+   INITIAL INCIDENT LOAD
+============================================================ */
+
+loadIncidents();
+
+
+/*
+  Incident data refreshes every 60 seconds.
+  The time dashboard remains independent.
+*/
+
+setInterval(
+  loadIncidents,
+  60000
+);
 
 </script>
 
