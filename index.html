@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>US States Time Dashboard</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- FontAwesome -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+
+          colors: {
+            notion: {
+              bgDark: '#191919',
+              cardDark: '#202020',
+              borderDark: '#2f2f2f',
+
+              bgLight: '#fcfbf9',
+              cardLight: '#ffffff',
+              borderLight: '#e9e9e8',
+
+              accent: '#2eaadc',
+              georgiaRed: '#e03e3e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(128,128,128,0.35);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(128,128,128,0.6);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      user-select: none;
+    }
+
+    .clock-font {
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.04em;
+    }
+
+    .tbilisi-glow {
+      box-shadow:
+        0 0 0 1px rgba(224,62,62,0.2),
+        0 0 35px rgba(224,62,62,0.18);
+    }
+
+    .dark .tbilisi-glow {
+      box-shadow:
+        0 0 0 1px rgba(224,62,62,0.3),
+        0 0 45px rgba(224,62,62,0.22);
+    }
+
+    .state-card {
+      transition:
+        transform 0.18s ease,
+        border-color 0.18s ease,
+        box-shadow 0.18s ease;
+    }
+
+    .state-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .section-line {
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(128,128,128,0.25),
+        transparent
+      );
+    }
+
+    .live-dot {
+      animation: pulseDot 2s infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.35;
+      }
+    }
+
+    .hidden-card {
+      display: none !important;
+    }
+
+  </style>
+</head>
+
+<body class="bg-notion-bgLight dark:bg-notion-bgDark
+             text-neutral-800 dark:text-neutral-200
+             min-h-screen p-4 sm:p-6 lg:p-8">
+
+  <main class="max-w-[1600px] mx-auto">
+
+    <!-- ========================================================= -->
+    <!-- HEADER -->
+    <!-- ========================================================= -->
+
+    <header class="
+      bg-notion-cardLight
+      dark:bg-notion-cardDark
+      border border-notion-borderLight
+      dark:border-notion-borderDark
+      rounded-2xl
+      px-5 py-4
+      shadow-sm
+      mb-6
+    ">
+
+      <div class="
+        flex flex-col
+        xl:flex-row
+        xl:items-center
+        xl:justify-between
+        gap-4
+      ">
+
+        <!-- TITLE -->
+
+        <div class="flex items-center gap-3">
+
+          <div class="
+            w-11 h-11
+            rounded-xl
+            bg-red-500/10
+            dark:bg-red-500/15
+            flex items-center justify-center
+            text-red-500
+          ">
+            <i class="fa-solid fa-earth-americas text-lg"></i>
+          </div>
+
+          <div>
+
+            <div class="flex items-center gap-2 flex-wrap">
+
+              <h1 class="
+                text-lg sm:text-xl
+                font-bold
+                tracking-tight
+                text-neutral-900
+                dark:text-white
+              ">
+                US States Time Dashboard
+              </h1>
+
+              <span class="
+                px-2.5 py-1
+                rounded-full
+                text-[10px]
+                font-bold
+                uppercase
+                tracking-wider
+                bg-red-100
+                dark:bg-red-950/60
+                text-red-700
+                dark:text-red-300
+                border
+                border-red-200
+                dark:border-red-900
+              ">
+                Tbilisi Anchor
+              </span>
+
+            </div>
+
+            <p class="
+              text-xs
+              text-neutral-500
+              dark:text-neutral-400
+              mt-0.5
+            ">
+              Live comparison of US state times against Tbilisi
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <!-- CONTROLS -->
+
+        <div class="flex flex-wrap items-center gap-3">
+
+          <!-- SEARCH -->
+
+          <div class="relative">
+
+            <i class="
+              fa-solid fa-magnifying-glass
+              absolute left-3 top-1/2
+              -translate-y-1/2
+              text-neutral-400
+              text-xs
+            "></i>
+
+            <input
+              id="searchInput"
+              type="text"
+              placeholder="Search state..."
+              class="
+                w-44 sm:w-52
+                pl-8 pr-3
+                py-2
+                rounded-xl
+                border
+                border-notion-borderLight
+                dark:border-notion-borderDark
+                bg-neutral-50
+                dark:bg-neutral-900
+                text-xs
+                outline-none
+                focus:border-blue-400
+                transition
+              "
+            >
+
+          </div>
+
+
+          <!-- SECONDS -->
+
+          <label class="
+            flex items-center
+            gap-2
+            cursor-pointer
+            text-xs
+            font-medium
+            bg-neutral-100
+            dark:bg-neutral-800
+            px-3 py-2
+            rounded-xl
+            border
+            border-notion-borderLight
+            dark:border-notion-borderDark
+          ">
+
+            <input
+              type="checkbox"
+              id="toggleSeconds"
+              class="sr-only peer"
+              checked
+            >
+
+            <div class="
+              w-8 h-4
+              bg-gray-300
+              dark:bg-gray-700
+              rounded-full
+              relative
+              after:content-['']
+              after:absolute
+              after:top-[2px]
+              after:left-[2px]
+              after:bg-white
+              after:h-3
+              after:w-3
+              after:rounded-full
+              after:transition-all
+              peer-checked:after:translate-x-full
+              peer-checked:bg-blue-600
+            "></div>
+
+            <span class="text-neutral-600 dark:text-neutral-300">
+              Seconds
+            </span>
+
+          </label>
+
+
+          <!-- THEME -->
+
+          <button
+            id="themeToggleBtn"
+            class="
+              px-3 py-2
+              rounded-xl
+              border
+              border-notion-borderLight
+              dark:border-notion-borderDark
+              hover:bg-neutral-100
+              dark:hover:bg-neutral-800
+              text-xs
+              flex items-center
+              gap-2
+              transition
+              font-medium
+            "
+          >
+
+            <i class="fa-solid fa-moon dark:hidden text-gray-600"></i>
+            <i class="fa-solid fa-sun hidden dark:block text-amber-400"></i>
+
+            <span id="themeLabel">
+              Dark Theme
+            </span>
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- ========================================================= -->
+    <!-- TBILISI MASTER CLOCK -->
+    <!-- ========================================================= -->
+
+    <section class="
+      bg-notion-cardLight
+      dark:bg-notion-cardDark
+      rounded-2xl
+      border
+      border-red-300/70
+      dark:border-red-900/70
+      p-5 sm:p-6
+      mb-7
+      tbilisi-glow
+    ">
+
+      <div class="
+        flex flex-col
+        md:flex-row
+        md:items-center
+        md:justify-between
+        gap-5
+      ">
+
+        <div class="flex items-center gap-4">
+
+          <div class="text-4xl sm:text-5xl">
+            🇬🇪
+          </div>
+
+          <div>
+
+            <div class="
+              text-[11px]
+              font-bold
+              uppercase
+              tracking-[0.2em]
+              text-red-500
+              mb-1
+            ">
+              Home / Reference Time
+            </div>
+
+            <div class="
+              text-xl
+              sm:text-2xl
+              font-extrabold
+              text-neutral-900
+              dark:text-white
+            ">
+              Tbilisi, Georgia
+            </div>
+
+            <div class="
+              text-xs
+              text-neutral-500
+              dark:text-neutral-400
+              mt-1
+            ">
+              Asia/Tbilisi · UTC+4
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="text-left md:text-right">
+
+          <div
+            id="clock-georgia"
+            class="
+              clock-font
+              text-5xl
+              sm:text-6xl
+              lg:text-7xl
+              font-bold
+              text-neutral-900
+              dark:text-white
+            "
+          >
+            --:--:--
+          </div>
+
+          <div
+            id="date-georgia"
+            class="
+              text-sm
+              font-medium
+              text-neutral-500
+              dark:text-neutral-400
+              mt-1
+            "
+          >
+            ---
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ========================================================= -->
+    <!-- DASHBOARD -->
+    <!-- ========================================================= -->
+
+    <div id="timezoneContainer"></div>
+
+
+    <!-- ========================================================= -->
+    <!-- FOOTER -->
+    <!-- ========================================================= -->
+
+    <footer class="
+      mt-8
+      pt-4
+      border-t
+      border-notion-borderLight
+      dark:border-notion-borderDark
+      flex
+      flex-col
+      sm:flex-row
+      sm:items-center
+      sm:justify-between
+      gap-2
+      text-[11px]
+      text-neutral-400
+      dark:text-neutral-500
+    ">
+
+      <div>
+        Times are automatically synchronized using the browser's
+        IANA timezone database.
+      </div>
+
+      <div class="flex items-center gap-2">
+
+        <span class="
+          w-2 h-2
+          rounded-full
+          bg-emerald-500
+          live-dot
+        "></span>
+
+        <span>
+          Live
+        </span>
+
+      </div>
+
+    </footer>
+
+  </main>
+
+
+<script>
+
+  /* ============================================================
+     CONFIGURATION
+     ============================================================ */
+
+  const STATES = [
+
+    /* EASTERN */
+    {
+      state: "AL",
+      name: "Alabama",
+      city: "Eastern Alabama",
+      zone: "America/Chicago",
+      group: "Central"
+    },
+
+    {
+      state: "FL",
+      name: "Florida",
+      city: "Miami",
+      zone: "America/New_York",
+      group: "Eastern"
+    },
+
+    {
+      state: "GA",
+      name: "Georgia",
+      city: "Atlanta",
+      zone: "America/New_York",
+      group: "Eastern"
+    },
+
+    {
+      state: "KY",
+      name: "Kentucky",
+      city: "Louisville",
+      zone: "America/New_York",
+      group: "Eastern"
+    },
+
+    {
+      state: "MD",
+      name: "Maryland",
+      city: "Baltimore",
+      zone: "America/New_York",
+      group: "Eastern"
+    },
+
+    {
+      state: "MA",
+      name: "Massachusetts",
+      city: "Boston",
+      zone: "America/New_York",
+      group: "Eastern"
+    },
+
+    {
+      state: "NH",
+      name: "New Hampshire",
+      city: "Concord",
+      zone: "America/New_York",
+      group: "Eastern"
+    },
+
+    {
+      state: "NC",
+      name: "North Carolina",
+      city: "Charlotte",
+      zone: "America/New_York",
+      group: "Eastern"
+    },
+
+    {
+      state: "OH",
+      name: "Ohio",
+      city: "Columbus",
+      zone: "America/New_York",
+      group: "Eastern"
+    },
+
+    {
+      state: "PA",
+      name: "Pennsylvania",
+      city: "Philadelphia",
+      zone: "America/New_York",
+      group: "Eastern"
+    },
+
+    {
+      state: "RI",
+      name: "Rhode Island",
+      city: "Providence",
+      zone: "America/New_York",
+      group: "Eastern"
+    },
+
+    {
+      state: "SC",
+      name: "South Carolina",
+      city: "Columbia",
+      zone: "America/New_York",
+      group: "Eastern"
+    },
+
+    {
+      state: "VT",
+      name: "Vermont",
+      city: "Burlington",
+      zone: "America/New_York",
+      group: "Eastern"
+    },
+
+    {
+      state: "VA",
+      name: "Virginia",
+      city: "Richmond",
+      zone: "America/New_York",
+      group: "Eastern"
+    },
+
+
+    /* CENTRAL */
+
+    {
+      state: "AR",
+      name: "Arkansas",
+      city: "Little Rock",
+      zone: "America/Chicago",
+      group: "Central"
+    },
+
+    {
+      state: "KS",
+      name: "Kansas",
+      city: "Wichita",
+      zone: "America/Chicago",
+      group: "Central"
+    },
+
+    {
+      state: "MN",
+      name: "Minnesota",
+      city: "Minneapolis",
+      zone: "America/Chicago",
+      group: "Central"
+    },
+
+    {
+      state: "MO",
+      name: "Missouri",
+      city: "St. Louis",
+      zone: "America/Chicago",
+      group: "Central"
+    },
+
+    {
+      state: "NE",
+      name: "Nebraska",
+      city: "Omaha",
+      zone: "America/Chicago",
+      group: "Central"
+    },
+
+    {
+      state: "ND",
+      name: "North Dakota",
+      city: "Fargo",
+      zone: "America/Chicago",
+      group: "Central"
+    },
+
+    {
+      state: "OK",
+      name: "Oklahoma",
+      city: "Oklahoma City",
+      zone: "America/Chicago",
+      group: "Central"
+    },
+
+    {
+      state: "SD",
+      name: "South Dakota",
+      city: "Sioux Falls",
+      zone: "America/Chicago",
+      group: "Central"
+    },
+
+    {
+      state: "TX",
+      name: "Texas",
+      city: "Dallas",
+      zone: "America/Chicago",
+      group: "Central"
+    },
+
+    {
+      state: "WI",
+      name: "Wisconsin",
+      city: "Milwaukee",
+      zone: "America/Chicago",
+      group: "Central"
+    },
+
+
+    /* MOUNTAIN */
+
+    {
+      state: "CO",
+      name: "Colorado",
+      city: "Denver",
+      zone: "America/Denver",
+      group: "Mountain"
+    },
+
+    {
+      state: "NM",
+      name: "New Mexico",
+      city: "Albuquerque",
+      zone: "America/Denver",
+      group: "Mountain"
+    },
+
+    {
+      state: "UT",
+      name: "Utah",
+      city: "Salt Lake City",
+      zone: "America/Denver",
+      group: "Mountain"
+    },
+
+    {
+      state: "WY",
+      name: "Wyoming",
+      city: "Cheyenne",
+      zone: "America/Denver",
+      group: "Mountain"
+    },
+
+
+    /* ARIZONA */
+
+    {
+      state: "AZ",
+      name: "Arizona",
+      city: "Phoenix",
+      zone: "America/Phoenix",
+      group: "Arizona"
+    },
+
+
+    /* PACIFIC */
+
+    {
+      state: "OR",
+      name: "Oregon",
+      city: "Portland",
+      zone: "America/Los_Angeles",
+      group: "Pacific"
+    },
+
+
+    /* ALASKA */
+
+    {
+      state: "AK",
+      name: "Alaska",
+      city: "Anchorage",
+      zone: "America/Anchorage",
+      group: "Alaska"
+    },
+
+
+    /* HAWAII */
+
+    {
+      state: "HI",
+      name: "Hawaii",
+      city: "Honolulu",
+      zone: "Pacific/Honolulu",
+      group: "Hawaii"
+    }
+
+  ];
+
+
+  /* ============================================================
+     GROUP CONFIGURATION
+     ============================================================ */
+
+  const GROUPS = [
+
+    {
+      id: "Eastern",
+      title: "Eastern Time",
+      subtitle: "ET · EST / EDT",
+      icon: "fa-sun",
+      color: "blue"
+    },
+
+    {
+      id: "Central",
+      title: "Central Time",
+      subtitle: "CT · CST / CDT",
+      icon: "fa-cloud-sun",
+      color: "cyan"
+    },
+
+    {
+      id: "Mountain",
+      title: "Mountain Time",
+      subtitle: "MT · MST / MDT",
+      icon: "fa-mountain-sun",
+      color: "amber"
+    },
+
+    {
+      id: "Arizona",
+      title: "Arizona",
+      subtitle: "MST · No DST",
+      icon: "fa-sun",
+      color: "orange"
+    },
+
+    {
+      id: "Pacific",
+      title: "Pacific Time",
+      subtitle: "PT · PST / PDT",
+      icon: "fa-water",
+      color: "purple"
+    },
+
+    {
+      id: "Alaska",
+      title: "Alaska Time",
+      subtitle: "AKT · AKST / AKDT",
+      icon: "fa-snowflake",
+      color: "sky"
+    },
+
+    {
+      id: "Hawaii",
+      title: "Hawaii Time",
+      subtitle: "HST · No DST",
+      icon: "fa-umbrella-beach",
+      color: "emerald"
+    }
+
+  ];
+
+
+  /* ============================================================
+     STATE
+     ============================================================ */
+
+  let showSeconds = true;
+
+
+  /* ============================================================
+     COLOR HELPERS
+     ============================================================ */
+
+  const COLORS = {
+
+    blue: {
+      icon: "text-blue-500",
+      border: "hover:border-blue-400",
+      badge: "bg-blue-500/10 text-blue-600 dark:text-blue-400"
+    },
+
+    cyan: {
+      icon: "text-cyan-500",
+      border: "hover:border-cyan-400",
+      badge: "bg-cyan-500/10 text-cyan-600 dark:text-cyan-400"
+    },
+
+    amber: {
+      icon: "text-amber-500",
+      border: "hover:border-amber-400",
+      badge: "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+    },
+
+    orange: {
+      icon: "text-orange-500",
+      border: "hover:border-orange-400",
+      badge: "bg-orange-500/10 text-orange-600 dark:text-orange-400"
+    },
+
+    purple: {
+      icon: "text-purple-500",
+      border: "hover:border-purple-400",
+      badge: "bg-purple-500/10 text-purple-600 dark:text-purple-400"
+    },
+
+    sky: {
+      icon: "text-sky-500",
+      border: "hover:border-sky-400",
+      badge: "bg-sky-500/10 text-sky-600 dark:text-sky-400"
+    },
+
+    emerald: {
+      icon: "text-emerald-500",
+      border: "hover:border-emerald-400",
+      badge: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+    }
+
+  };
+
+
+  /* ============================================================
+     CREATE DASHBOARD
+     ============================================================ */
+
+  function buildDashboard() {
+
+    const container =
+      document.getElementById("timezoneContainer");
+
+    container.innerHTML = "";
+
+    GROUPS.forEach(group => {
+
+      const states =
+        STATES.filter(s => s.group === group.id);
+
+      if (!states.length) return;
+
+      const colors =
+        COLORS[group.color];
+
+      const section =
+        document.createElement("section");
+
+      section.className = "timezone-section mb-8";
+
+      section.dataset.group = group.id;
+
+      section.innerHTML = `
+
+        <div class="
+          flex items-center
+          justify-between
+          mb-3
+          px-1
+        ">
+
+          <div class="flex items-center gap-2.5">
+
+            <div class="
+              w-8 h-8
+              rounded-lg
+              bg-neutral-100
+              dark:bg-neutral-800
+              flex items-center
+              justify-center
+            ">
+
+              <i class="
+                fa-solid
+                ${group.icon}
+                ${colors.icon}
+                text-sm
+              "></i>
+
+            </div>
+
+            <div>
+
+              <h2 class="
+                text-sm
+                font-bold
+                text-neutral-900
+                dark:text-neutral-100
+              ">
+                ${group.title}
+              </h2>
+
+              <p class="
+                text-[10px]
+                uppercase
+                tracking-wider
+                text-neutral-400
+                dark:text-neutral-500
+              ">
+                ${group.subtitle}
+              </p>
+
+            </div>
+
+          </div>
+
+          <span class="
+            text-[10px]
+            font-medium
+            text-neutral-400
+            dark:text-neutral-500
+          ">
+            ${states.length} state${states.length !== 1 ? "s" : ""}
+          </span>
+
+        </div>
+
+
+        <div class="
+          grid
+          grid-cols-1
+          sm:grid-cols-2
+          lg:grid-cols-3
+          xl:grid-cols-4
+          2xl:grid-cols-5
+          gap-3
+        ">
+
+          ${states.map(state => createCard(state, colors)).join("")}
+
+        </div>
+
+      `;
+
+      container.appendChild(section);
+
+    });
+
+  }
+
+
+  /* ============================================================
+     CREATE STATE CARD
+     ============================================================ */
+
+  function createCard(state, colors) {
+
+    return `
+
+      <div
+        class="
+          state-card
+          state-card-${state.state}
+          bg-neutral-50
+          dark:bg-neutral-900/70
+          rounded-xl
+          border
+          border-notion-borderLight
+          dark:border-notion-borderDark
+          ${colors.border}
+          p-4
+        "
+        data-state="${state.state}"
+        data-name="${state.name.toLowerCase()}"
+      >
+
+        <!-- TOP -->
+
+        <div class="
+          flex
+          items-start
+          justify-between
+          gap-2
+        ">
+
+          <div class="flex items-center gap-2.5">
+
+            <div class="
+              w-9 h-9
+              rounded-lg
+              bg-white
+              dark:bg-neutral-800
+              border
+              border-neutral-200
+              dark:border-neutral-700
+              flex items-center
+              justify-center
+              font-extrabold
+              text-[11px]
+              text-neutral-700
+              dark:text-neutral-200
+            ">
+              ${state.state}
+            </div>
+
+            <div>
+
+              <div class="
+                text-xs
+                font-bold
+                text-neutral-900
+                dark:text-neutral-100
+              ">
+                ${state.name}
+              </div>
+
+              <div class="
+                text-[10px]
+                text-neutral-400
+                dark:text-neutral-500
+                mt-0.5
+              ">
+                ${state.city}
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- OFFSET -->
+
+          <span
+            id="offset-${state.state}"
+            class="
+              offset-badge
+              px-2
+              py-1
+              rounded-md
+              ${colors.badge}
+              text-[10px]
+              font-bold
+              font-mono
+              whitespace-nowrap
+            "
+          >
+            --h
+          </span>
+
+        </div>
+
+
+        <!-- CLOCK -->
+
+        <div
+          id="clock-${state.state}"
+          class="
+            clock-font
+            text-3xl
+            sm:text-4xl
+            font-bold
+            text-neutral-900
+            dark:text-white
+            text-center
+            mt-5
+            mb-3
+          "
+        >
+          --:--:--
+        </div>
+
+
+        <!-- FOOTER -->
+
+        <div class="
+          pt-2.5
+          border-t
+          border-neutral-200
+          dark:border-neutral-800
+          flex
+          items-center
+          justify-between
+          gap-2
+        ">
+
+          <span
+            id="date-${state.state}"
+            class="
+              text-[10px]
+              font-medium
+              text-neutral-500
+              dark:text-neutral-400
+              truncate
+            "
+          >
+            ---
+          </span>
+
+          <span
+            id="code-${state.state}"
+            class="
+              text-[10px]
+              font-mono
+              font-bold
+              text-neutral-400
+              dark:text-neutral-500
+            "
+          >
+            ---
+          </span>
+
+        </div>
+
+      </div>
+
+    `;
+
+  }
+
+
+  /* ============================================================
+     GET TIMEZONE OFFSET
+     ============================================================ */
+
+  function getTimezoneOffsetHours(date, timeZone) {
+
+    const parts =
+      new Intl.DateTimeFormat(
+        "en-US",
+        {
+          timeZone,
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hourCycle: "h23"
+        }
+      ).formatToParts(date);
+
+    const values = {};
+
+    parts.forEach(part => {
+
+      if (part.type !== "literal") {
+        values[part.type] = Number(part.value);
+      }
+
+    });
+
+    const localAsUTC =
+      Date.UTC(
+        values.year,
+        values.month - 1,
+        values.day,
+        values.hour,
+        values.minute,
+        values.second
+      );
+
+    const actualUTC =
+      Date.UTC(
+        date.getUTCFullYear(),
+        date.getUTCMonth(),
+        date.getUTCDate(),
+        date.getUTCHours(),
+        date.getUTCMinutes(),
+        date.getUTCSeconds()
+      );
+
+    return Math.round(
+      (localAsUTC - actualUTC) / 3600000
+    );
+
+  }
+
+
+  /* ============================================================
+     FORMAT OFFSET
+     ============================================================ */
+
+  function formatDifference(hours) {
+
+    if (hours === 0) {
+      return "Same";
+    }
+
+    return hours > 0
+      ? `+${hours}h`
+      : `${hours}h`;
+
+  }
+
+
+  /* ============================================================
+     UPDATE CLOCKS
+     ============================================================ */
+
+  function updateClocks() {
+
+    const now = new Date();
+
+    /* ---------------- Tbilisi ---------------- */
+
+    const tbilisiOptions = {
+
+      timeZone: "Asia/Tbilisi",
+
+      hour: "2-digit",
+      minute: "2-digit",
+
+      ...(showSeconds
+        ? { second: "2-digit" }
+        : {}),
+
+      hour12: false
+
+    };
+
+    document.getElementById("clock-georgia").textContent =
+      new Intl.DateTimeFormat(
+        "en-GB",
+        tbilisiOptions
+      ).format(now);
+
+
+    document.getElementById("date-georgia").textContent =
+      new Intl.DateTimeFormat(
+        "en-US",
+        {
+          timeZone: "Asia/Tbilisi",
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+          year: "numeric"
+        }
+      ).format(now);
+
+
+    /* ---------------- US STATES ---------------- */
+
+    const tbilisiOffset =
+      getTimezoneOffsetHours(
+        now,
+        "Asia/Tbilisi"
+      );
+
+
+    STATES.forEach(state => {
+
+      const timeElement =
+        document.getElementById(
+          `clock-${state.state}`
+        );
+
+      const dateElement =
+        document.getElementById(
+          `date-${state.state}`
+        );
+
+      const offsetElement =
+        document.getElementById(
+          `offset-${state.state}`
+        );
+
+      const codeElement =
+        document.getElementById(
+          `code-${state.state}`
+        );
+
+
+      if (!timeElement) return;
+
+
+      /* TIME */
+
+      const timeOptions = {
+
+        timeZone: state.zone,
+
+        hour: "2-digit",
+        minute: "2-digit",
+
+        ...(showSeconds
+          ? { second: "2-digit" }
+          : {}),
+
+        hour12: false
+
+      };
+
+      timeElement.textContent =
+        new Intl.DateTimeFormat(
+          "en-GB",
+          timeOptions
+        ).format(now);
+
+
+      /* DATE */
+
+      dateElement.textContent =
+        new Intl.DateTimeFormat(
+          "en-US",
+          {
+            timeZone: state.zone,
+            weekday: "short",
+            month: "short",
+            day: "numeric"
+          }
+        ).format(now);
+
+
+      /* OFFSET */
+
+      const stateOffset =
+        getTimezoneOffsetHours(
+          now,
+          state.zone
+        );
+
+      const difference =
+        stateOffset - tbilisiOffset;
+
+      offsetElement.textContent =
+        formatDifference(difference);
+
+
+      /* TIMEZONE CODE */
+
+      const codeFormatter =
+        new Intl.DateTimeFormat(
+          "en-US",
+          {
+            timeZone: state.zone,
+            timeZoneName: "short"
+          }
+        );
+
+      const parts =
+        codeFormatter.formatToParts(now);
+
+      const zonePart =
+        parts.find(
+          p => p.type === "timeZoneName"
+        );
+
+      if (zonePart) {
+        codeElement.textContent =
+          zonePart.value;
+      }
+
+    });
+
+  }
+
+
+  /* ============================================================
+     SEARCH
+     ============================================================ */
+
+  function setupSearch() {
+
+    const input =
+      document.getElementById("searchInput");
+
+    input.addEventListener(
+      "input",
+      function () {
+
+        const query =
+          this.value
+            .trim()
+            .toLowerCase();
+
+        document
+          .querySelectorAll(".state-card")
+          .forEach(card => {
+
+            const state =
+              card.dataset.state.toLowerCase();
+
+            const name =
+              card.dataset.name;
+
+            const match =
+              !query ||
+              state.includes(query) ||
+              name.includes(query);
+
+            card.classList.toggle(
+              "hidden-card",
+              !match
+            );
+
+          });
+
+
+        /* Hide empty sections */
+
+        document
+          .querySelectorAll(".timezone-section")
+          .forEach(section => {
+
+            const visibleCards =
+              section.querySelectorAll(
+                ".state-card:not(.hidden-card)"
+              );
+
+            section.style.display =
+              visibleCards.length
+                ? ""
+                : "none";
+
+          });
+
+      }
+    );
+
+  }
+
+
+  /* ============================================================
+     THEME
+     ============================================================ */
+
+  function setupTheme() {
+
+    const button =
+      document.getElementById(
+        "themeToggleBtn"
+      );
+
+    const label =
+      document.getElementById(
+        "themeLabel"
+      );
+
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        const isDark =
+          document.documentElement
+            .classList
+            .toggle("dark");
+
+        label.textContent =
+          isDark
+            ? "Dark Theme"
+            : "Light Theme";
+
+      }
+    );
+
+  }
+
+
+  /* ============================================================
+     SECONDS
+     ============================================================ */
+
+  function setupSeconds() {
+
+    const checkbox =
+      document.getElementById(
+        "toggleSeconds"
+      );
+
+    checkbox.addEventListener(
+      "change",
+      event => {
+
+        showSeconds =
+          event.target.checked;
+
+        updateClocks();
+
+      }
+    );
+
+  }
+
+
+  /* ============================================================
+     INITIALIZATION
+     ============================================================ */
+
+  window.addEventListener(
+    "load",
+    () => {
+
+      buildDashboard();
+
+      setupSearch();
+
+      setupTheme();
+
+      setupSeconds();
+
+      updateClocks();
+
+      setInterval(
+        updateClocks,
+        1000
+      );
+
+    }
+  );
+
+</script>
+
+</body>
+</html>
