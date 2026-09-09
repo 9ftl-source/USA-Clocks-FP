@@ -56,7 +56,7 @@
     }
 
     body {
-      background: var(--n-bg-secondary);
+      background: var(--n-bg);
       color: var(--n-text);
       transition: background-color 0.15s ease, color 0.15s ease;
     }
@@ -116,7 +116,7 @@
       border-radius: var(--n-radius);
       border: 1px solid var(--n-border);
       padding: 16px;
-      background: var(--n-bg);
+      background: var(--n-bg-secondary);
     }
 
     .detail-section.action { border-left: 3px solid var(--n-accent); }
@@ -573,7 +573,7 @@
 
       <div class="grid min-h-[600px] lg:grid-cols-[280px_1fr]">
 
-        <aside class="border-b p-4 lg:border-b-0 lg:border-r" style="border-color: var(--n-border);">
+        <aside class="border-b p-4 lg:border-b-0 lg:border-r" style="border-color: var(--n-border); background: var(--n-bg-secondary);">
           <div class="mb-3 flex items-center justify-between">
             <h3 class="text-xs font-semibold uppercase tracking-wider" style="color: var(--n-text-muted);">Incidents</h3>
             <button onclick="loadIncidents(); renderAdminIncidentList();" style="color: var(--n-text-muted);" title="Refresh">
