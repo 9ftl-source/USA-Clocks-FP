@@ -13,13 +13,16 @@
   />
 
   <script>
-    tailwind.config = { darkMode: 'class' };
+    tailwind.config = {
+      darkMode: 'class'
+    };
   </script>
 
   <style>
-    /* ===================================================
+    /* =========================================================
        NOTION-INSPIRED DESIGN TOKENS
-    =================================================== */
+    ========================================================== */
+
     :root {
       --n-bg: #ffffff;
       --n-bg-secondary: #f7f7f5;
@@ -28,6 +31,7 @@
       --n-text-muted: #787774;
       --n-accent: #2383e2;
       --n-accent-soft: #e7f3fe;
+
       --n-radius: 6px;
       --n-radius-lg: 10px;
     }
@@ -42,30 +46,51 @@
       --n-accent-soft: rgba(95, 179, 252, 0.12);
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
-    html, body {
+    html,
+    body {
       margin: 0;
       padding: 0;
       min-height: 100%;
       max-width: 100vw;
       overflow-x: hidden;
-      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji",
+
+      font-family:
+        ui-sans-serif,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Helvetica,
+        "Apple Color Emoji",
+        Arial,
+        sans-serif,
+        "Segoe UI Emoji",
         "Segoe UI Symbol";
     }
 
     body {
       background: var(--n-bg);
       color: var(--n-text);
-      transition: background-color 0.15s ease, color 0.15s ease;
+      transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
     }
 
-    /* Prevent any child from forcing horizontal scroll */
-    #app, main, header, section, aside {
+    #app,
+    main,
+    header,
+    section,
+    aside {
       min-width: 0;
       max-width: 100%;
     }
+
+    /* =========================================================
+       GENERAL CARDS
+    ========================================================== */
 
     .app-card {
       background: var(--n-bg);
@@ -74,28 +99,40 @@
       box-shadow: none;
     }
 
-    .tab-button {
-      transition: all 0.15s ease;
-      color: var(--n-text-muted);
+    .app-card-hover {
+      transition:
+        border-color 0.12s ease,
+        background-color 0.12s ease,
+        transform 0.12s ease;
     }
 
-    .tab-button.active {
-      background: var(--n-bg);
-      color: var(--n-text);
-      box-shadow: 0 1px 2px rgba(15, 15, 15, 0.08);
-    }
-
-    .timezone-card, .incident-card {
-      transition: border-color 0.12s ease, background-color 0.12s ease;
-    }
-
-    .timezone-card:hover, .incident-card:hover {
+    .app-card-hover:hover {
       border-color: #cfcfcd;
     }
 
-    .dark .timezone-card:hover, .dark .incident-card:hover {
+    .dark .app-card-hover:hover {
       border-color: #3f3f3f;
     }
+
+    /* =========================================================
+       SECTION DIVIDERS
+    ========================================================== */
+
+    .section-divider {
+      border-top: 1px solid var(--n-border);
+      margin: 30px 0;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    /* =========================================================
+       MODALS
+    ========================================================== */
 
     .modal-backdrop {
       background: rgba(15, 15, 15, 0.45);
@@ -107,10 +144,23 @@
       overflow-y: auto;
     }
 
-    .loading-spinner { animation: spin 0.8s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    /* =========================================================
+       LOADING
+    ========================================================== */
 
-    .incident-card { border-radius: var(--n-radius-lg); }
+    .loading-spinner {
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* =========================================================
+       DETAIL SECTIONS
+    ========================================================== */
 
     .detail-section {
       border-radius: var(--n-radius);
@@ -119,110 +169,325 @@
       background: var(--n-bg-secondary);
     }
 
-    .detail-section.action { border-left: 3px solid var(--n-accent); }
-    .detail-section.check { border-left: 3px solid #dfab01; }
-    .detail-section.response { border-left: 3px solid #0f7b6c; }
-    .detail-section.procedure { border-left: 3px solid #9065b0; }
+    .detail-section.action {
+      border-left: 3px solid var(--n-accent);
+    }
+
+    .detail-section.check {
+      border-left: 3px solid #dfab01;
+    }
+
+    .detail-section.response {
+      border-left: 3px solid #0f7b6c;
+    }
+
+    .detail-section.procedure {
+      border-left: 3px solid #9065b0;
+    }
+
+    /* =========================================================
+       BADGES
+    ========================================================== */
 
     .badge {
       display: inline-flex;
       align-items: center;
       gap: 5px;
+
       border-radius: var(--n-radius);
       padding: 3px 8px;
+
       font-size: 11px;
       font-weight: 600;
       white-space: nowrap;
+
       border: 1px solid transparent;
     }
 
-    .badge-active { background: #e9f6ec; color: #1a7f37; }
-    .badge-monitoring { background: #fbf1cb; color: #9a6700; }
-    .badge-resolved { background: #eeeeec; color: #6b6b68; }
-    .dark .badge-resolved { background: #2a2a2a; color: #9b9b99; }
-    .badge-high { background: #fbe4e2; color: #b93b30; }
-    .badge-medium { background: #fbf1cb; color: #9a6700; }
-    .badge-low { background: var(--n-accent-soft); color: var(--n-accent); }
-    .platform-badge { background: #f1e5fc; color: #6940a5; }
-    .dark .platform-badge { background: rgba(147, 112, 219, 0.16); color: #c9a6f5; }
-    .category-badge { background: var(--n-accent-soft); color: var(--n-accent); }
+    .badge-active {
+      background: #e9f6ec;
+      color: #1a7f37;
+    }
 
-    textarea, input, select {
+    .badge-monitoring {
+      background: #fbf1cb;
+      color: #9a6700;
+    }
+
+    .badge-resolved {
+      background: #eeeeec;
+      color: #6b6b68;
+    }
+
+    .dark .badge-resolved {
+      background: #2a2a2a;
+      color: #9b9b99;
+    }
+
+    .badge-high {
+      background: #fbe4e2;
+      color: #b93b30;
+    }
+
+    .badge-medium {
+      background: #fbf1cb;
+      color: #9a6700;
+    }
+
+    .badge-low {
+      background: var(--n-accent-soft);
+      color: var(--n-accent);
+    }
+
+    .platform-badge {
+      background: #f1e5fc;
+      color: #6940a5;
+    }
+
+    .dark .platform-badge {
+      background: rgba(147, 112, 219, 0.16);
+      color: #c9a6f5;
+    }
+
+    .category-badge {
+      background: var(--n-accent-soft);
+      color: var(--n-accent);
+    }
+
+    /* =========================================================
+       FORM ELEMENTS
+    ========================================================== */
+
+    textarea,
+    input,
+    select {
       outline: none;
       background: var(--n-bg);
       color: var(--n-text);
+
       border-color: var(--n-border) !important;
     }
 
-    textarea:focus, input:focus, select:focus {
-      border-color: var(--n-accent) !important;
-      box-shadow: 0 0 0 2px var(--n-accent-soft);
+    textarea::placeholder,
+    input::placeholder {
+      color: var(--n-text-muted);
+      opacity: 0.75;
     }
 
-    .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
-    .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
-    .scrollbar-thin::-webkit-scrollbar-thumb { background: #d3d3d1; border-radius: 999px; }
-    .dark .scrollbar-thin::-webkit-scrollbar-thumb { background: #3f3f3f; }
+    textarea:focus,
+    input:focus,
+    select:focus {
+      border-color: var(--n-accent) !important;
 
-    .hidden-view { display: none !important; }
+      box-shadow:
+        0 0 0 2px var(--n-accent-soft);
+    }
+
+    /* =========================================================
+       SCROLLBAR
+    ========================================================== */
+
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background: #d3d3d1;
+      border-radius: 999px;
+    }
+
+    .dark .scrollbar-thin::-webkit-scrollbar-thumb {
+      background: #3f3f3f;
+    }
+
+    /* =========================================================
+       EMPTY STATES
+    ========================================================== */
+
+    .empty-state {
+      min-height: 200px;
+    }
+
+    /* =========================================================
+       CLOCK
+    ========================================================== */
+
+    .clock-number {
+      letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .city-row {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* =========================================================
+       TOAST
+    ========================================================== */
 
     .toast {
-      animation: toastIn 0.15s ease, toastOut 0.2s ease 3.4s forwards;
+      animation:
+        toastIn 0.15s ease,
+        toastOut 0.2s ease 3.4s forwards;
     }
-    @keyframes toastIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes toastOut { to { opacity: 0; transform: translateY(6px); } }
 
-    .empty-state { min-height: 200px; }
-    .clock-number { letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
-    .city-row { font-variant-numeric: tabular-nums; }
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes toastOut {
+      to {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+    }
+
+    /* =========================================================
+       SECTION LABEL
+    ========================================================== */
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+
+      font-size: 10px;
+      font-weight: 700;
+
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+
+      color: var(--n-text-muted);
+    }
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================== */
 
     @media (max-width: 768px) {
-      .app-card { border-radius: var(--n-radius); }
-      .modal-panel { max-height: calc(100vh - 16px); }
+      .app-card {
+        border-radius: var(--n-radius);
+      }
+
+      .modal-panel {
+        max-height: calc(100vh - 16px);
+      }
     }
   </style>
 </head>
 
 <body class="min-h-screen">
 
-  <!-- HEADER -->
-  <header class="sticky top-0 z-40 border-b" style="border-color: var(--n-border); background: var(--n-bg);">
+  <!-- =======================================================
+       HEADER
+  ======================================================== -->
+
+  <header
+    class="sticky top-0 z-40 border-b"
+    style="
+      border-color: var(--n-border);
+      background: var(--n-bg);
+    "
+  >
     <div class="mx-auto max-w-[1600px] px-4 py-3 sm:px-6">
 
       <div class="flex flex-wrap items-center justify-between gap-3">
 
+        <!-- BRAND -->
+
         <div class="flex min-w-0 items-center gap-3">
-          <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md" style="background: var(--n-accent-soft); color: var(--n-accent);">
+
+          <div
+            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md"
+            style="
+              background: var(--n-accent-soft);
+              color: var(--n-accent);
+            "
+          >
             <i class="fa-solid fa-headset"></i>
           </div>
 
           <div class="min-w-0">
-            <h1 class="truncate text-sm font-semibold sm:text-base" style="color: var(--n-text);">
+
+            <h1
+              class="truncate text-sm font-semibold sm:text-base"
+              style="color: var(--n-text);"
+            >
               Support Operations Dashboard
             </h1>
-            <p class="truncate text-xs" style="color: var(--n-text-muted);">
+
+            <p
+              class="truncate text-xs"
+              style="color: var(--n-text-muted);"
+            >
               US time reference &amp; live support incidents
             </p>
+
           </div>
+
         </div>
+
+        <!-- HEADER CONTROLS -->
 
         <div class="flex items-center gap-2">
 
-          <div class="hidden items-center gap-2 rounded-md border px-3 py-1.5 text-xs sm:flex" style="border-color: var(--n-border);">
-            <i class="fa-regular fa-clock" style="color: var(--n-text-muted);"></i>
-            <span class="font-medium" style="color: var(--n-text-muted);">Tbilisi</span>
-            <span id="headerTbilisiClock" class="font-semibold tabular-nums" style="color: var(--n-text);">--:--:--</span>
+          <div
+            class="hidden items-center gap-2 rounded-md border px-3 py-1.5 text-xs sm:flex"
+            style="border-color: var(--n-border);"
+          >
+            <i
+              class="fa-regular fa-clock"
+              style="color: var(--n-text-muted);"
+            ></i>
+
+            <span
+              class="font-medium"
+              style="color: var(--n-text-muted);"
+            >
+              Tbilisi
+            </span>
+
+            <span
+              id="headerTbilisiClock"
+              class="font-semibold tabular-nums"
+              style="color: var(--n-text);"
+            >
+              --:--:--
+            </span>
           </div>
+
+          <!-- THEME -->
 
           <button
             id="themeToggle"
             onclick="toggleTheme()"
             class="flex h-9 w-9 items-center justify-center rounded-md border transition"
-            style="border-color: var(--n-border); color: var(--n-text);"
+            style="
+              border-color: var(--n-border);
+              color: var(--n-text);
+            "
             title="Toggle theme"
           >
-            <i id="themeIcon" class="fa-solid fa-moon"></i>
+            <i
+              id="themeIcon"
+              class="fa-solid fa-moon"
+            ></i>
           </button>
+
+          <!-- ADMIN -->
 
           <button
             onclick="openAdmin()"
@@ -230,40 +495,73 @@
             style="background: var(--n-accent);"
           >
             <i class="fa-solid fa-user-shield"></i>
-            <span class="hidden sm:inline">TL / QA / MA</span>
+
+            <span class="hidden sm:inline">
+              TL / QA / MA
+            </span>
           </button>
 
         </div>
       </div>
 
-      <!-- MAIN TABS -->
-      <div class="mt-3 flex gap-1 rounded-md p-1" style="background: var(--n-bg-secondary);">
-        <button id="tabTime" onclick="switchTab('time')" class="tab-button active flex-1 rounded-md px-4 py-1.5 text-xs font-semibold">
-          <i class="fa-regular fa-clock mr-1"></i> US TIME
-        </button>
-        <button id="tabIncidents" onclick="switchTab('incidents')" class="tab-button flex-1 rounded-md px-4 py-1.5 text-xs font-semibold">
-          <i class="fa-solid fa-triangle-exclamation mr-1"></i> CURRENT INCIDENTS
-        </button>
-      </div>
-
     </div>
   </header>
 
-  <!-- MAIN -->
+
+  <!-- =======================================================
+       MAIN
+  ======================================================== -->
+
   <main class="mx-auto max-w-[1600px] px-4 py-5 sm:px-6">
 
-    <!-- TIME VIEW -->
+
+    <!-- =====================================================
+         TIME DASHBOARD
+    ====================================================== -->
+
     <section id="timeView">
 
-      <div class="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+      <!-- SECTION HEADER -->
+
+      <div
+        class="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between"
+      >
+
         <div>
-          <h2 class="text-base font-semibold" style="color: var(--n-text);">US Time Zones</h2>
-          <p class="text-xs" style="color: var(--n-text-muted);">Quick operational view</p>
+
+          <div class="section-label mb-1">
+            <i class="fa-regular fa-clock"></i>
+            Time Dashboard
+          </div>
+
+          <h2
+            class="text-base font-semibold"
+            style="color: var(--n-text);"
+          >
+            US Time Zones
+          </h2>
+
+          <p
+            class="text-xs"
+            style="color: var(--n-text-muted);"
+          >
+            Quick operational view
+          </p>
+
         </div>
 
+
         <div class="flex flex-wrap items-center gap-2">
+
+          <!-- SEARCH -->
+
           <div class="relative w-full sm:w-72">
-            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-xs" style="color: var(--n-text-muted);"></i>
+
+            <i
+              class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-xs"
+              style="color: var(--n-text-muted);"
+            ></i>
+
             <input
               id="timezoneSearch"
               type="text"
@@ -272,59 +570,181 @@
               class="w-full rounded-md border py-2 pl-9 pr-3 text-sm"
               style="border-color: var(--n-border);"
             />
+
           </div>
+
+
+          <!-- SECONDS -->
 
           <button
             id="secondsToggle"
             onclick="toggleSeconds()"
             class="rounded-md border px-3 py-2 text-xs font-semibold transition"
-            style="border-color: var(--n-border); color: var(--n-text-muted);"
+            style="
+              border-color: var(--n-border);
+              color: var(--n-text-muted);
+            "
           >
-            <i class="fa-solid fa-stopwatch mr-1"></i> Seconds
+            <i class="fa-solid fa-stopwatch mr-1"></i>
+            Seconds
           </button>
+
         </div>
+
       </div>
 
-      <!-- COMPACT TBILISI REFERENCE -->
-      <div class="app-card mb-4 flex flex-col justify-between gap-3 px-4 py-3 sm:flex-row sm:items-center">
+
+      <!-- ===================================================
+           TBILISI REFERENCE
+      ==================================================== -->
+
+      <div
+        class="app-card mb-4 flex flex-col justify-between gap-3 px-4 py-3 sm:flex-row sm:items-center"
+      >
+
         <div class="flex items-center gap-3">
-          <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md" style="background: var(--n-bg-secondary); color: var(--n-text-muted);">
+
+          <div
+            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md"
+            style="
+              background: var(--n-bg-secondary);
+              color: var(--n-text-muted);
+            "
+          >
             <i class="fa-solid fa-location-dot"></i>
           </div>
+
           <div>
-            <p class="text-[10px] font-semibold uppercase tracking-wider" style="color: var(--n-text-muted);">Reference Time</p>
-            <div class="mt-0.5 flex flex-wrap items-baseline gap-x-2 gap-y-0">
-              <h2 class="text-sm font-semibold" style="color: var(--n-text);">Tbilisi, Georgia</h2>
-              <span id="tbilisiDate" class="text-xs" style="color: var(--n-text-muted);">--</span>
+
+            <p
+              class="text-[10px] font-semibold uppercase tracking-wider"
+              style="color: var(--n-text-muted);"
+            >
+              Reference Time
+            </p>
+
+            <div
+              class="mt-0.5 flex flex-wrap items-baseline gap-x-2 gap-y-0"
+            >
+
+              <h2
+                class="text-sm font-semibold"
+                style="color: var(--n-text);"
+              >
+                Tbilisi, Georgia
+              </h2>
+
+              <span
+                id="tbilisiDate"
+                class="text-xs"
+                style="color: var(--n-text-muted);"
+              >
+                --
+              </span>
+
             </div>
+
           </div>
+
         </div>
+
 
         <div class="flex items-center gap-4 sm:gap-6">
+
           <div class="text-right">
-            <div id="tbilisiClock" class="clock-number text-2xl font-bold sm:text-3xl" style="color: var(--n-text);">--:--:--</div>
-            <div class="text-[10px]" style="color: var(--n-text-muted);">Asia/Tbilisi &middot; UTC+4</div>
+
+            <div
+              id="tbilisiClock"
+              class="clock-number text-2xl font-bold sm:text-3xl"
+              style="color: var(--n-text);"
+            >
+              --:--:--
+            </div>
+
+            <div
+              class="text-[10px]"
+              style="color: var(--n-text-muted);"
+            >
+              Asia/Tbilisi &middot; UTC+4
+            </div>
+
           </div>
+
         </div>
+
       </div>
 
-      <div id="timezoneGroups" class="space-y-3"></div>
+
+      <!-- ===================================================
+           TIMEZONE GROUPS
+      ==================================================== -->
+
+      <div
+        id="timezoneGroups"
+        class="space-y-3"
+      ></div>
 
     </section>
 
-    <!-- INCIDENT VIEW -->
-    <section id="incidentsView" class="hidden-view">
+
+    <!-- =====================================================
+         DIVIDER
+    ====================================================== -->
+
+    <div class="section-divider"></div>
+
+
+    <!-- =====================================================
+         ANNOUNCEMENTS / INCIDENTS
+    ====================================================== -->
+
+    <section id="incidentsView">
+
+      <!-- SECTION HEADER / FILTERS -->
 
       <div class="app-card mb-4 p-4">
-        <div class="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+
+        <div
+          class="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between"
+        >
+
           <div>
-            <h2 class="text-base font-semibold" style="color: var(--n-text);">Current Incidents</h2>
-            <p class="text-xs" style="color: var(--n-text-muted);">Active operational issues and support playbooks</p>
+
+            <div class="section-label mb-1">
+              <i class="fa-solid fa-bullhorn"></i>
+              Announcements
+            </div>
+
+            <h2
+              class="text-base font-semibold"
+              style="color: var(--n-text);"
+            >
+              Current Incidents
+            </h2>
+
+            <p
+              class="text-xs"
+              style="color: var(--n-text-muted);"
+            >
+              Active operational issues and support playbooks
+            </p>
+
           </div>
 
+
+          <!-- FILTERS -->
+
           <div class="flex flex-col gap-2 sm:flex-row">
+
+            <!-- SEARCH -->
+
             <div class="relative sm:w-72">
-              <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-xs" style="color: var(--n-text-muted);"></i>
+
+              <i
+                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-xs"
+                style="color: var(--n-text-muted);"
+              ></i>
+
               <input
                 id="incidentSearch"
                 type="text"
@@ -333,9 +753,18 @@
                 class="w-full rounded-md border py-2 pl-9 pr-3 text-sm"
                 style="border-color: var(--n-border);"
               />
+
             </div>
 
-            <select id="platformFilter" onchange="renderIncidents()" class="rounded-md border px-3 py-2 text-sm" style="border-color: var(--n-border);">
+
+            <!-- PLATFORM -->
+
+            <select
+              id="platformFilter"
+              onchange="renderIncidents()"
+              class="rounded-md border px-3 py-2 text-sm"
+              style="border-color: var(--n-border);"
+            >
               <option value="">All Platforms</option>
               <option value="Fortune Purple">Fortune Purple</option>
               <option value="Movacoins">Movacoins</option>
@@ -343,7 +772,15 @@
               <option value="All Platforms">All Platforms</option>
             </select>
 
-            <select id="categoryFilter" onchange="renderIncidents()" class="rounded-md border px-3 py-2 text-sm" style="border-color: var(--n-border);">
+
+            <!-- CATEGORY -->
+
+            <select
+              id="categoryFilter"
+              onchange="renderIncidents()"
+              class="rounded-md border px-3 py-2 text-sm"
+              style="border-color: var(--n-border);"
+            >
               <option value="">All Categories</option>
               <option value="Payments">Payments</option>
               <option value="Withdrawals">Withdrawals</option>
@@ -355,169 +792,551 @@
               <option value="Technical">Technical</option>
               <option value="Other">Other</option>
             </select>
+
           </div>
+
         </div>
+
       </div>
+
+
+      <!-- ===================================================
+           ACTIVE INCIDENTS
+      ==================================================== -->
 
       <div class="mb-6">
+
         <div class="mb-3 flex items-center justify-between">
+
           <div class="flex items-center gap-2">
-            <span class="flex h-7 w-7 items-center justify-center rounded-md" style="background: #fbe4e2; color: #b93b30;">
+
+            <span
+              class="flex h-7 w-7 items-center justify-center rounded-md"
+              style="
+                background: #fbe4e2;
+                color: #b93b30;
+              "
+            >
               <i class="fa-solid fa-bolt text-xs"></i>
             </span>
-            <h3 class="text-sm font-semibold" style="color: var(--n-text);">Active Incidents</h3>
-            <span id="activeIncidentCount" class="rounded-full px-2 py-0.5 text-[10px] font-semibold" style="background: var(--n-bg-secondary); color: var(--n-text-muted);">0</span>
+
+            <h3
+              class="text-sm font-semibold"
+              style="color: var(--n-text);"
+            >
+              Active Incidents
+            </h3>
+
+            <span
+              id="activeIncidentCount"
+              class="rounded-full px-2 py-0.5 text-[10px] font-semibold"
+              style="
+                background: var(--n-bg-secondary);
+                color: var(--n-text-muted);
+              "
+            >
+              0
+            </span>
+
           </div>
 
-          <button onclick="loadIncidents()" class="rounded-md px-2.5 py-1.5 text-xs font-semibold transition" style="color: var(--n-text-muted);">
-            <i class="fa-solid fa-rotate-right mr-1"></i> Refresh
+
+          <button
+            onclick="loadIncidents()"
+            class="rounded-md px-2.5 py-1.5 text-xs font-semibold transition"
+            style="color: var(--n-text-muted);"
+          >
+            <i class="fa-solid fa-rotate-right mr-1"></i>
+            Refresh
           </button>
+
         </div>
 
-        <div id="incidentList" class="grid gap-3 md:grid-cols-2 xl:grid-cols-3"></div>
+
+        <div
+          id="incidentList"
+          class="grid gap-3 md:grid-cols-2 xl:grid-cols-3"
+        ></div>
+
       </div>
 
+
+      <!-- ===================================================
+           RESOLVED
+      ==================================================== -->
+
       <div>
+
         <div class="mb-3 flex items-center gap-2">
-          <span class="flex h-7 w-7 items-center justify-center rounded-md" style="background: var(--n-bg-secondary); color: var(--n-text-muted);">
+
+          <span
+            class="flex h-7 w-7 items-center justify-center rounded-md"
+            style="
+              background: var(--n-bg-secondary);
+              color: var(--n-text-muted);
+            "
+          >
             <i class="fa-solid fa-check text-xs"></i>
           </span>
-          <h3 class="text-sm font-semibold" style="color: var(--n-text);">Resolved History</h3>
+
+          <h3
+            class="text-sm font-semibold"
+            style="color: var(--n-text);"
+          >
+            Resolved History
+          </h3>
+
         </div>
 
-        <div id="resolvedList" class="space-y-2"></div>
+        <div
+          id="resolvedList"
+          class="space-y-2"
+        ></div>
+
       </div>
 
     </section>
 
   </main>
 
-  <!-- INCIDENT DETAIL MODAL -->
-  <div id="incidentModal" class="modal-backdrop fixed inset-0 z-50 hidden items-center justify-center p-4">
-    <div class="modal-panel w-full max-w-4xl rounded-lg" style="background: var(--n-bg);">
 
-      <div class="sticky top-0 z-10 border-b px-5 py-4" style="border-color: var(--n-border); background: var(--n-bg);">
+  <!-- =======================================================
+       INCIDENT DETAIL MODAL
+  ======================================================== -->
+
+  <div
+    id="incidentModal"
+    class="modal-backdrop fixed inset-0 z-50 hidden items-center justify-center p-4"
+  >
+
+    <div
+      class="modal-panel w-full max-w-4xl rounded-lg"
+      style="background: var(--n-bg);"
+    >
+
+      <!-- MODAL HEADER -->
+
+      <div
+        class="sticky top-0 z-10 border-b px-5 py-4"
+        style="
+          border-color: var(--n-border);
+          background: var(--n-bg);
+        "
+      >
+
         <div class="flex items-start justify-between gap-4">
+
           <div class="min-w-0">
-            <div id="detailBadges" class="mb-2 flex flex-wrap gap-1.5"></div>
-            <h2 id="detailTitle" class="text-lg font-semibold" style="color: var(--n-text);">Incident</h2>
-            <p id="detailMeta" class="mt-1 text-xs" style="color: var(--n-text-muted);"></p>
+
+            <div
+              id="detailBadges"
+              class="mb-2 flex flex-wrap gap-1.5"
+            ></div>
+
+            <h2
+              id="detailTitle"
+              class="text-lg font-semibold"
+              style="color: var(--n-text);"
+            >
+              Incident
+            </h2>
+
+            <p
+              id="detailMeta"
+              class="mt-1 text-xs"
+              style="color: var(--n-text-muted);"
+            ></p>
+
           </div>
-          <button onclick="hideModal('incidentModal')" class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md" style="color: var(--n-text-muted);">
+
+          <button
+            onclick="hideModal('incidentModal')"
+            class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md"
+            style="color: var(--n-text-muted);"
+          >
             <i class="fa-solid fa-xmark"></i>
           </button>
+
         </div>
+
       </div>
+
+
+      <!-- MODAL BODY -->
 
       <div class="space-y-4 p-5">
 
+        <!-- ISSUE -->
+
         <div class="detail-section issue">
+
           <div class="mb-2 flex items-center gap-2">
-            <span class="flex h-7 w-7 items-center justify-center rounded-md" style="background: var(--n-bg-secondary); color: var(--n-text-muted);">
+
+            <span
+              class="flex h-7 w-7 items-center justify-center rounded-md"
+              style="
+                background: var(--n-bg-secondary);
+                color: var(--n-text-muted);
+              "
+            >
               <i class="fa-solid fa-circle-info text-xs"></i>
             </span>
+
             <div>
-              <h3 class="text-sm font-semibold" style="color: var(--n-text);">Issue</h3>
-              <p class="text-[10px] uppercase tracking-wider" style="color: var(--n-text-muted);">What is happening</p>
+
+              <h3
+                class="text-sm font-semibold"
+                style="color: var(--n-text);"
+              >
+                Issue
+              </h3>
+
+              <p
+                class="text-[10px] uppercase tracking-wider"
+                style="color: var(--n-text-muted);"
+              >
+                What is happening
+              </p>
+
             </div>
+
           </div>
-          <div id="detailDescription" class="whitespace-pre-wrap text-sm leading-6" style="color: var(--n-text);"></div>
+
+          <div
+            id="detailDescription"
+            class="whitespace-pre-wrap text-sm leading-6"
+            style="color: var(--n-text);"
+          ></div>
+
         </div>
+
+
+        <!-- AGENT ACTION -->
 
         <div class="detail-section action">
+
           <div class="mb-2 flex items-center gap-2">
-            <span class="flex h-7 w-7 items-center justify-center rounded-md" style="background: var(--n-accent-soft); color: var(--n-accent);">
+
+            <span
+              class="flex h-7 w-7 items-center justify-center rounded-md"
+              style="
+                background: var(--n-accent-soft);
+                color: var(--n-accent);
+              "
+            >
               <i class="fa-solid fa-user-check text-xs"></i>
             </span>
+
             <div>
-              <h3 class="text-sm font-semibold" style="color: var(--n-text);">Agent Action</h3>
-              <p class="text-[10px] uppercase tracking-wider" style="color: var(--n-text-muted);">What the agent should do</p>
+
+              <h3
+                class="text-sm font-semibold"
+                style="color: var(--n-text);"
+              >
+                Agent Action
+              </h3>
+
+              <p
+                class="text-[10px] uppercase tracking-wider"
+                style="color: var(--n-text-muted);"
+              >
+                What the agent should do
+              </p>
+
             </div>
+
           </div>
-          <div id="detailAgentAction" class="whitespace-pre-wrap text-sm font-medium leading-6" style="color: var(--n-text);"></div>
+
+          <div
+            id="detailAgentAction"
+            class="whitespace-pre-wrap text-sm font-medium leading-6"
+            style="color: var(--n-text);"
+          ></div>
+
         </div>
+
+
+        <!-- WHAT TO CHECK -->
 
         <div class="detail-section check">
+
           <div class="mb-2 flex items-center gap-2">
-            <span class="flex h-7 w-7 items-center justify-center rounded-md" style="background: #fbf1cb; color: #9a6700;">
+
+            <span
+              class="flex h-7 w-7 items-center justify-center rounded-md"
+              style="
+                background: #fbf1cb;
+                color: #9a6700;
+              "
+            >
               <i class="fa-solid fa-magnifying-glass text-xs"></i>
             </span>
+
             <div>
-              <h3 class="text-sm font-semibold" style="color: var(--n-text);">What to Check</h3>
-              <p class="text-[10px] uppercase tracking-wider" style="color: var(--n-text-muted);">Diagnostic information</p>
+
+              <h3
+                class="text-sm font-semibold"
+                style="color: var(--n-text);"
+              >
+                What to Check
+              </h3>
+
+              <p
+                class="text-[10px] uppercase tracking-wider"
+                style="color: var(--n-text-muted);"
+              >
+                Diagnostic information
+              </p>
+
             </div>
+
           </div>
-          <div id="detailWhatToCheck" class="whitespace-pre-wrap text-sm leading-6" style="color: var(--n-text);"></div>
+
+          <div
+            id="detailWhatToCheck"
+            class="whitespace-pre-wrap text-sm leading-6"
+            style="color: var(--n-text);"
+          ></div>
+
         </div>
+
+
+        <!-- SUPPORT PROCEDURE -->
 
         <div class="detail-section procedure">
+
           <div class="mb-2 flex items-center gap-2">
-            <span class="flex h-7 w-7 items-center justify-center rounded-md" style="background: #f1e5fc; color: #6940a5;">
+
+            <span
+              class="flex h-7 w-7 items-center justify-center rounded-md"
+              style="
+                background: #f1e5fc;
+                color: #6940a5;
+              "
+            >
               <i class="fa-solid fa-list-check text-xs"></i>
             </span>
+
             <div>
-              <h3 class="text-sm font-semibold" style="color: var(--n-text);">Support Procedure</h3>
-              <p class="text-[10px] uppercase tracking-wider" style="color: var(--n-text-muted);">Step-by-step internal instructions</p>
+
+              <h3
+                class="text-sm font-semibold"
+                style="color: var(--n-text);"
+              >
+                Support Procedure
+              </h3>
+
+              <p
+                class="text-[10px] uppercase tracking-wider"
+                style="color: var(--n-text-muted);"
+              >
+                Step-by-step internal instructions
+              </p>
+
             </div>
+
           </div>
-          <div id="detailInstructions" class="whitespace-pre-wrap text-sm leading-6" style="color: var(--n-text);"></div>
+
+          <div
+            id="detailInstructions"
+            class="whitespace-pre-wrap text-sm leading-6"
+            style="color: var(--n-text);"
+          ></div>
+
         </div>
+
+
+        <!-- CUSTOMER RESPONSE -->
 
         <div class="detail-section response">
+
           <div class="mb-2 flex items-center gap-2">
-            <span class="flex h-7 w-7 items-center justify-center rounded-md" style="background: #d9f2ec; color: #0f7b6c;">
+
+            <span
+              class="flex h-7 w-7 items-center justify-center rounded-md"
+              style="
+                background: #d9f2ec;
+                color: #0f7b6c;
+              "
+            >
               <i class="fa-solid fa-comment-dots text-xs"></i>
             </span>
+
             <div>
-              <h3 class="text-sm font-semibold" style="color: var(--n-text);">Customer Response</h3>
-              <p class="text-[10px] uppercase tracking-wider" style="color: var(--n-text-muted);">Ready-to-use customer message</p>
+
+              <h3
+                class="text-sm font-semibold"
+                style="color: var(--n-text);"
+              >
+                Customer Response
+              </h3>
+
+              <p
+                class="text-[10px] uppercase tracking-wider"
+                style="color: var(--n-text-muted);"
+              >
+                Ready-to-use customer message
+              </p>
+
             </div>
+
           </div>
-          <div id="detailResponse" class="whitespace-pre-wrap rounded-md border p-3 text-sm leading-6" style="border-color: var(--n-border); color: var(--n-text);"></div>
+
+          <div
+            id="detailResponse"
+            class="whitespace-pre-wrap rounded-md border p-3 text-sm leading-6"
+            style="
+              border-color: var(--n-border);
+              color: var(--n-text);
+            "
+          ></div>
+
         </div>
 
-        <div id="detailNotionWrapper" class="rounded-md border p-4" style="border-color: var(--n-border); background: var(--n-bg-secondary);">
+
+        <!-- NOTION -->
+
+        <div
+          id="detailNotionWrapper"
+          class="rounded-md border p-4"
+          style="
+            border-color: var(--n-border);
+            background: var(--n-bg-secondary);
+          "
+        >
+
           <div class="flex items-center justify-between gap-3">
+
             <div class="flex items-center gap-2">
-              <i class="fa-solid fa-book" style="color: var(--n-text-muted);"></i>
+
+              <i
+                class="fa-solid fa-book"
+                style="color: var(--n-text-muted);"
+              ></i>
+
               <div>
-                <p class="text-sm font-semibold" style="color: var(--n-text);">Notion Article</p>
-                <p class="text-[10px]" style="color: var(--n-text-muted);">Full internal reference</p>
+
+                <p
+                  class="text-sm font-semibold"
+                  style="color: var(--n-text);"
+                >
+                  Notion Article
+                </p>
+
+                <p
+                  class="text-[10px]"
+                  style="color: var(--n-text-muted);"
+                >
+                  Full internal reference
+                </p>
+
               </div>
+
             </div>
-            <a id="detailNotion" href="#" target="_blank" rel="noopener noreferrer" class="rounded-md px-3 py-2 text-xs font-semibold text-white" style="background: var(--n-accent);">
-              Open Article <i class="fa-solid fa-arrow-up-right-from-square ml-1"></i>
+
+            <a
+              id="detailNotion"
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="rounded-md px-3 py-2 text-xs font-semibold text-white"
+              style="background: var(--n-accent);"
+            >
+              Open Article
+              <i class="fa-solid fa-arrow-up-right-from-square ml-1"></i>
             </a>
+
           </div>
+
         </div>
 
       </div>
+
     </div>
+
   </div>
 
-  <!-- LOGIN MODAL -->
-  <div id="loginModal" class="modal-backdrop fixed inset-0 z-[60] hidden items-center justify-center p-4">
-    <div class="w-full max-w-sm rounded-lg p-6" style="background: var(--n-bg);">
+
+  <!-- =======================================================
+       LOGIN MODAL
+  ======================================================== -->
+
+  <div
+    id="loginModal"
+    class="modal-backdrop fixed inset-0 z-[60] hidden items-center justify-center p-4"
+  >
+
+    <div
+      class="w-full max-w-sm rounded-lg p-6"
+      style="background: var(--n-bg);"
+    >
+
       <div class="mb-5 text-center">
-        <div class="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-md" style="background: var(--n-accent-soft); color: var(--n-accent);">
+
+        <div
+          class="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-md"
+          style="
+            background: var(--n-accent-soft);
+            color: var(--n-accent);
+          "
+        >
           <i class="fa-solid fa-lock"></i>
         </div>
-        <h2 class="text-base font-semibold" style="color: var(--n-text);">Management Login</h2>
-        <p class="mt-1 text-xs" style="color: var(--n-text-muted);">TL, QA and Management access</p>
+
+        <h2
+          class="text-base font-semibold"
+          style="color: var(--n-text);"
+        >
+          Management Login
+        </h2>
+
+        <p
+          class="mt-1 text-xs"
+          style="color: var(--n-text-muted);"
+        >
+          TL, QA and Management access
+        </p>
+
       </div>
 
+
       <div class="space-y-3">
+
+        <!-- ROLE -->
+
         <div>
-          <label class="field-label mb-1.5 block text-xs font-semibold" style="color: var(--n-text-muted);">Role</label>
-          <select id="loginRole" class="w-full rounded-md border px-3 py-2 text-sm" style="border-color: var(--n-border);">
+
+          <label
+            class="field-label mb-1.5 block text-xs font-semibold"
+            style="color: var(--n-text-muted);"
+          >
+            Role
+          </label>
+
+          <select
+            id="loginRole"
+            class="w-full rounded-md border px-3 py-2 text-sm"
+            style="border-color: var(--n-border);"
+          >
             <option value="TL">Team Lead</option>
             <option value="QA">QA</option>
             <option value="MA">Management</option>
           </select>
+
         </div>
 
+
+        <!-- PIN -->
+
         <div>
-          <label class="field-label mb-1.5 block text-xs font-semibold" style="color: var(--n-text-muted);">PIN</label>
+
+          <label
+            class="field-label mb-1.5 block text-xs font-semibold"
+            style="color: var(--n-text-muted);"
+          >
+            PIN
+          </label>
+
           <input
             id="loginPin"
             type="password"
@@ -528,188 +1347,624 @@
             class="w-full rounded-md border px-3 py-2 text-sm"
             style="border-color: var(--n-border);"
           />
+
         </div>
 
-        <div id="loginError" class="hidden rounded-md border p-3 text-xs font-medium" style="border-color: #f3c9c5; background: #fbe4e2; color: #b93b30;"></div>
 
-        <button id="loginSubmitButton" onclick="login()" class="flex w-full items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-semibold text-white" style="background: var(--n-accent);">
-          <i class="fa-solid fa-right-to-bracket"></i> Login
+        <!-- ERROR -->
+
+        <div
+          id="loginError"
+          class="hidden rounded-md border p-3 text-xs font-medium"
+          style="
+            border-color: #f3c9c5;
+            background: #fbe4e2;
+            color: #b93b30;
+          "
+        ></div>
+
+
+        <!-- LOGIN -->
+
+        <button
+          id="loginSubmitButton"
+          onclick="login()"
+          class="flex w-full items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-semibold text-white"
+          style="background: var(--n-accent);"
+        >
+          <i class="fa-solid fa-right-to-bracket"></i>
+          Login
         </button>
 
-        <button onclick="hideModal('loginModal')" class="w-full rounded-md px-4 py-2 text-xs font-semibold" style="color: var(--n-text-muted);">
+
+        <!-- CANCEL -->
+
+        <button
+          onclick="hideModal('loginModal')"
+          class="w-full rounded-md px-4 py-2 text-xs font-semibold"
+          style="color: var(--n-text-muted);"
+        >
           Cancel
         </button>
+
       </div>
+
     </div>
+
   </div>
 
-  <!-- ADMIN MODAL -->
-  <div id="adminModal" class="modal-backdrop fixed inset-0 z-[55] hidden items-center justify-center p-4">
-    <div class="modal-panel w-full max-w-6xl rounded-lg" style="background: var(--n-bg);">
 
-      <div class="sticky top-0 z-20 border-b px-5 py-4" style="border-color: var(--n-border); background: var(--n-bg);">
+  <!-- =======================================================
+       ADMIN MODAL
+  ======================================================== -->
+
+  <div
+    id="adminModal"
+    class="modal-backdrop fixed inset-0 z-[55] hidden items-center justify-center p-4"
+  >
+
+    <div
+      class="modal-panel w-full max-w-6xl rounded-lg"
+      style="background: var(--n-bg);"
+    >
+
+      <!-- ADMIN HEADER -->
+
+      <div
+        class="sticky top-0 z-20 border-b px-5 py-4"
+        style="
+          border-color: var(--n-border);
+          background: var(--n-bg);
+        "
+      >
+
         <div class="flex flex-wrap items-center justify-between gap-3">
+
           <div>
+
             <div class="flex items-center gap-2">
-              <i class="fa-solid fa-user-shield" style="color: var(--n-text-muted);"></i>
-              <h2 class="text-base font-semibold" style="color: var(--n-text);">Incident Management</h2>
+
+              <i
+                class="fa-solid fa-user-shield"
+                style="color: var(--n-text-muted);"
+              ></i>
+
+              <h2
+                class="text-base font-semibold"
+                style="color: var(--n-text);"
+              >
+                Incident Management
+              </h2>
+
             </div>
-            <p id="adminRoleText" class="mt-1 text-xs" style="color: var(--n-text-muted);"></p>
+
+            <p
+              id="adminRoleText"
+              class="mt-1 text-xs"
+              style="color: var(--n-text-muted);"
+            ></p>
+
           </div>
+
 
           <div class="flex items-center gap-2">
-            <button onclick="startNewIncident()" class="rounded-md px-3 py-2 text-xs font-semibold text-white" style="background: var(--n-accent);">
-              <i class="fa-solid fa-plus mr-1"></i> New Incident
+
+            <!-- NEW -->
+
+            <button
+              onclick="startNewIncident()"
+              class="rounded-md px-3 py-2 text-xs font-semibold text-white"
+              style="background: var(--n-accent);"
+            >
+              <i class="fa-solid fa-plus mr-1"></i>
+              New Incident
             </button>
-            <button onclick="logout()" class="rounded-md border px-3 py-2 text-xs font-semibold" style="border-color: var(--n-border); color: var(--n-text-muted);">
-              <i class="fa-solid fa-right-from-bracket mr-1"></i> Logout
+
+
+            <!-- LOGOUT -->
+
+            <button
+              onclick="logout()"
+              class="rounded-md border px-3 py-2 text-xs font-semibold"
+              style="
+                border-color: var(--n-border);
+                color: var(--n-text-muted);
+              "
+            >
+              <i class="fa-solid fa-right-from-bracket mr-1"></i>
+              Logout
             </button>
-            <button onclick="hideModal('adminModal')" class="flex h-8 w-8 items-center justify-center rounded-md" style="color: var(--n-text-muted);">
+
+
+            <!-- CLOSE -->
+
+            <button
+              onclick="hideModal('adminModal')"
+              class="flex h-8 w-8 items-center justify-center rounded-md"
+              style="color: var(--n-text-muted);"
+            >
               <i class="fa-solid fa-xmark"></i>
             </button>
+
           </div>
+
         </div>
+
       </div>
+
+
+      <!-- ADMIN CONTENT -->
 
       <div class="grid min-h-[600px] lg:grid-cols-[280px_1fr]">
 
-        <aside class="border-b p-4 lg:border-b-0 lg:border-r" style="border-color: var(--n-border); background: var(--n-bg-secondary);">
+        <!-- INCIDENT LIST -->
+
+        <aside
+          class="border-b p-4 lg:border-b-0 lg:border-r"
+          style="
+            border-color: var(--n-border);
+            background: var(--n-bg-secondary);
+          "
+        >
+
           <div class="mb-3 flex items-center justify-between">
-            <h3 class="text-xs font-semibold uppercase tracking-wider" style="color: var(--n-text-muted);">Incidents</h3>
-            <button onclick="loadIncidents(); renderAdminIncidentList();" style="color: var(--n-text-muted);" title="Refresh">
+
+            <h3
+              class="text-xs font-semibold uppercase tracking-wider"
+              style="color: var(--n-text-muted);"
+            >
+              Incidents
+            </h3>
+
+            <button
+              onclick="loadIncidents(); renderAdminIncidentList();"
+              style="color: var(--n-text-muted);"
+              title="Refresh"
+            >
               <i class="fa-solid fa-rotate-right text-xs"></i>
             </button>
+
           </div>
-          <div id="adminIncidentList" class="max-h-[260px] space-y-1 overflow-y-auto scrollbar-thin lg:max-h-[530px]"></div>
+
+
+          <div
+            id="adminIncidentList"
+            class="max-h-[260px] space-y-1 overflow-y-auto scrollbar-thin lg:max-h-[530px]"
+          ></div>
+
         </aside>
+
+
+        <!-- EDITOR -->
 
         <section class="min-w-0 p-4 sm:p-5">
 
-          <div id="editorEmpty" class="empty-state flex items-center justify-center rounded-lg border border-dashed" style="border-color: var(--n-border);">
+          <!-- EMPTY -->
+
+          <div
+            id="editorEmpty"
+            class="empty-state flex items-center justify-center rounded-lg border border-dashed"
+            style="border-color: var(--n-border);"
+          >
+
             <div class="max-w-sm text-center">
-              <div class="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-md" style="background: var(--n-bg-secondary); color: var(--n-text-muted);">
+
+              <div
+                class="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-md"
+                style="
+                  background: var(--n-bg-secondary);
+                  color: var(--n-text-muted);
+                "
+              >
                 <i class="fa-solid fa-pen-to-square"></i>
               </div>
-              <h3 class="text-sm font-semibold" style="color: var(--n-text);">Select an incident</h3>
-              <p class="mt-1 text-xs leading-5" style="color: var(--n-text-muted);">Choose an incident from the left or create a new one.</p>
+
+              <h3
+                class="text-sm font-semibold"
+                style="color: var(--n-text);"
+              >
+                Select an incident
+              </h3>
+
+              <p
+                class="mt-1 text-xs leading-5"
+                style="color: var(--n-text-muted);"
+              >
+                Choose an incident from the left or create a new one.
+              </p>
+
             </div>
+
           </div>
 
-          <div id="incidentEditor" class="hidden">
+
+          <!-- EDITOR -->
+
+          <div
+            id="incidentEditor"
+            class="hidden"
+          >
+
             <div class="mb-4 flex items-center justify-between gap-3">
+
               <div>
-                <h3 id="editorHeading" class="text-base font-semibold" style="color: var(--n-text);">Edit Incident</h3>
-                <p class="text-xs" style="color: var(--n-text-muted);">Keep the operational information structured.</p>
+
+                <h3
+                  id="editorHeading"
+                  class="text-base font-semibold"
+                  style="color: var(--n-text);"
+                >
+                  Edit Incident
+                </h3>
+
+                <p
+                  class="text-xs"
+                  style="color: var(--n-text-muted);"
+                >
+                  Keep the operational information structured.
+                </p>
+
               </div>
-              <button id="deleteIncidentButton" onclick="deleteSelectedIncident()" class="rounded-md border px-3 py-2 text-xs font-semibold" style="border-color: #f3c9c5; color: #b93b30;">
-                <i class="fa-solid fa-trash mr-1"></i> Delete
+
+
+              <button
+                id="deleteIncidentButton"
+                onclick="deleteSelectedIncident()"
+                class="rounded-md border px-3 py-2 text-xs font-semibold"
+                style="
+                  border-color: #f3c9c5;
+                  color: #b93b30;
+                "
+              >
+                <i class="fa-solid fa-trash mr-1"></i>
+                Delete
               </button>
+
             </div>
+
 
             <div class="space-y-4">
 
+              <!-- TOP SELECTORS -->
+
               <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                <div>
-                  <label class="field-label">Platform</label>
-                  <select id="editorPlatform" class="field-input">
-                    <option value="Fortune Purple">Fortune Purple</option>
-                    <option value="Movacoins">Movacoins</option>
-                    <option value="9F">9F</option>
-                    <option value="All Platforms">All Platforms</option>
-                  </select>
-                </div>
+
+                <!-- PLATFORM -->
 
                 <div>
-                  <label class="field-label">Status</label>
-                  <select id="editorStatus" class="field-input">
-                    <option value="ACTIVE">ACTIVE</option>
-                    <option value="MONITORING">MONITORING</option>
-                    <option value="RESOLVED">RESOLVED</option>
+
+                  <label class="field-label">
+                    Platform
+                  </label>
+
+                  <select
+                    id="editorPlatform"
+                    class="field-input"
+                  >
+                    <option value="Fortune Purple">
+                      Fortune Purple
+                    </option>
+
+                    <option value="Movacoins">
+                      Movacoins
+                    </option>
+
+                    <option value="9F">
+                      9F
+                    </option>
+
+                    <option value="All Platforms">
+                      All Platforms
+                    </option>
                   </select>
+
                 </div>
+
+
+                <!-- STATUS -->
 
                 <div>
-                  <label class="field-label">Severity</label>
-                  <select id="editorSeverity" class="field-input">
-                    <option value="HIGH">HIGH</option>
-                    <option value="MEDIUM">MEDIUM</option>
-                    <option value="LOW">LOW</option>
+
+                  <label class="field-label">
+                    Status
+                  </label>
+
+                  <select
+                    id="editorStatus"
+                    class="field-input"
+                  >
+                    <option value="ACTIVE">
+                      ACTIVE
+                    </option>
+
+                    <option value="MONITORING">
+                      MONITORING
+                    </option>
+
+                    <option value="RESOLVED">
+                      RESOLVED
+                    </option>
                   </select>
+
                 </div>
+
+
+                <!-- SEVERITY -->
 
                 <div>
-                  <label class="field-label">Category</label>
-                  <select id="editorCategory" class="field-input">
-                    <option value="Payments">Payments</option>
-                    <option value="Withdrawals">Withdrawals</option>
-                    <option value="Deposits">Deposits</option>
-                    <option value="Games">Games</option>
-                    <option value="KYC">KYC</option>
-                    <option value="Account">Account</option>
-                    <option value="Promotions">Promotions</option>
-                    <option value="Technical">Technical</option>
-                    <option value="Other">Other</option>
+
+                  <label class="field-label">
+                    Severity
+                  </label>
+
+                  <select
+                    id="editorSeverity"
+                    class="field-input"
+                  >
+                    <option value="HIGH">
+                      HIGH
+                    </option>
+
+                    <option value="MEDIUM">
+                      MEDIUM
+                    </option>
+
+                    <option value="LOW">
+                      LOW
+                    </option>
                   </select>
+
                 </div>
+
+
+                <!-- CATEGORY -->
+
+                <div>
+
+                  <label class="field-label">
+                    Category
+                  </label>
+
+                  <select
+                    id="editorCategory"
+                    class="field-input"
+                  >
+                    <option value="Payments">
+                      Payments
+                    </option>
+
+                    <option value="Withdrawals">
+                      Withdrawals
+                    </option>
+
+                    <option value="Deposits">
+                      Deposits
+                    </option>
+
+                    <option value="Games">
+                      Games
+                    </option>
+
+                    <option value="KYC">
+                      KYC
+                    </option>
+
+                    <option value="Account">
+                      Account
+                    </option>
+
+                    <option value="Promotions">
+                      Promotions
+                    </option>
+
+                    <option value="Technical">
+                      Technical
+                    </option>
+
+                    <option value="Other">
+                      Other
+                    </option>
+                  </select>
+
+                </div>
+
               </div>
+
+
+              <!-- TITLE -->
 
               <div>
-                <label class="field-label">Incident Title</label>
-                <input id="editorTitle" type="text" placeholder="Example: Temporary Game Availability Issue" class="field-input" />
+
+                <label class="field-label">
+                  Incident Title
+                </label>
+
+                <input
+                  id="editorTitle"
+                  type="text"
+                  placeholder="Example: Temporary Game Availability Issue"
+                  class="field-input"
+                />
+
               </div>
+
+
+              <!-- AFFECTED -->
 
               <div>
-                <label class="field-label">Affected</label>
-                <input id="editorAffected" type="text" placeholder="Example: BGaming, Evoplay, Hacksaw and NETENT games" class="field-input" />
+
+                <label class="field-label">
+                  Affected
+                </label>
+
+                <input
+                  id="editorAffected"
+                  type="text"
+                  placeholder="Example: BGaming, Evoplay, Hacksaw and NETENT games"
+                  class="field-input"
+                />
+
               </div>
+
+
+              <!-- ISSUE -->
 
               <div>
-                <label class="field-label">Issue</label>
-                <textarea id="editorDescription" rows="4" placeholder="Describe what is happening and why." class="field-input resize-y"></textarea>
+
+                <label class="field-label">
+                  Issue
+                </label>
+
+                <textarea
+                  id="editorDescription"
+                  rows="4"
+                  placeholder="Describe what is happening and why."
+                  class="field-input resize-y"
+                ></textarea>
+
               </div>
+
+
+              <!-- ACTION -->
 
               <div>
-                <label class="field-label">Agent Action</label>
-                <textarea id="editorAgentAction" rows="3" placeholder="What should the agent do immediately?" class="field-input resize-y"></textarea>
+
+                <label class="field-label">
+                  Agent Action
+                </label>
+
+                <textarea
+                  id="editorAgentAction"
+                  rows="3"
+                  placeholder="What should the agent do immediately?"
+                  class="field-input resize-y"
+                ></textarea>
+
               </div>
+
+
+              <!-- CHECK -->
 
               <div>
-                <label class="field-label">What to Check</label>
-                <textarea id="editorWhatToCheck" rows="4" placeholder="What information should the agent collect or verify?" class="field-input resize-y"></textarea>
+
+                <label class="field-label">
+                  What to Check
+                </label>
+
+                <textarea
+                  id="editorWhatToCheck"
+                  rows="4"
+                  placeholder="What information should the agent collect or verify?"
+                  class="field-input resize-y"
+                ></textarea>
+
               </div>
+
+
+              <!-- PROCEDURE -->
 
               <div>
-                <label class="field-label">Support Procedure</label>
-                <textarea id="editorInstructions" rows="7" placeholder="Step-by-step internal instructions." class="field-input resize-y"></textarea>
+
+                <label class="field-label">
+                  Support Procedure
+                </label>
+
+                <textarea
+                  id="editorInstructions"
+                  rows="7"
+                  placeholder="Step-by-step internal instructions."
+                  class="field-input resize-y"
+                ></textarea>
+
               </div>
+
+
+              <!-- RESPONSE -->
 
               <div>
-                <label class="field-label">Customer Response</label>
-                <textarea id="editorResponse" rows="5" placeholder="Ready-to-use response for the customer." class="field-input resize-y"></textarea>
+
+                <label class="field-label">
+                  Customer Response
+                </label>
+
+                <textarea
+                  id="editorResponse"
+                  rows="5"
+                  placeholder="Ready-to-use response for the customer."
+                  class="field-input resize-y"
+                ></textarea>
+
               </div>
+
+
+              <!-- NOTION -->
 
               <div>
-                <label class="field-label">Notion Article URL</label>
-                <input id="editorNotionUrl" type="url" placeholder="https://..." class="field-input" />
+
+                <label class="field-label">
+                  Notion Article URL
+                </label>
+
+                <input
+                  id="editorNotionUrl"
+                  type="url"
+                  placeholder="https://..."
+                  class="field-input"
+                />
+
               </div>
 
-              <div class="flex flex-wrap items-center justify-between gap-3 border-t pt-4" style="border-color: var(--n-border);">
-                <p id="editorMessage" class="text-xs"></p>
-                <button onclick="saveIncident()" id="saveIncidentButton" class="rounded-md px-5 py-2.5 text-sm font-semibold text-white" style="background: var(--n-accent);">
-                  <i class="fa-solid fa-floppy-disk mr-1"></i> Save Incident
+
+              <!-- SAVE -->
+
+              <div
+                class="flex flex-wrap items-center justify-between gap-3 border-t pt-4"
+                style="border-color: var(--n-border);"
+              >
+
+                <p
+                  id="editorMessage"
+                  class="text-xs"
+                ></p>
+
+                <button
+                  onclick="saveIncident()"
+                  id="saveIncidentButton"
+                  class="rounded-md px-5 py-2.5 text-sm font-semibold text-white"
+                  style="background: var(--n-accent);"
+                >
+                  <i class="fa-solid fa-floppy-disk mr-1"></i>
+                  Save Incident
                 </button>
+
               </div>
 
             </div>
+
           </div>
 
         </section>
+
       </div>
+
     </div>
+
   </div>
 
-  <!-- TOAST -->
-  <div id="toastContainer" class="pointer-events-none fixed bottom-5 right-5 z-[100] space-y-2"></div>
+
+  <!-- =======================================================
+       TOAST
+  ======================================================== -->
+
+  <div
+    id="toastContainer"
+    class="pointer-events-none fixed bottom-5 right-5 z-[100] space-y-2"
+  ></div>
+
+
+  <!-- =======================================================
+       JAVASCRIPT
+  ======================================================== -->
 
   <script>
 
@@ -717,986 +1972,3292 @@
        CONFIG
     ========================================================== */
 
-    const API_URL = 'https://script.google.com/macros/s/AKfycbx4tSUdnFm6oSrGqK06eQ6INHyc9JA_W6TGYbfulqv5WBvB9XLDEtTLx5qSe3U4cW9DwA/exec';
+    const API_URL =
+      'https://script.google.com/macros/s/AKfycbx4tSUdnFm6oSrGqK06eQ6INHyc9JA_W6TGYbfulqv5WBvB9XLDEtTLx5qSe3U4cW9DwA/exec';
+
 
     /* =========================================================
        STATE
     ========================================================== */
 
     let incidents = [];
-    let currentTab = 'time';
+
     let showSeconds = true;
-    let adminToken = sessionStorage.getItem('support_admin_token') || '';
-    let role = sessionStorage.getItem('support_admin_role') || '';
+
+    let adminToken =
+      sessionStorage.getItem('support_admin_token') || '';
+
+    let role =
+      sessionStorage.getItem('support_admin_role') || '';
+
     let adminPin = '';
+
     let selectedIncidentId = null;
+
     let creatingNewIncident = false;
 
-    const roleLabels = { TL: 'Team Lead', QA: 'QA', MA: 'Management' };
+
+    const roleLabels = {
+      TL: 'Team Lead',
+      QA: 'QA',
+      MA: 'Management'
+    };
+
 
     /* =========================================================
        TIMEZONE DATA
     ========================================================== */
 
     const timezoneGroups = [
+
       {
-        key: 'ET', name: 'Eastern Time', short: 'ET', zone: 'America/New_York', icon: 'fa-sun',
+        key: 'ET',
+        name: 'Eastern Time',
+        short: 'ET',
+        zone: 'America/New_York',
+        icon: 'fa-sun',
+
         states: [
-          ['FL', 'Florida', 'Miami'], ['GA', 'Georgia', 'Atlanta'], ['KY', 'Kentucky', 'Louisville'],
-          ['MD', 'Maryland', 'Baltimore'], ['MA', 'Massachusetts', 'Boston'], ['NH', 'New Hampshire', 'Concord'],
-          ['NC', 'North Carolina', 'Charlotte'], ['OH', 'Ohio', 'Columbus'], ['PA', 'Pennsylvania', 'Philadelphia'],
-          ['RI', 'Rhode Island', 'Providence'], ['SC', 'South Carolina', 'Columbia'], ['VT', 'Vermont', 'Burlington'],
-          ['VA', 'Virginia', 'Richmond']
+          ['FL', 'Florida', 'Miami', 'America/New_York'],
+          ['GA', 'Georgia', 'Atlanta', 'America/New_York'],
+          ['KY', 'Kentucky', 'Louisville', 'America/New_York'],
+          ['MD', 'Maryland', 'Baltimore', 'America/New_York'],
+          ['MA', 'Massachusetts', 'Boston', 'America/New_York'],
+          ['NH', 'New Hampshire', 'Concord', 'America/New_York'],
+          ['NC', 'North Carolina', 'Charlotte', 'America/New_York'],
+          ['OH', 'Ohio', 'Columbus', 'America/New_York'],
+          ['PA', 'Pennsylvania', 'Philadelphia', 'America/New_York'],
+          ['RI', 'Rhode Island', 'Providence', 'America/New_York'],
+          ['SC', 'South Carolina', 'Columbia', 'America/New_York'],
+          ['VT', 'Vermont', 'Burlington', 'America/New_York'],
+          ['VA', 'Virginia', 'Richmond', 'America/New_York']
         ]
       },
+
       {
-        key: 'CT', name: 'Central Time', short: 'CT', zone: 'America/Chicago', icon: 'fa-cloud-sun',
+        key: 'CT',
+        name: 'Central Time',
+        short: 'CT',
+        zone: 'America/Chicago',
+        icon: 'fa-cloud-sun',
+
         states: [
-          ['AL', 'Alabama', 'Birmingham'], ['AR', 'Arkansas', 'Little Rock'], ['KS', 'Kansas', 'Wichita'],
-          ['MN', 'Minnesota', 'Minneapolis'], ['MO', 'Missouri', 'St. Louis'], ['NE', 'Nebraska', 'Omaha'],
-          ['ND', 'North Dakota', 'Fargo'], ['OK', 'Oklahoma', 'Oklahoma City'], ['SD', 'South Dakota', 'Sioux Falls'],
-          ['TX', 'Texas', 'Dallas'], ['WI', 'Wisconsin', 'Milwaukee']
+          ['AL', 'Alabama', 'Birmingham', 'America/Chicago'],
+          ['AR', 'Arkansas', 'Little Rock', 'America/Chicago'],
+          ['KS', 'Kansas', 'Wichita', 'America/Chicago'],
+          ['MN', 'Minnesota', 'Minneapolis', 'America/Chicago'],
+          ['MO', 'Missouri', 'St. Louis', 'America/Chicago'],
+          ['NE', 'Nebraska', 'Omaha', 'America/Chicago'],
+          ['ND', 'North Dakota', 'Fargo', 'America/Chicago'],
+          ['OK', 'Oklahoma', 'Oklahoma City', 'America/Chicago'],
+          ['SD', 'South Dakota', 'Sioux Falls', 'America/Chicago'],
+          ['TX', 'Texas', 'Dallas', 'America/Chicago'],
+          ['WI', 'Wisconsin', 'Milwaukee', 'America/Chicago']
         ]
       },
+
       {
-        key: 'MT', name: 'Mountain Time', short: 'MT', zone: 'America/Denver', icon: 'fa-mountain-sun',
+        key: 'MT',
+        name: 'Mountain Time',
+        short: 'MT',
+        zone: 'America/Denver',
+        icon: 'fa-mountain-sun',
+
         states: [
-          ['CO', 'Colorado', 'Denver'], ['NM', 'New Mexico', 'Albuquerque'], ['UT', 'Utah', 'Salt Lake City'],
-          ['WY', 'Wyoming', 'Cheyenne']
+          ['CO', 'Colorado', 'Denver', 'America/Denver'],
+          ['NM', 'New Mexico', 'Albuquerque', 'America/Denver'],
+          ['UT', 'Utah', 'Salt Lake City', 'America/Denver'],
+          ['WY', 'Wyoming', 'Cheyenne', 'America/Denver']
         ]
       },
-      { key: 'MST', name: 'Arizona', short: 'MST', zone: 'America/Phoenix', icon: 'fa-sun', states: [['AZ', 'Arizona', 'Phoenix']] },
-      { key: 'PT', name: 'Pacific Time', short: 'PT', zone: 'America/Los_Angeles', icon: 'fa-water', states: [['OR', 'Oregon', 'Portland']] },
-      { key: 'AKT', name: 'Alaska Time', short: 'AKT', zone: 'America/Anchorage', icon: 'fa-snowflake', states: [['AK', 'Alaska', 'Anchorage']] },
-      { key: 'HST', name: 'Hawaii Time', short: 'HST', zone: 'Pacific/Honolulu', icon: 'fa-umbrella-beach', states: [['HI', 'Hawaii', 'Honolulu']] }
+
+      {
+        key: 'MST',
+        name: 'Arizona',
+        short: 'MST',
+        zone: 'America/Phoenix',
+        icon: 'fa-sun',
+
+        states: [
+          ['AZ', 'Arizona', 'Phoenix', 'America/Phoenix']
+        ]
+      },
+
+      {
+        key: 'PT',
+        name: 'Pacific Time',
+        short: 'PT',
+        zone: 'America/Los_Angeles',
+        icon: 'fa-water',
+
+        states: [
+          ['OR', 'Oregon', 'Portland', 'America/Los_Angeles']
+        ]
+      },
+
+      {
+        key: 'AKT',
+        name: 'Alaska Time',
+        short: 'AKT',
+        zone: 'America/Anchorage',
+        icon: 'fa-snowflake',
+
+        states: [
+          ['AK', 'Alaska', 'Anchorage', 'America/Anchorage']
+        ]
+      },
+
+      {
+        key: 'HST',
+        name: 'Hawaii Time',
+        short: 'HST',
+        zone: 'Pacific/Honolulu',
+        icon: 'fa-umbrella-beach',
+
+        states: [
+          ['HI', 'Hawaii', 'Honolulu', 'Pacific/Honolulu']
+        ]
+      }
+
     ];
 
+
     /* =========================================================
-       FIELD STYLING (applied after DOM ready)
+       FIELD STYLING
     ========================================================== */
 
     document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('.field-input').forEach(el => {
-        el.classList.add(
-          'w-full', 'rounded-md', 'border', 'px-3', 'py-2', 'text-sm'
-        );
-        el.style.borderColor = 'var(--n-border)';
-      });
 
-      document.querySelectorAll('.field-label').forEach(el => {
-        el.classList.add('mb-1.5', 'block', 'text-xs', 'font-semibold');
-        el.style.color = 'var(--n-text-muted)';
-      });
+      document
+        .querySelectorAll('.field-input')
+        .forEach(el => {
+
+          el.classList.add(
+            'w-full',
+            'rounded-md',
+            'border',
+            'px-3',
+            'py-2',
+            'text-sm'
+          );
+
+          el.style.borderColor =
+            'var(--n-border)';
+        });
+
+
+      document
+        .querySelectorAll('.field-label')
+        .forEach(el => {
+
+          el.classList.add(
+            'mb-1.5',
+            'block',
+            'text-xs',
+            'font-semibold'
+          );
+
+          el.style.color =
+            'var(--n-text-muted)';
+        });
+
     });
+
 
     /* =========================================================
        THEME
     ========================================================== */
 
     function initTheme() {
-      const saved = localStorage.getItem('support_dashboard_theme');
+
+      const saved =
+        localStorage.getItem(
+          'support_dashboard_theme'
+        );
+
+
       if (saved === 'dark') {
+
         document.documentElement.classList.add('dark');
+
       } else if (saved === 'light') {
+
         document.documentElement.classList.remove('dark');
-      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+
+      } else if (
+        window.matchMedia &&
+        window.matchMedia(
+          '(prefers-color-scheme: dark)'
+        ).matches
+      ) {
+
         document.documentElement.classList.add('dark');
+
       }
+
+
       updateThemeIcon();
     }
+
 
     function toggleTheme() {
+
       document.documentElement.classList.toggle('dark');
-      const dark = document.documentElement.classList.contains('dark');
-      localStorage.setItem('support_dashboard_theme', dark ? 'dark' : 'light');
+
+      const dark =
+        document.documentElement.classList.contains('dark');
+
+
+      localStorage.setItem(
+        'support_dashboard_theme',
+        dark ? 'dark' : 'light'
+      );
+
+
       updateThemeIcon();
     }
 
+
     function updateThemeIcon() {
-      const icon = document.getElementById('themeIcon');
+
+      const icon =
+        document.getElementById('themeIcon');
+
       if (!icon) return;
-      const dark = document.documentElement.classList.contains('dark');
-      icon.className = dark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+
+
+      const dark =
+        document.documentElement.classList.contains('dark');
+
+
+      icon.className =
+        dark
+          ? 'fa-solid fa-sun'
+          : 'fa-solid fa-moon';
     }
 
-    /* =========================================================
-       TABS
-    ========================================================== */
-
-    function switchTab(tab) {
-      currentTab = tab;
-      const timeView = document.getElementById('timeView');
-      const incidentsView = document.getElementById('incidentsView');
-      const tabTime = document.getElementById('tabTime');
-      const tabIncidents = document.getElementById('tabIncidents');
-
-      if (tab === 'time') {
-        timeView.classList.remove('hidden-view');
-        incidentsView.classList.add('hidden-view');
-        tabTime.classList.add('active');
-        tabIncidents.classList.remove('active');
-      } else {
-        timeView.classList.add('hidden-view');
-        incidentsView.classList.remove('hidden-view');
-        tabTime.classList.remove('active');
-        tabIncidents.classList.add('active');
-        if (!incidents.length) loadIncidents();
-      }
-    }
 
     /* =========================================================
        TIME HELPERS
     ========================================================== */
 
     function getTimeParts(zone) {
+
       const now = new Date();
-      const time = new Intl.DateTimeFormat('en-US', {
-        timeZone: zone, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
-      }).formatToParts(now);
+
+      const time =
+        new Intl.DateTimeFormat('en-US', {
+          timeZone: zone,
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false
+        }).formatToParts(now);
+
+
       const map = {};
-      time.forEach(part => { map[part.type] = part.value; });
+
+      time.forEach(part => {
+        map[part.type] = part.value;
+      });
+
+
       return map;
     }
 
+
     function getDate(zone) {
-      return new Intl.DateTimeFormat('en-US', {
-        timeZone: zone, weekday: 'short', month: 'short', day: 'numeric'
-      }).format(new Date());
+
+      return new Intl.DateTimeFormat(
+        'en-US',
+        {
+          timeZone: zone,
+          weekday: 'short',
+          month: 'short',
+          day: 'numeric'
+        }
+      ).format(new Date());
+
     }
+
 
     function getOffset(zone) {
-      const parts = new Intl.DateTimeFormat('en-US', { timeZone: zone, timeZoneName: 'longOffset' }).formatToParts(new Date());
-      const offset = parts.find(part => part.type === 'timeZoneName');
+
+      const parts =
+        new Intl.DateTimeFormat(
+          'en-US',
+          {
+            timeZone: zone,
+            timeZoneName: 'longOffset'
+          }
+        ).formatToParts(new Date());
+
+
+      const offset =
+        parts.find(
+          part =>
+            part.type === 'timeZoneName'
+        );
+
+
       if (!offset) return '';
-      return offset.value.replace('GMT', 'UTC');
+
+
+      return offset.value.replace(
+        'GMT',
+        'UTC'
+      );
     }
 
+
     function getMinutesForZone(zone) {
-      const parts = new Intl.DateTimeFormat('en-US', { timeZone: zone, hour: '2-digit', minute: '2-digit', hour12: false }).formatToParts(new Date());
-      const hour = Number(parts.find(p => p.type === 'hour')?.value || 0);
-      const minute = Number(parts.find(p => p.type === 'minute')?.value || 0);
+
+      const parts =
+        new Intl.DateTimeFormat(
+          'en-US',
+          {
+            timeZone: zone,
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+          }
+        ).formatToParts(new Date());
+
+
+      const hour =
+        Number(
+          parts.find(
+            p => p.type === 'hour'
+          )?.value || 0
+        );
+
+
+      const minute =
+        Number(
+          parts.find(
+            p => p.type === 'minute'
+          )?.value || 0
+        );
+
+
       return hour * 60 + minute;
     }
 
+
     function getWorkingStatus(zone) {
-      const minutes = getMinutesForZone(zone);
-      if (minutes >= 8 * 60 && minutes < 18 * 60) {
-        return { text: 'Working hours', class: 'text-emerald-600 dark:text-emerald-400' };
+
+      const minutes =
+        getMinutesForZone(zone);
+
+
+      if (
+        minutes >= 8 * 60 &&
+        minutes < 18 * 60
+      ) {
+
+        return {
+          text: 'Working hours',
+          class:
+            'text-emerald-600 dark:text-emerald-400'
+        };
+
       }
-      return { text: 'Outside hours', class: '' };
+
+
+      return {
+        text: 'Outside hours',
+        class: ''
+      };
     }
 
+
     function formatClock(zone) {
-      const parts = getTimeParts(zone);
-      let result = `${parts.hour}:${parts.minute}`;
-      if (showSeconds) result += `:${parts.second}`;
+
+      const parts =
+        getTimeParts(zone);
+
+
+      let result =
+        `${parts.hour}:${parts.minute}`;
+
+
+      if (showSeconds) {
+
+        result +=
+          `:${parts.second}`;
+      }
+
+
       return result;
     }
 
+
     function updateTbilisiClock() {
-      const zone = 'Asia/Tbilisi';
-      const parts = getTimeParts(zone);
-      const clock = `${parts.hour}:${parts.minute}:${parts.second}`;
-      const main = document.getElementById('tbilisiClock');
-      const header = document.getElementById('headerTbilisiClock');
-      const date = document.getElementById('tbilisiDate');
-      if (main) main.textContent = clock;
-      if (header) header.textContent = clock;
-      if (date) date.textContent = getDate(zone);
+
+      const zone =
+        'Asia/Tbilisi';
+
+
+      const parts =
+        getTimeParts(zone);
+
+
+      const clock =
+        `${parts.hour}:${parts.minute}:${parts.second}`;
+
+
+      const main =
+        document.getElementById(
+          'tbilisiClock'
+        );
+
+
+      const header =
+        document.getElementById(
+          'headerTbilisiClock'
+        );
+
+
+      const date =
+        document.getElementById(
+          'tbilisiDate'
+        );
+
+
+      if (main) {
+        main.textContent = clock;
+      }
+
+
+      if (header) {
+        header.textContent = clock;
+      }
+
+
+      if (date) {
+        date.textContent =
+          getDate(zone);
+      }
+
     }
+
 
     /* =========================================================
        TIMEZONE RENDERING
     ========================================================== */
 
     function renderTimezones() {
-      const container = document.getElementById('timezoneGroups');
+
+      const container =
+        document.getElementById(
+          'timezoneGroups'
+        );
+
+
       if (!container) return;
 
-      const search = (document.getElementById('timezoneSearch')?.value || '').trim().toLowerCase();
+
+      const search =
+        (
+          document.getElementById(
+            'timezoneSearch'
+          )?.value || ''
+        )
+          .trim()
+          .toLowerCase();
+
+
       let html = '';
 
+
       timezoneGroups.forEach(group => {
-        const matchingStates = group.states.filter(state => {
-          if (!search) return true;
-          return [state[0], state[1], state[2], group.name, group.short].join(' ').toLowerCase().includes(search);
-        });
 
-        if (!matchingStates.length) return;
+        const matchingStates =
+          group.states.filter(state => {
 
-        const time = formatClock(group.zone);
-        const offset = getOffset(group.zone);
-        const working = getWorkingStatus(group.zone);
+            if (!search) {
+              return true;
+            }
+
+
+            return [
+              state[0],
+              state[1],
+              state[2],
+              group.name,
+              group.short
+            ]
+              .join(' ')
+              .toLowerCase()
+              .includes(search);
+
+          });
+
+
+        if (!matchingStates.length) {
+          return;
+        }
+
+
+        const time =
+          formatClock(group.zone);
+
+
+        const offset =
+          getOffset(group.zone);
+
+
+        const working =
+          getWorkingStatus(group.zone);
+
 
         html += `
-          <div class="timezone-card app-card overflow-hidden">
-            <div class="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-              <div class="flex min-w-0 items-center gap-3">
-                <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md" style="background: var(--n-bg-secondary); color: var(--n-text-muted);">
-                  <i class="fa-solid ${group.icon} text-xs"></i>
+
+          <div
+            class="app-card app-card-hover overflow-hidden"
+          >
+
+            <div
+              class="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+            >
+
+              <div
+                class="flex min-w-0 items-center gap-3"
+              >
+
+                <div
+                  class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md"
+                  style="
+                    background: var(--n-bg-secondary);
+                    color: var(--n-text-muted);
+                  "
+                >
+                  <i
+                    class="fa-solid ${group.icon} text-xs"
+                  ></i>
                 </div>
+
+
                 <div class="min-w-0">
-                  <div class="flex items-center gap-2">
-                    <h3 class="text-sm font-semibold" style="color: var(--n-text);">${group.name}</h3>
-                    <span class="rounded-md px-1.5 py-0.5 text-[10px] font-semibold" style="background: var(--n-bg-secondary); color: var(--n-text-muted);">${group.short}</span>
-                  </div>
-                  <div class="mt-0.5 flex flex-wrap items-center gap-2 text-[10px]">
-                    <span class="${working.class}" style="color: ${working.class ? '' : 'var(--n-text-muted)'};">${working.text}</span>
-                    <span style="color: var(--n-text-muted);">${offset}</span>
-                  </div>
-                </div>
-              </div>
 
-              <div class="flex items-center gap-4 sm:ml-auto">
-                <div class="text-right">
-                  <div id="zoneClock-${group.key}" class="clock-number text-2xl font-bold leading-none" style="color: var(--n-text);">${time}</div>
-                  <div class="mt-1 text-[9px]" style="color: var(--n-text-muted);">Local time</div>
-                </div>
-              </div>
-            </div>
+                  <div
+                    class="flex items-center gap-2"
+                  >
 
-            <div class="border-t px-4 py-2.5" style="border-color: var(--n-border); background: var(--n-bg-secondary);">
-              <div class="grid grid-cols-2 gap-x-4 gap-y-1 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                ${matchingStates.map(state => `
-                  <div class="city-row flex min-w-0 items-center justify-between gap-2 py-1">
-                    <div class="min-w-0 truncate">
-                      <span class="mr-1 text-[10px] font-semibold" style="color: var(--n-text-muted);">${state[0]}</span>
-                      <span class="truncate text-[10px]" style="color: var(--n-text);">${state[1]}</span>
-                    </div>
-                    <span class="state-clock shrink-0 text-[10px] font-semibold tabular-nums" style="color: var(--n-text-muted);" data-zone="${state[3] || group.zone}">
-                      ${formatClock(state[3] || group.zone)}
+                    <h3
+                      class="text-sm font-semibold"
+                      style="color: var(--n-text);"
+                    >
+                      ${escapeHTML(group.name)}
+                    </h3>
+
+                    <span
+                      class="rounded-md px-1.5 py-0.5 text-[10px] font-semibold"
+                      style="
+                        background: var(--n-bg-secondary);
+                        color: var(--n-text-muted);
+                      "
+                    >
+                      ${escapeHTML(group.short)}
                     </span>
+
                   </div>
-                `).join('')}
+
+
+                  <div
+                    class="mt-0.5 flex flex-wrap items-center gap-2 text-[10px]"
+                  >
+
+                    <span
+                      class="${working.class}"
+                      style="
+                        color:
+                          ${working.class
+                            ? ''
+                            : 'var(--n-text-muted)'};
+                      "
+                    >
+                      ${escapeHTML(working.text)}
+                    </span>
+
+                    <span
+                      style="color: var(--n-text-muted);"
+                    >
+                      ${escapeHTML(offset)}
+                    </span>
+
+                  </div>
+
+                </div>
+
               </div>
+
+
+              <div
+                class="flex items-center gap-4 sm:ml-auto"
+              >
+
+                <div class="text-right">
+
+                  <div
+                    id="zoneClock-${group.key}"
+                    class="clock-number text-2xl font-bold leading-none"
+                    style="color: var(--n-text);"
+                  >
+                    ${time}
+                  </div>
+
+                  <div
+                    class="mt-1 text-[9px]"
+                    style="color: var(--n-text-muted);"
+                  >
+                    Local time
+                  </div>
+
+                </div>
+
+              </div>
+
             </div>
+
+
+            <div
+              class="border-t px-4 py-2.5"
+              style="
+                border-color: var(--n-border);
+                background: var(--n-bg-secondary);
+              "
+            >
+
+              <div
+                class="grid grid-cols-2 gap-x-4 gap-y-1 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+              >
+
+                ${matchingStates
+                  .map(state => `
+
+                    <div
+                      class="city-row flex min-w-0 items-center justify-between gap-2 py-1"
+                    >
+
+                      <div
+                        class="min-w-0 truncate"
+                      >
+
+                        <span
+                          class="mr-1 text-[10px] font-semibold"
+                          style="color: var(--n-text-muted);"
+                        >
+                          ${escapeHTML(state[0])}
+                        </span>
+
+                        <span
+                          class="truncate text-[10px]"
+                          style="color: var(--n-text);"
+                        >
+                          ${escapeHTML(state[1])}
+                        </span>
+
+                      </div>
+
+
+                      <span
+                        class="state-clock shrink-0 text-[10px] font-semibold tabular-nums"
+                        style="color: var(--n-text-muted);"
+                        data-zone="${escapeAttribute(state[3] || group.zone)}"
+                      >
+                        ${formatClock(state[3] || group.zone)}
+                      </span>
+
+                    </div>
+
+                  `)
+                  .join('')}
+
+              </div>
+
+            </div>
+
           </div>
+
         `;
+
       });
 
+
       if (!html) {
+
         html = `
-          <div class="app-card flex min-h-[160px] items-center justify-center">
+
+          <div
+            class="app-card flex min-h-[160px] items-center justify-center"
+          >
+
             <div class="text-center">
-              <i class="fa-solid fa-magnifying-glass mb-2 text-xl" style="color: var(--n-text-muted);"></i>
-              <p class="text-sm font-semibold" style="color: var(--n-text);">No states or cities found</p>
-              <p class="mt-1 text-xs" style="color: var(--n-text-muted);">Try another search.</p>
+
+              <i
+                class="fa-solid fa-magnifying-glass mb-2 text-xl"
+                style="color: var(--n-text-muted);"
+              ></i>
+
+              <p
+                class="text-sm font-semibold"
+                style="color: var(--n-text);"
+              >
+                No states or cities found
+              </p>
+
+              <p
+                class="mt-1 text-xs"
+                style="color: var(--n-text-muted);"
+              >
+                Try another search.
+              </p>
+
             </div>
+
           </div>
+
         `;
+
       }
+
 
       container.innerHTML = html;
     }
 
+
     function updateLiveTimeDisplays() {
+
       updateTbilisiClock();
+
+
       timezoneGroups.forEach(group => {
-        const clock = document.getElementById(`zoneClock-${group.key}`);
-        if (clock) clock.textContent = formatClock(group.zone);
+
+        const clock =
+          document.getElementById(
+            `zoneClock-${group.key}`
+          );
+
+
+        if (clock) {
+
+          clock.textContent =
+            formatClock(group.zone);
+        }
+
       });
-      document.querySelectorAll('.state-clock').forEach(el => {
-        const zone = el.dataset.zone;
-        if (zone) el.textContent = formatClock(zone);
-      });
+
+
+      document
+        .querySelectorAll('.state-clock')
+        .forEach(el => {
+
+          const zone =
+            el.dataset.zone;
+
+
+          if (zone) {
+
+            el.textContent =
+              formatClock(zone);
+          }
+
+        });
+
     }
 
+
     function toggleSeconds() {
-      showSeconds = !showSeconds;
-      const button = document.getElementById('secondsToggle');
-      button.innerHTML = showSeconds
-        ? `<i class="fa-solid fa-stopwatch mr-1"></i> Seconds`
-        : `<i class="fa-solid fa-clock mr-1"></i> Minutes only`;
+
+      showSeconds =
+        !showSeconds;
+
+
+      const button =
+        document.getElementById(
+          'secondsToggle'
+        );
+
+
+      if (!button) return;
+
+
+      button.innerHTML =
+        showSeconds
+          ? `<i class="fa-solid fa-stopwatch mr-1"></i> Seconds`
+          : `<i class="fa-solid fa-clock mr-1"></i> Minutes only`;
+
+
       updateLiveTimeDisplays();
     }
+
 
     /* =========================================================
        API
     ========================================================== */
 
     async function api(action, data = {}) {
-      if (API_URL.includes('PASTE_YOUR_')) {
-        throw new Error('Apps Script API URL is not configured.');
+
+      if (
+        API_URL.includes(
+          'PASTE_YOUR_'
+        )
+      ) {
+
+        throw new Error(
+          'Apps Script API URL is not configured.'
+        );
+
       }
 
-      const requestData = { action, ...data };
-      if (adminToken) requestData.token = adminToken;
-      if (adminPin) requestData.pin = adminPin;
-      if (role) requestData.role = role;
 
-      const body = new URLSearchParams();
-      body.set('payload', JSON.stringify(requestData));
+      const requestData = {
+        action,
+        ...data
+      };
 
-      const response = await fetch(API_URL, { method: 'POST', body });
-      const text = await response.text();
+
+      if (adminToken) {
+        requestData.token =
+          adminToken;
+      }
+
+
+      if (adminPin) {
+        requestData.pin =
+          adminPin;
+      }
+
+
+      if (role) {
+        requestData.role =
+          role;
+      }
+
+
+      const body =
+        new URLSearchParams();
+
+
+      body.set(
+        'payload',
+        JSON.stringify(requestData)
+      );
+
+
+      const response =
+        await fetch(
+          API_URL,
+          {
+            method: 'POST',
+            body
+          }
+        );
+
+
+      const text =
+        await response.text();
+
 
       let json;
+
+
       try {
-        json = JSON.parse(text);
+
+        json =
+          JSON.parse(text);
+
       } catch (error) {
-        console.error('Raw Apps Script response:', text);
-        throw new Error(`Apps Script returned an invalid response (${response.status}).`);
+
+        console.error(
+          'Raw Apps Script response:',
+          text
+        );
+
+
+        throw new Error(
+          `Apps Script returned an invalid response (${response.status}).`
+        );
+
       }
 
-      console.log('Apps Script response:', json);
 
-      /* IMPORTANT: check both ok and success — the backend uses `ok`,
-         so this used to fail to surface backend errors. */
-      if (!response.ok || json.ok === false || json.success === false) {
-        throw new Error(json.error || json.message || `Request failed (${response.status}).`);
+      console.log(
+        'Apps Script response:',
+        json
+      );
+
+
+      if (
+        !response.ok ||
+        json.ok === false ||
+        json.success === false
+      ) {
+
+        throw new Error(
+          json.error ||
+          json.message ||
+          `Request failed (${response.status}).`
+        );
+
       }
+
 
       return json;
     }
+
 
     /* =========================================================
        LOAD INCIDENTS
     ========================================================== */
 
     async function loadIncidents() {
+
       try {
-        const result = await api('list');
-        incidents = normalizeIncidentList(result);
+
+        const result =
+          await api('list');
+
+
+        incidents =
+          normalizeIncidentList(
+            result
+          );
+
+
         renderIncidents();
+
         renderAdminIncidentList();
+
       } catch (error) {
-        console.error('Failed to load incidents:', error);
+
+        console.error(
+          'Failed to load incidents:',
+          error
+        );
+
+
         incidents = [];
+
+
         renderIncidents();
-        showToast(error.message || 'Unable to load incidents.', 'error');
+
+
+        showToast(
+          error.message ||
+          'Unable to load incidents.',
+          'error'
+        );
+
       }
+
     }
 
+
     function normalizeIncidentList(result) {
-      if (Array.isArray(result)) return result;
-      if (Array.isArray(result.incidents)) return result.incidents;
-      if (Array.isArray(result.data)) return result.data;
-      if (Array.isArray(result.rows)) return result.rows;
+
+      if (Array.isArray(result)) {
+        return result;
+      }
+
+
+      if (Array.isArray(result.incidents)) {
+        return result.incidents;
+      }
+
+
+      if (Array.isArray(result.data)) {
+        return result.data;
+      }
+
+
+      if (Array.isArray(result.rows)) {
+        return result.rows;
+      }
+
+
       return [];
     }
+
 
     /* =========================================================
        INCIDENT NORMALIZATION
     ========================================================== */
 
     function normalizeIncident(incident) {
-      const item = { ...incident };
-      item.id = item.id || item.ID || item.incidentId || '';
-      item.platform = item.platform || item.Platform || 'All Platforms';
-      item.status = String(item.status || item.Status || 'ACTIVE').toUpperCase();
-      item.severity = String(item.severity || item.Severity || 'MEDIUM').toUpperCase();
-      item.category = item.category || item.Category || 'Other';
-      item.title = item.title || item.Title || 'Untitled Incident';
-      item.affected = item.affected || item.Affected || '';
-      item.description = item.description || item.Description || '';
-      item.agentAction = item.agentAction || item.AgentAction || item.agent_action || '';
-      item.whatToCheck = item.whatToCheck || item.WhatToCheck || item.what_to_check || '';
-      item.instructions = item.instructions || item.Instructions || '';
-      item.response = item.response || item.Response || item.customerResponse || item.CustomerResponse || '';
-      item.notionUrl = item.notionUrl || item.NotionUrl || item.notion || '';
-      item.createdBy = item.createdBy || item.CreatedBy || '';
-      item.createdAt = item.createdAt || item.CreatedAt || '';
-      item.updatedBy = item.updatedBy || item.UpdatedBy || '';
-      item.updatedAt = item.updatedAt || item.UpdatedAt || '';
+
+      const item = {
+        ...incident
+      };
+
+
+      item.id =
+        item.id ||
+        item.ID ||
+        item.incidentId ||
+        '';
+
+
+      item.platform =
+        item.platform ||
+        item.Platform ||
+        'All Platforms';
+
+
+      item.status =
+        String(
+          item.status ||
+          item.Status ||
+          'ACTIVE'
+        ).toUpperCase();
+
+
+      item.severity =
+        String(
+          item.severity ||
+          item.Severity ||
+          'MEDIUM'
+        ).toUpperCase();
+
+
+      item.category =
+        item.category ||
+        item.Category ||
+        'Other';
+
+
+      item.title =
+        item.title ||
+        item.Title ||
+        'Untitled Incident';
+
+
+      item.affected =
+        item.affected ||
+        item.Affected ||
+        '';
+
+
+      item.description =
+        item.description ||
+        item.Description ||
+        '';
+
+
+      item.agentAction =
+        item.agentAction ||
+        item.AgentAction ||
+        item.agent_action ||
+        '';
+
+
+      item.whatToCheck =
+        item.whatToCheck ||
+        item.WhatToCheck ||
+        item.what_to_check ||
+        '';
+
+
+      item.instructions =
+        item.instructions ||
+        item.Instructions ||
+        '';
+
+
+      item.response =
+        item.response ||
+        item.Response ||
+        item.customerResponse ||
+        item.CustomerResponse ||
+        '';
+
+
+      item.notionUrl =
+        item.notionUrl ||
+        item.NotionUrl ||
+        item.notion ||
+        '';
+
+
+      item.createdBy =
+        item.createdBy ||
+        item.CreatedBy ||
+        '';
+
+
+      item.createdAt =
+        item.createdAt ||
+        item.CreatedAt ||
+        '';
+
+
+      item.updatedBy =
+        item.updatedBy ||
+        item.UpdatedBy ||
+        '';
+
+
+      item.updatedAt =
+        item.updatedAt ||
+        item.UpdatedAt ||
+        '';
+
+
       return item;
     }
 
+
     /* =========================================================
-       INCIDENT FILTERING
+       FILTERING
     ========================================================== */
 
     function getFilteredIncidents() {
-      const search = (document.getElementById('incidentSearch')?.value || '').trim().toLowerCase();
-      const platform = document.getElementById('platformFilter')?.value || '';
-      const category = document.getElementById('categoryFilter')?.value || '';
 
-      return incidents.map(normalizeIncident).filter(incident => {
-        const searchable = [
-          incident.title, incident.platform, incident.category, incident.severity,
-          incident.status, incident.affected, incident.description, incident.agentAction,
-          incident.whatToCheck, incident.instructions, incident.response
-        ].join(' ').toLowerCase();
+      const search =
+        (
+          document.getElementById(
+            'incidentSearch'
+          )?.value || ''
+        )
+          .trim()
+          .toLowerCase();
 
-        if (search && !searchable.includes(search)) return false;
-        if (platform && incident.platform !== platform) return false;
-        if (category && incident.category !== category) return false;
-        return true;
-      });
+
+      const platform =
+        document.getElementById(
+          'platformFilter'
+        )?.value || '';
+
+
+      const category =
+        document.getElementById(
+          'categoryFilter'
+        )?.value || '';
+
+
+      return incidents
+        .map(normalizeIncident)
+        .filter(incident => {
+
+          const searchable = [
+
+            incident.title,
+            incident.platform,
+            incident.category,
+            incident.severity,
+            incident.status,
+            incident.affected,
+            incident.description,
+            incident.agentAction,
+            incident.whatToCheck,
+            incident.instructions,
+            incident.response
+
+          ]
+            .join(' ')
+            .toLowerCase();
+
+
+          if (
+            search &&
+            !searchable.includes(search)
+          ) {
+            return false;
+          }
+
+
+          if (
+            platform &&
+            incident.platform !== platform
+          ) {
+            return false;
+          }
+
+
+          if (
+            category &&
+            incident.category !== category
+          ) {
+            return false;
+          }
+
+
+          return true;
+        });
+
     }
+
 
     /* =========================================================
        INCIDENT RENDER
     ========================================================== */
 
     function renderIncidents() {
-      const filtered = getFilteredIncidents();
-      const active = filtered.filter(incident => incident.status !== 'RESOLVED');
-      const resolved = filtered.filter(incident => incident.status === 'RESOLVED');
 
-      const count = document.getElementById('activeIncidentCount');
-      if (count) count.textContent = active.length;
+      const filtered =
+        getFilteredIncidents();
 
-      const list = document.getElementById('incidentList');
-      const resolvedList = document.getElementById('resolvedList');
+
+      const active =
+        filtered.filter(
+          incident =>
+            incident.status !== 'RESOLVED'
+        );
+
+
+      const resolved =
+        filtered.filter(
+          incident =>
+            incident.status === 'RESOLVED'
+        );
+
+
+      const count =
+        document.getElementById(
+          'activeIncidentCount'
+        );
+
+
+      if (count) {
+        count.textContent =
+          active.length;
+      }
+
+
+      const list =
+        document.getElementById(
+          'incidentList'
+        );
+
+
+      const resolvedList =
+        document.getElementById(
+          'resolvedList'
+        );
+
 
       if (list) {
-        list.innerHTML = !active.length
-          ? emptyIncidentHTML('No active incidents', 'There are no matching active incidents.')
-          : active.map(incidentCardHTML).join('');
+
+        list.innerHTML =
+          !active.length
+            ? emptyIncidentHTML(
+                'No active incidents',
+                'There are no matching active incidents.'
+              )
+            : active
+                .map(
+                  incidentCardHTML
+                )
+                .join('');
+
       }
+
 
       if (resolvedList) {
+
         if (!resolved.length) {
+
           resolvedList.innerHTML = `
-            <div class="rounded-md border border-dashed p-5 text-center" style="border-color: var(--n-border);">
-              <p class="text-xs" style="color: var(--n-text-muted);">No matching resolved incidents.</p>
+
+            <div
+              class="rounded-md border border-dashed p-5 text-center"
+              style="border-color: var(--n-border);"
+            >
+              <p
+                class="text-xs"
+                style="color: var(--n-text-muted);"
+              >
+                No matching resolved incidents.
+              </p>
             </div>
+
           `;
+
         } else {
-          resolvedList.innerHTML = resolved
-            .sort((a, b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0))
-            .map(resolvedIncidentHTML)
-            .join('');
+
+          resolvedList.innerHTML =
+            resolved
+              .sort(
+                (a, b) =>
+                  new Date(
+                    b.updatedAt ||
+                    b.createdAt ||
+                    0
+                  ) -
+                  new Date(
+                    a.updatedAt ||
+                    a.createdAt ||
+                    0
+                  )
+              )
+              .map(
+                resolvedIncidentHTML
+              )
+              .join('');
+
         }
+
       }
+
     }
+
 
     function incidentCardHTML(incident) {
-      const statusClass = incident.status === 'MONITORING' ? 'badge-monitoring' : 'badge-active';
-      const severityClass = incident.severity === 'HIGH' ? 'badge-high' : incident.severity === 'LOW' ? 'badge-low' : 'badge-medium';
-      const action = incident.agentAction || incident.instructions || 'Review the incident instructions.';
+
+      const statusClass =
+        incident.status === 'MONITORING'
+          ? 'badge-monitoring'
+          : 'badge-active';
+
+
+      const severityClass =
+        incident.severity === 'HIGH'
+          ? 'badge-high'
+          : incident.severity === 'LOW'
+            ? 'badge-low'
+            : 'badge-medium';
+
+
+      const action =
+        incident.agentAction ||
+        incident.instructions ||
+        'Review the incident instructions.';
+
 
       return `
-        <button onclick="openIncident('${escapeAttribute(incident.id)}')" class="incident-card app-card w-full min-w-0 text-left">
+
+        <button
+          onclick="openIncident('${escapeAttribute(incident.id)}')"
+          class="app-card app-card-hover w-full min-w-0 text-left"
+        >
+
           <div class="p-4">
-            <div class="mb-3 flex flex-wrap items-center gap-1.5">
-              <span class="badge ${statusClass}"><i class="fa-solid fa-circle text-[6px]"></i> ${escapeHTML(incident.status)}</span>
-              <span class="badge ${severityClass}">${escapeHTML(incident.severity)}</span>
-              <span class="badge platform-badge"><i class="fa-solid fa-layer-group"></i> ${escapeHTML(incident.platform)}</span>
-              <span class="badge category-badge">${escapeHTML(incident.category)}</span>
+
+            <div
+              class="mb-3 flex flex-wrap items-center gap-1.5"
+            >
+
+              <span
+                class="badge ${statusClass}"
+              >
+                <i
+                  class="fa-solid fa-circle text-[6px]"
+                ></i>
+
+                ${escapeHTML(
+                  incident.status
+                )}
+              </span>
+
+
+              <span
+                class="badge ${severityClass}"
+              >
+                ${escapeHTML(
+                  incident.severity
+                )}
+              </span>
+
+
+              <span
+                class="badge platform-badge"
+              >
+                <i class="fa-solid fa-layer-group"></i>
+
+                ${escapeHTML(
+                  incident.platform
+                )}
+              </span>
+
+
+              <span
+                class="badge category-badge"
+              >
+                ${escapeHTML(
+                  incident.category
+                )}
+              </span>
+
             </div>
 
-            <h3 class="line-clamp-2 text-sm font-semibold" style="color: var(--n-text);">${escapeHTML(incident.title)}</h3>
 
-            ${incident.affected ? `<p class="mt-1 text-xs font-medium" style="color: var(--n-text-muted);">${escapeHTML(incident.affected)}</p>` : ''}
+            <h3
+              class="line-clamp-2 text-sm font-semibold"
+              style="color: var(--n-text);"
+            >
+              ${escapeHTML(
+                incident.title
+              )}
+            </h3>
 
-            <div class="mt-3 rounded-md p-3" style="background: var(--n-bg-secondary);">
-              <div class="mb-1 text-[10px] font-semibold uppercase tracking-wider" style="color: var(--n-accent);">Agent Action</div>
-              <p class="line-clamp-3 text-xs leading-5" style="color: var(--n-text-muted);">${escapeHTML(action)}</p>
+
+            ${
+              incident.affected
+                ? `
+                  <p
+                    class="mt-1 text-xs font-medium"
+                    style="color: var(--n-text-muted);"
+                  >
+                    ${escapeHTML(
+                      incident.affected
+                    )}
+                  </p>
+                `
+                : ''
+            }
+
+
+            <div
+              class="mt-3 rounded-md p-3"
+              style="background: var(--n-bg-secondary);"
+            >
+
+              <div
+                class="mb-1 text-[10px] font-semibold uppercase tracking-wider"
+                style="color: var(--n-accent);"
+              >
+                Agent Action
+              </div>
+
+              <p
+                class="line-clamp-3 text-xs leading-5"
+                style="color: var(--n-text-muted);"
+              >
+                ${escapeHTML(action)}
+              </p>
+
             </div>
 
-            <div class="mt-3 flex items-center justify-between">
-              <span class="text-[10px]" style="color: var(--n-text-muted);">${formatIncidentDate(incident.updatedAt || incident.createdAt)}</span>
-              <span class="text-xs font-semibold" style="color: var(--n-text-muted);">View playbook <i class="fa-solid fa-arrow-right ml-1"></i></span>
+
+            <div
+              class="mt-3 flex items-center justify-between"
+            >
+
+              <span
+                class="text-[10px]"
+                style="color: var(--n-text-muted);"
+              >
+                ${formatIncidentDate(
+                  incident.updatedAt ||
+                  incident.createdAt
+                )}
+              </span>
+
+
+              <span
+                class="text-xs font-semibold"
+                style="color: var(--n-text-muted);"
+              >
+                View playbook
+
+                <i
+                  class="fa-solid fa-arrow-right ml-1"
+                ></i>
+
+              </span>
+
             </div>
+
           </div>
+
         </button>
+
       `;
     }
+
 
     function resolvedIncidentHTML(incident) {
+
       return `
-        <button onclick="openIncident('${escapeAttribute(incident.id)}')" class="app-card flex w-full min-w-0 items-center justify-between gap-4 px-4 py-3 text-left">
+
+        <button
+          onclick="openIncident('${escapeAttribute(incident.id)}')"
+          class="app-card app-card-hover flex w-full min-w-0 items-center justify-between gap-4 px-4 py-3 text-left"
+        >
+
           <div class="min-w-0">
-            <div class="mb-1 flex flex-wrap gap-1.5">
-              <span class="badge badge-resolved"><i class="fa-solid fa-check"></i> RESOLVED</span>
-              <span class="badge platform-badge">${escapeHTML(incident.platform)}</span>
-              <span class="badge category-badge">${escapeHTML(incident.category)}</span>
+
+            <div
+              class="mb-1 flex flex-wrap gap-1.5"
+            >
+
+              <span
+                class="badge badge-resolved"
+              >
+                <i class="fa-solid fa-check"></i>
+                RESOLVED
+              </span>
+
+
+              <span
+                class="badge platform-badge"
+              >
+                ${escapeHTML(
+                  incident.platform
+                )}
+              </span>
+
+
+              <span
+                class="badge category-badge"
+              >
+                ${escapeHTML(
+                  incident.category
+                )}
+              </span>
+
             </div>
-            <p class="truncate text-sm font-semibold" style="color: var(--n-text);">${escapeHTML(incident.title)}</p>
+
+
+            <p
+              class="truncate text-sm font-semibold"
+              style="color: var(--n-text);"
+            >
+              ${escapeHTML(
+                incident.title
+              )}
+            </p>
+
           </div>
-          <i class="fa-solid fa-chevron-right shrink-0 text-xs" style="color: var(--n-text-muted);"></i>
+
+
+          <i
+            class="fa-solid fa-chevron-right shrink-0 text-xs"
+            style="color: var(--n-text-muted);"
+          ></i>
+
         </button>
+
       `;
     }
 
-    function emptyIncidentHTML(title, text) {
+
+    function emptyIncidentHTML(
+      title,
+      text
+    ) {
+
       return `
-        <div class="app-card empty-state flex items-center justify-center md:col-span-2 xl:col-span-3">
+
+        <div
+          class="app-card empty-state flex items-center justify-center md:col-span-2 xl:col-span-3"
+        >
+
           <div class="text-center">
-            <div class="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-md" style="background: var(--n-bg-secondary); color: var(--n-text-muted);">
+
+            <div
+              class="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-md"
+              style="
+                background: var(--n-bg-secondary);
+                color: var(--n-text-muted);
+              "
+            >
               <i class="fa-solid fa-circle-check"></i>
             </div>
-            <p class="font-semibold" style="color: var(--n-text);">${escapeHTML(title)}</p>
-            <p class="mt-1 text-xs" style="color: var(--n-text-muted);">${escapeHTML(text)}</p>
+
+
+            <p
+              class="font-semibold"
+              style="color: var(--n-text);"
+            >
+              ${escapeHTML(title)}
+            </p>
+
+
+            <p
+              class="mt-1 text-xs"
+              style="color: var(--n-text-muted);"
+            >
+              ${escapeHTML(text)}
+            </p>
+
           </div>
+
         </div>
+
       `;
     }
 
+
     /* =========================================================
-       DETAIL MODAL
+       INCIDENT DETAIL
     ========================================================== */
 
     function openIncident(id) {
-      const incident = incidents.map(normalizeIncident).find(item => String(item.id) === String(id));
+
+      const incident =
+        incidents
+          .map(normalizeIncident)
+          .find(
+            item =>
+              String(item.id) ===
+              String(id)
+          );
+
+
       if (!incident) return;
 
-      document.getElementById('detailTitle').textContent = incident.title;
-      document.getElementById('detailMeta').textContent = [
-        incident.affected, formatIncidentDate(incident.updatedAt || incident.createdAt)
-      ].filter(Boolean).join(' · ');
 
-      document.getElementById('detailBadges').innerHTML = `
-        <span class="badge ${incident.status === 'RESOLVED' ? 'badge-resolved' : incident.status === 'MONITORING' ? 'badge-monitoring' : 'badge-active'}">${escapeHTML(incident.status)}</span>
-        <span class="badge ${incident.severity === 'HIGH' ? 'badge-high' : incident.severity === 'LOW' ? 'badge-low' : 'badge-medium'}">${escapeHTML(incident.severity)}</span>
-        <span class="badge platform-badge"><i class="fa-solid fa-layer-group"></i> ${escapeHTML(incident.platform)}</span>
-        <span class="badge category-badge">${escapeHTML(incident.category)}</span>
+      document.getElementById(
+        'detailTitle'
+      ).textContent =
+        incident.title;
+
+
+      document.getElementById(
+        'detailMeta'
+      ).textContent = [
+
+        incident.affected,
+
+        formatIncidentDate(
+          incident.updatedAt ||
+          incident.createdAt
+        )
+
+      ]
+        .filter(Boolean)
+        .join(' · ');
+
+
+      document.getElementById(
+        'detailBadges'
+      ).innerHTML = `
+
+        <span
+          class="badge ${
+            incident.status === 'RESOLVED'
+              ? 'badge-resolved'
+              : incident.status === 'MONITORING'
+                ? 'badge-monitoring'
+                : 'badge-active'
+          }"
+        >
+          ${escapeHTML(
+            incident.status
+          )}
+        </span>
+
+
+        <span
+          class="badge ${
+            incident.severity === 'HIGH'
+              ? 'badge-high'
+              : incident.severity === 'LOW'
+                ? 'badge-low'
+                : 'badge-medium'
+          }"
+        >
+          ${escapeHTML(
+            incident.severity
+          )}
+        </span>
+
+
+        <span
+          class="badge platform-badge"
+        >
+          <i class="fa-solid fa-layer-group"></i>
+
+          ${escapeHTML(
+            incident.platform
+          )}
+        </span>
+
+
+        <span
+          class="badge category-badge"
+        >
+          ${escapeHTML(
+            incident.category
+          )}
+        </span>
+
       `;
 
-      document.getElementById('detailDescription').textContent = incident.description || 'No issue description provided.';
-      document.getElementById('detailAgentAction').textContent = incident.agentAction || incident.instructions || 'No specific agent action provided.';
-      document.getElementById('detailWhatToCheck').textContent = incident.whatToCheck || 'No specific checks provided.';
-      document.getElementById('detailInstructions').textContent = incident.instructions || 'No step-by-step procedure provided.';
-      document.getElementById('detailResponse').textContent = incident.response || 'No customer response provided.';
 
-      const notionWrapper = document.getElementById('detailNotionWrapper');
-      const notion = document.getElementById('detailNotion');
+      document.getElementById(
+        'detailDescription'
+      ).textContent =
+        incident.description ||
+        'No issue description provided.';
+
+
+      document.getElementById(
+        'detailAgentAction'
+      ).textContent =
+        incident.agentAction ||
+        incident.instructions ||
+        'No specific agent action provided.';
+
+
+      document.getElementById(
+        'detailWhatToCheck'
+      ).textContent =
+        incident.whatToCheck ||
+        'No specific checks provided.';
+
+
+      document.getElementById(
+        'detailInstructions'
+      ).textContent =
+        incident.instructions ||
+        'No step-by-step procedure provided.';
+
+
+      document.getElementById(
+        'detailResponse'
+      ).textContent =
+        incident.response ||
+        'No customer response provided.';
+
+
+      const notionWrapper =
+        document.getElementById(
+          'detailNotionWrapper'
+        );
+
+
+      const notion =
+        document.getElementById(
+          'detailNotion'
+        );
+
 
       if (incident.notionUrl) {
-        notion.href = incident.notionUrl;
-        notionWrapper.classList.remove('hidden');
+
+        notion.href =
+          incident.notionUrl;
+
+        notionWrapper.classList.remove(
+          'hidden'
+        );
+
       } else {
-        notionWrapper.classList.add('hidden');
+
+        notionWrapper.classList.add(
+          'hidden'
+        );
+
       }
 
-      showModal('incidentModal');
+
+      showModal(
+        'incidentModal'
+      );
+
     }
+
 
     /* =========================================================
        ADMIN
     ========================================================== */
 
     function openAdmin() {
-      if (!['TL', 'QA', 'MA'].includes(role)) {
-        showModal('loginModal');
+
+      if (
+        !['TL', 'QA', 'MA'].includes(
+          role
+        )
+      ) {
+
+        showModal(
+          'loginModal'
+        );
+
         return;
       }
 
-      document.getElementById('adminRoleText').textContent = `Signed in as ${roleLabels[role] || role}`;
+
+      document.getElementById(
+        'adminRoleText'
+      ).textContent =
+        `Signed in as ${
+          roleLabels[role] ||
+          role
+        }`;
+
+
       renderAdminIncidentList();
+
       renderIncidentEditor();
-      showModal('adminModal');
+
+      showModal(
+        'adminModal'
+      );
+
     }
+
 
     function renderAdminIncidentList() {
-      const container = document.getElementById('adminIncidentList');
+
+      const container =
+        document.getElementById(
+          'adminIncidentList'
+        );
+
+
       if (!container) return;
 
-      const sorted = incidents.map(normalizeIncident).sort((a, b) => {
-        if (a.status !== 'RESOLVED' && b.status === 'RESOLVED') return -1;
-        if (a.status === 'RESOLVED' && b.status !== 'RESOLVED') return 1;
-        return new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0);
-      });
+
+      const sorted =
+        incidents
+          .map(normalizeIncident)
+          .sort((a, b) => {
+
+            if (
+              a.status !== 'RESOLVED' &&
+              b.status === 'RESOLVED'
+            ) {
+              return -1;
+            }
+
+
+            if (
+              a.status === 'RESOLVED' &&
+              b.status !== 'RESOLVED'
+            ) {
+              return 1;
+            }
+
+
+            return (
+              new Date(
+                b.updatedAt ||
+                b.createdAt ||
+                0
+              ) -
+              new Date(
+                a.updatedAt ||
+                a.createdAt ||
+                0
+              )
+            );
+
+          });
+
 
       if (!sorted.length) {
+
         container.innerHTML = `
-          <div class="rounded-md border border-dashed p-4 text-center" style="border-color: var(--n-border);">
-            <p class="text-xs" style="color: var(--n-text-muted);">No incidents found.</p>
+
+          <div
+            class="rounded-md border border-dashed p-4 text-center"
+            style="border-color: var(--n-border);"
+          >
+            <p
+              class="text-xs"
+              style="color: var(--n-text-muted);"
+            >
+              No incidents found.
+            </p>
           </div>
+
         `;
+
         return;
       }
 
-      container.innerHTML = sorted.map(incident => {
-        const selected = String(incident.id) === String(selectedIncidentId);
-        return `
-          <button onclick="selectIncident('${escapeAttribute(incident.id)}')" class="w-full min-w-0 rounded-md border px-3 py-2.5 text-left transition"
-            style="border-color: ${selected ? 'var(--n-accent)' : 'transparent'}; background: ${selected ? 'var(--n-accent-soft)' : 'transparent'};">
-            <div class="mb-1 flex flex-wrap gap-1">
-              <span class="text-[9px] font-semibold uppercase" style="color: ${incident.status === 'RESOLVED' ? 'var(--n-text-muted)' : incident.status === 'MONITORING' ? '#9a6700' : '#1a7f37'};">
-                ${escapeHTML(incident.status)}
-              </span>
-              <span class="text-[9px] font-semibold" style="color: #6940a5;">${escapeHTML(incident.platform)}</span>
-            </div>
-            <p class="line-clamp-2 text-xs font-semibold" style="color: var(--n-text);">${escapeHTML(incident.title)}</p>
-          </button>
-        `;
-      }).join('');
+
+      container.innerHTML =
+        sorted
+          .map(incident => {
+
+            const selected =
+              String(incident.id) ===
+              String(
+                selectedIncidentId
+              );
+
+
+            return `
+
+              <button
+                onclick="selectIncident('${escapeAttribute(incident.id)}')"
+                class="w-full min-w-0 rounded-md border px-3 py-2.5 text-left transition"
+                style="
+                  border-color:
+                    ${
+                      selected
+                        ? 'var(--n-accent)'
+                        : 'transparent'
+                    };
+
+                  background:
+                    ${
+                      selected
+                        ? 'var(--n-accent-soft)'
+                        : 'transparent'
+                    };
+                "
+              >
+
+                <div
+                  class="mb-1 flex flex-wrap gap-1"
+                >
+
+                  <span
+                    class="text-[9px] font-semibold uppercase"
+                    style="
+                      color:
+                        ${
+                          incident.status ===
+                          'RESOLVED'
+                            ? 'var(--n-text-muted)'
+                            : incident.status ===
+                              'MONITORING'
+                              ? '#9a6700'
+                              : '#1a7f37'
+                        };
+                    "
+                  >
+                    ${escapeHTML(
+                      incident.status
+                    )}
+                  </span>
+
+
+                  <span
+                    class="text-[9px] font-semibold"
+                    style="color: #6940a5;"
+                  >
+                    ${escapeHTML(
+                      incident.platform
+                    )}
+                  </span>
+
+                </div>
+
+
+                <p
+                  class="line-clamp-2 text-xs font-semibold"
+                  style="color: var(--n-text);"
+                >
+                  ${escapeHTML(
+                    incident.title
+                  )}
+                </p>
+
+              </button>
+
+            `;
+
+          })
+          .join('');
+
     }
+
 
     function selectIncident(id) {
-      creatingNewIncident = false;
-      selectedIncidentId = id;
+
+      creatingNewIncident =
+        false;
+
+
+      selectedIncidentId =
+        id;
+
+
       renderAdminIncidentList();
+
       renderIncidentEditor();
+
     }
 
-    function startNewIncident() {
-      creatingNewIncident = true;
-      selectedIncidentId = null;
 
-      document.getElementById('editorEmpty').classList.add('hidden');
-      document.getElementById('incidentEditor').classList.remove('hidden');
-      document.getElementById('editorHeading').textContent = 'Create New Incident';
-      document.getElementById('deleteIncidentButton').classList.add('hidden');
+    function startNewIncident() {
+
+      creatingNewIncident =
+        true;
+
+
+      selectedIncidentId =
+        null;
+
+
+      document
+        .getElementById(
+          'editorEmpty'
+        )
+        .classList.add(
+          'hidden'
+        );
+
+
+      document
+        .getElementById(
+          'incidentEditor'
+        )
+        .classList.remove(
+          'hidden'
+        );
+
+
+      document.getElementById(
+        'editorHeading'
+      ).textContent =
+        'Create New Incident';
+
+
+      document
+        .getElementById(
+          'deleteIncidentButton'
+        )
+        .classList.add(
+          'hidden'
+        );
+
 
       clearEditor();
 
-      document.getElementById('editorPlatform').value = 'Fortune Purple';
-      document.getElementById('editorStatus').value = 'ACTIVE';
-      document.getElementById('editorSeverity').value = 'MEDIUM';
-      document.getElementById('editorCategory').value = 'Technical';
-      document.getElementById('editorTitle').focus();
+
+      document.getElementById(
+        'editorPlatform'
+      ).value =
+        'Fortune Purple';
+
+
+      document.getElementById(
+        'editorStatus'
+      ).value =
+        'ACTIVE';
+
+
+      document.getElementById(
+        'editorSeverity'
+      ).value =
+        'MEDIUM';
+
+
+      document.getElementById(
+        'editorCategory'
+      ).value =
+        'Technical';
+
+
+      document.getElementById(
+        'editorTitle'
+      ).focus();
+
     }
+
 
     function renderIncidentEditor() {
-      const empty = document.getElementById('editorEmpty');
-      const editor = document.getElementById('incidentEditor');
+
+      const empty =
+        document.getElementById(
+          'editorEmpty'
+        );
+
+
+      const editor =
+        document.getElementById(
+          'incidentEditor'
+        );
+
 
       if (creatingNewIncident) {
-        empty.classList.add('hidden');
-        editor.classList.remove('hidden');
+
+        empty.classList.add(
+          'hidden'
+        );
+
+        editor.classList.remove(
+          'hidden'
+        );
+
         return;
       }
 
-      const incident = incidents.map(normalizeIncident).find(item => String(item.id) === String(selectedIncidentId));
+
+      const incident =
+        incidents
+          .map(normalizeIncident)
+          .find(
+            item =>
+              String(item.id) ===
+              String(
+                selectedIncidentId
+              )
+          );
+
 
       if (!incident) {
-        empty.classList.remove('hidden');
-        editor.classList.add('hidden');
+
+        empty.classList.remove(
+          'hidden'
+        );
+
+        editor.classList.add(
+          'hidden'
+        );
+
         return;
       }
 
-      empty.classList.add('hidden');
-      editor.classList.remove('hidden');
 
-      document.getElementById('editorHeading').textContent = 'Edit Incident';
-      document.getElementById('deleteIncidentButton').classList.remove('hidden');
+      empty.classList.add(
+        'hidden'
+      );
 
-      document.getElementById('editorPlatform').value = incident.platform || 'All Platforms';
-      document.getElementById('editorStatus').value = incident.status || 'ACTIVE';
-      document.getElementById('editorSeverity').value = incident.severity || 'MEDIUM';
-      document.getElementById('editorCategory').value = incident.category || 'Other';
-      document.getElementById('editorTitle').value = incident.title || '';
-      document.getElementById('editorAffected').value = incident.affected || '';
-      document.getElementById('editorDescription').value = incident.description || '';
-      document.getElementById('editorAgentAction').value = incident.agentAction || '';
-      document.getElementById('editorWhatToCheck').value = incident.whatToCheck || '';
-      document.getElementById('editorInstructions').value = incident.instructions || '';
-      document.getElementById('editorResponse').value = incident.response || '';
-      document.getElementById('editorNotionUrl').value = incident.notionUrl || '';
+
+      editor.classList.remove(
+        'hidden'
+      );
+
+
+      document.getElementById(
+        'editorHeading'
+      ).textContent =
+        'Edit Incident';
+
+
+      document
+        .getElementById(
+          'deleteIncidentButton'
+        )
+        .classList.remove(
+          'hidden'
+        );
+
+
+      document.getElementById(
+        'editorPlatform'
+      ).value =
+        incident.platform ||
+        'All Platforms';
+
+
+      document.getElementById(
+        'editorStatus'
+      ).value =
+        incident.status ||
+        'ACTIVE';
+
+
+      document.getElementById(
+        'editorSeverity'
+      ).value =
+        incident.severity ||
+        'MEDIUM';
+
+
+      document.getElementById(
+        'editorCategory'
+      ).value =
+        incident.category ||
+        'Other';
+
+
+      document.getElementById(
+        'editorTitle'
+      ).value =
+        incident.title ||
+        '';
+
+
+      document.getElementById(
+        'editorAffected'
+      ).value =
+        incident.affected ||
+        '';
+
+
+      document.getElementById(
+        'editorDescription'
+      ).value =
+        incident.description ||
+        '';
+
+
+      document.getElementById(
+        'editorAgentAction'
+      ).value =
+        incident.agentAction ||
+        '';
+
+
+      document.getElementById(
+        'editorWhatToCheck'
+      ).value =
+        incident.whatToCheck ||
+        '';
+
+
+      document.getElementById(
+        'editorInstructions'
+      ).value =
+        incident.instructions ||
+        '';
+
+
+      document.getElementById(
+        'editorResponse'
+      ).value =
+        incident.response ||
+        '';
+
+
+      document.getElementById(
+        'editorNotionUrl'
+      ).value =
+        incident.notionUrl ||
+        '';
+
 
       clearEditorMessage();
+
     }
+
 
     function clearEditor() {
+
       [
-        'editorTitle', 'editorAffected', 'editorDescription', 'editorAgentAction',
-        'editorWhatToCheck', 'editorInstructions', 'editorResponse', 'editorNotionUrl'
+
+        'editorTitle',
+        'editorAffected',
+        'editorDescription',
+        'editorAgentAction',
+        'editorWhatToCheck',
+        'editorInstructions',
+        'editorResponse',
+        'editorNotionUrl'
+
       ].forEach(id => {
-        const element = document.getElementById(id);
-        if (element) element.value = '';
+
+        const element =
+          document.getElementById(
+            id
+          );
+
+
+        if (element) {
+          element.value = '';
+        }
+
       });
+
+
       clearEditorMessage();
+
     }
 
+
     function clearEditorMessage() {
-      const element = document.getElementById('editorMessage');
+
+      const element =
+        document.getElementById(
+          'editorMessage'
+        );
+
+
       if (element) {
-        element.textContent = '';
-        element.className = 'text-xs';
+
+        element.textContent =
+          '';
+
+
+        element.className =
+          'text-xs';
+
       }
+
     }
+
 
     /* =========================================================
        SAVE INCIDENT
     ========================================================== */
 
     async function saveIncident() {
-      if (!['TL', 'QA', 'MA'].includes(role)) {
-        showToast('Management login required.', 'error');
+
+      if (
+        !['TL', 'QA', 'MA'].includes(
+          role
+        )
+      ) {
+
+        showToast(
+          'Management login required.',
+          'error'
+        );
+
         return;
       }
 
-      const title = document.getElementById('editorTitle').value.trim();
+
+      const title =
+        document.getElementById(
+          'editorTitle'
+        ).value.trim();
+
+
       if (!title) {
-        setEditorMessage('Incident title is required.', 'error');
+
+        setEditorMessage(
+          'Incident title is required.',
+          'error'
+        );
+
         return;
       }
+
 
       const incidentData = {
-        platform: document.getElementById('editorPlatform').value,
-        status: document.getElementById('editorStatus').value,
-        severity: document.getElementById('editorSeverity').value,
-        category: document.getElementById('editorCategory').value,
+
+        platform:
+          document.getElementById(
+            'editorPlatform'
+          ).value,
+
+        status:
+          document.getElementById(
+            'editorStatus'
+          ).value,
+
+        severity:
+          document.getElementById(
+            'editorSeverity'
+          ).value,
+
+        category:
+          document.getElementById(
+            'editorCategory'
+          ).value,
+
         title,
-        affected: document.getElementById('editorAffected').value.trim(),
-        description: document.getElementById('editorDescription').value.trim(),
-        agentAction: document.getElementById('editorAgentAction').value.trim(),
-        whatToCheck: document.getElementById('editorWhatToCheck').value.trim(),
-        instructions: document.getElementById('editorInstructions').value.trim(),
-        response: document.getElementById('editorResponse').value.trim(),
-        notionUrl: document.getElementById('editorNotionUrl').value.trim()
+
+        affected:
+          document.getElementById(
+            'editorAffected'
+          ).value.trim(),
+
+        description:
+          document.getElementById(
+            'editorDescription'
+          ).value.trim(),
+
+        agentAction:
+          document.getElementById(
+            'editorAgentAction'
+          ).value.trim(),
+
+        whatToCheck:
+          document.getElementById(
+            'editorWhatToCheck'
+          ).value.trim(),
+
+        instructions:
+          document.getElementById(
+            'editorInstructions'
+          ).value.trim(),
+
+        response:
+          document.getElementById(
+            'editorResponse'
+          ).value.trim(),
+
+        notionUrl:
+          document.getElementById(
+            'editorNotionUrl'
+          ).value.trim()
+
       };
 
-      const button = document.getElementById('saveIncidentButton');
-      button.disabled = true;
-      button.innerHTML = `<i class="fa-solid fa-spinner loading-spinner mr-1"></i> Saving...`;
+
+      const button =
+        document.getElementById(
+          'saveIncidentButton'
+        );
+
+
+      button.disabled =
+        true;
+
+
+      button.innerHTML =
+        `<i class="fa-solid fa-spinner loading-spinner mr-1"></i> Saving...`;
+
 
       try {
+
         if (creatingNewIncident) {
-          const result = await api('create', { incident: incidentData });
-          const created = normalizeIncident(result.incident || result.data || result);
+
+          const result =
+            await api(
+              'create',
+              {
+                incident:
+                  incidentData
+              }
+            );
+
+
+          const created =
+            normalizeIncident(
+              result.incident ||
+              result.data ||
+              result
+            );
+
 
           if (created.id) {
-            incidents.push(created);
-            selectedIncidentId = created.id;
+
+            incidents.push(
+              created
+            );
+
+
+            selectedIncidentId =
+              created.id;
+
           }
 
-          creatingNewIncident = false;
-          setEditorMessage('Incident created successfully.', 'success');
-          showToast('Incident created.');
-        } else {
-          const result = await api('update', { incident: { id: selectedIncidentId, ...incidentData } });
 
-          const index = incidents.findIndex(incident => String(normalizeIncident(incident).id) === String(selectedIncidentId));
-          const returned = normalizeIncident(result.incident || result.data || incidentData);
+          creatingNewIncident =
+            false;
+
+
+          setEditorMessage(
+            'Incident created successfully.',
+            'success'
+          );
+
+
+          showToast(
+            'Incident created.'
+          );
+
+        } else {
+
+          const result =
+            await api(
+              'update',
+              {
+                incident: {
+                  id:
+                    selectedIncidentId,
+
+                  ...incidentData
+                }
+              }
+            );
+
+
+          const index =
+            incidents.findIndex(
+              incident =>
+                String(
+                  normalizeIncident(
+                    incident
+                  ).id
+                ) ===
+                String(
+                  selectedIncidentId
+                )
+            );
+
+
+          const returned =
+            normalizeIncident(
+              result.incident ||
+              result.data ||
+              incidentData
+            );
+
 
           if (index >= 0) {
-            incidents[index] = { ...incidents[index], ...returned, ...incidentData, id: selectedIncidentId };
+
+            incidents[index] = {
+              ...incidents[index],
+              ...returned,
+              ...incidentData,
+              id:
+                selectedIncidentId
+            };
+
           }
 
-          setEditorMessage('Incident updated successfully.', 'success');
-          showToast('Incident updated.');
+
+          setEditorMessage(
+            'Incident updated successfully.',
+            'success'
+          );
+
+
+          showToast(
+            'Incident updated.'
+          );
+
         }
 
+
         renderIncidents();
+
         renderAdminIncidentList();
+
         renderIncidentEditor();
 
       } catch (error) {
-        console.error('Save error:', error);
-        setEditorMessage(error.message || 'Unable to save incident.', 'error');
-        showToast(error.message || 'Unable to save incident.', 'error');
+
+        console.error(
+          'Save error:',
+          error
+        );
+
+
+        setEditorMessage(
+          error.message ||
+          'Unable to save incident.',
+          'error'
+        );
+
+
+        showToast(
+          error.message ||
+          'Unable to save incident.',
+          'error'
+        );
+
       } finally {
-        button.disabled = false;
-        button.innerHTML = `<i class="fa-solid fa-floppy-disk mr-1"></i> Save Incident`;
+
+        button.disabled =
+          false;
+
+
+        button.innerHTML =
+          `<i class="fa-solid fa-floppy-disk mr-1"></i> Save Incident`;
+
       }
+
     }
+
 
     /* =========================================================
        DELETE
     ========================================================== */
 
     async function deleteSelectedIncident() {
-      if (!selectedIncidentId || creatingNewIncident) return;
 
-      const incident = incidents.map(normalizeIncident).find(item => String(item.id) === String(selectedIncidentId));
+      if (
+        !selectedIncidentId ||
+        creatingNewIncident
+      ) {
+        return;
+      }
+
+
+      const incident =
+        incidents
+          .map(normalizeIncident)
+          .find(
+            item =>
+              String(item.id) ===
+              String(
+                selectedIncidentId
+              )
+          );
+
+
       if (!incident) return;
 
-      const confirmed = window.confirm(`Delete "${incident.title}"?\n\nThis action cannot be undone.`);
+
+      const confirmed =
+        window.confirm(
+          `Delete "${incident.title}"?\n\nThis action cannot be undone.`
+        );
+
+
       if (!confirmed) return;
 
+
       try {
-        await api('delete', { id: selectedIncidentId });
 
-        incidents = incidents.filter(item => String(normalizeIncident(item).id) !== String(selectedIncidentId));
+        await api(
+          'delete',
+          {
+            id:
+              selectedIncidentId
+          }
+        );
 
-        selectedIncidentId = null;
-        creatingNewIncident = false;
+
+        incidents =
+          incidents.filter(
+            item =>
+              String(
+                normalizeIncident(
+                  item
+                ).id
+              ) !==
+              String(
+                selectedIncidentId
+              )
+          );
+
+
+        selectedIncidentId =
+          null;
+
+
+        creatingNewIncident =
+          false;
+
 
         renderIncidents();
+
         renderAdminIncidentList();
+
         renderIncidentEditor();
 
-        showToast('Incident deleted.');
+
+        showToast(
+          'Incident deleted.'
+        );
+
       } catch (error) {
-        console.error('Delete error:', error);
-        showToast(error.message || 'Unable to delete incident.', 'error');
+
+        console.error(
+          'Delete error:',
+          error
+        );
+
+
+        showToast(
+          error.message ||
+          'Unable to delete incident.',
+          'error'
+        );
+
       }
+
     }
+
 
     /* =========================================================
        LOGIN
     ========================================================== */
 
     async function login() {
-      const selectedRole = document.getElementById('loginRole').value.trim().toUpperCase();
-      const pin = document.getElementById('loginPin').value.trim();
 
-      const errorBox = document.getElementById('loginError');
-      const button = document.getElementById('loginSubmitButton');
+      const selectedRole =
+        document.getElementById(
+          'loginRole'
+        ).value
+          .trim()
+          .toUpperCase();
 
-      errorBox.classList.add('hidden');
-      errorBox.textContent = '';
+
+      const pin =
+        document.getElementById(
+          'loginPin'
+        ).value.trim();
+
+
+      const errorBox =
+        document.getElementById(
+          'loginError'
+        );
+
+
+      const button =
+        document.getElementById(
+          'loginSubmitButton'
+        );
+
+
+      errorBox.classList.add(
+        'hidden'
+      );
+
+
+      errorBox.textContent =
+        '';
+
 
       if (!pin) {
-        errorBox.textContent = 'Please enter your PIN.';
-        errorBox.classList.remove('hidden');
+
+        errorBox.textContent =
+          'Please enter your PIN.';
+
+
+        errorBox.classList.remove(
+          'hidden'
+        );
+
+
         return;
       }
 
-      button.disabled = true;
-      button.innerHTML = `<i class="fa-solid fa-spinner loading-spinner"></i> Logging in...`;
+
+      button.disabled =
+        true;
+
+
+      button.innerHTML =
+        `<i class="fa-solid fa-spinner loading-spinner"></i> Logging in...`;
+
 
       try {
-        const body = new URLSearchParams();
-        body.set('payload', JSON.stringify({ action: 'login', role: selectedRole, pin }));
 
-        const response = await fetch(API_URL, { method: 'POST', body });
-        const text = await response.text();
+        const body =
+          new URLSearchParams();
+
+
+        body.set(
+          'payload',
+          JSON.stringify({
+            action: 'login',
+            role: selectedRole,
+            pin
+          })
+        );
+
+
+        const response =
+          await fetch(
+            API_URL,
+            {
+              method: 'POST',
+              body
+            }
+          );
+
+
+        const text =
+          await response.text();
+
 
         let result;
+
+
         try {
-          result = JSON.parse(text);
+
+          result =
+            JSON.parse(text);
+
         } catch (error) {
-          throw new Error('The Apps Script login did not return valid JSON.');
+
+          throw new Error(
+            'The Apps Script login did not return valid JSON.'
+          );
+
         }
 
-        if (!response.ok || result.ok === false || result.success === false) {
-          throw new Error(result.error || result.message || 'Invalid PIN or login failed.');
+
+        if (
+          !response.ok ||
+          result.ok === false ||
+          result.success === false
+        ) {
+
+          throw new Error(
+            result.error ||
+            result.message ||
+            'Invalid PIN or login failed.'
+          );
+
         }
 
-        adminToken = result.token || result.sessionToken || result.adminToken || result.authToken || '';
-        role = String(result.role || selectedRole).toUpperCase();
-        adminPin = pin;
 
-        if (!['TL', 'QA', 'MA'].includes(role)) {
-          throw new Error('The server returned an invalid management role.');
+        adminToken =
+          result.token ||
+          result.sessionToken ||
+          result.adminToken ||
+          result.authToken ||
+          '';
+
+
+        role =
+          String(
+            result.role ||
+            selectedRole
+          ).toUpperCase();
+
+
+        adminPin =
+          pin;
+
+
+        if (
+          !['TL', 'QA', 'MA'].includes(
+            role
+          )
+        ) {
+
+          throw new Error(
+            'The server returned an invalid management role.'
+          );
+
         }
 
-        if (adminToken) sessionStorage.setItem('support_admin_token', adminToken);
-        sessionStorage.setItem('support_admin_role', role);
 
-        document.getElementById('loginPin').value = '';
-        hideModal('loginModal');
+        if (adminToken) {
+
+          sessionStorage.setItem(
+            'support_admin_token',
+            adminToken
+          );
+
+        }
+
+
+        sessionStorage.setItem(
+          'support_admin_role',
+          role
+        );
+
+
+        document.getElementById(
+          'loginPin'
+        ).value =
+          '';
+
+
+        hideModal(
+          'loginModal'
+        );
+
+
         openAdmin();
 
-        showToast(`Logged in as ${roleLabels[role] || role}.`);
+
+        showToast(
+          `Logged in as ${
+            roleLabels[role] ||
+            role
+          }.`
+        );
 
       } catch (error) {
-        console.error('LOGIN ERROR:', error);
-        errorBox.textContent = error.message || 'Login failed.';
-        errorBox.classList.remove('hidden');
+
+        console.error(
+          'LOGIN ERROR:',
+          error
+        );
+
+
+        errorBox.textContent =
+          error.message ||
+          'Login failed.';
+
+
+        errorBox.classList.remove(
+          'hidden'
+        );
+
       } finally {
-        button.disabled = false;
-        button.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> Login`;
+
+        button.disabled =
+          false;
+
+
+        button.innerHTML =
+          `<i class="fa-solid fa-right-to-bracket"></i> Login`;
+
       }
+
     }
+
 
     /* =========================================================
        LOGOUT
     ========================================================== */
 
     function logout() {
-      adminToken = '';
-      adminPin = '';
-      role = '';
-      selectedIncidentId = null;
-      creatingNewIncident = false;
 
-      sessionStorage.removeItem('support_admin_token');
-      sessionStorage.removeItem('support_admin_role');
+      adminToken =
+        '';
 
-      hideModal('adminModal');
-      showToast('Logged out.');
+
+      adminPin =
+        '';
+
+
+      role =
+        '';
+
+
+      selectedIncidentId =
+        null;
+
+
+      creatingNewIncident =
+        false;
+
+
+      sessionStorage.removeItem(
+        'support_admin_token'
+      );
+
+
+      sessionStorage.removeItem(
+        'support_admin_role'
+      );
+
+
+      hideModal(
+        'adminModal'
+      );
+
+
+      showToast(
+        'Logged out.'
+      );
+
     }
+
 
     /* =========================================================
        MODALS
     ========================================================== */
 
     function showModal(id) {
-      const modal = document.getElementById(id);
+
+      const modal =
+        document.getElementById(
+          id
+        );
+
+
       if (!modal) return;
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
-      document.body.style.overflow = 'hidden';
+
+
+      modal.classList.remove(
+        'hidden'
+      );
+
+
+      modal.classList.add(
+        'flex'
+      );
+
+
+      document.body.style.overflow =
+        'hidden';
+
     }
+
 
     function hideModal(id) {
-      const modal = document.getElementById(id);
+
+      const modal =
+        document.getElementById(
+          id
+        );
+
+
       if (!modal) return;
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
-      document.body.style.overflow = '';
+
+
+      modal.classList.add(
+        'hidden'
+      );
+
+
+      modal.classList.remove(
+        'flex'
+      );
+
+
+      document.body.style.overflow =
+        '';
+
     }
 
-    document.addEventListener('click', event => {
-      if (event.target.classList.contains('modal-backdrop')) {
-        hideModal(event.target.id);
-      }
-    });
 
-    document.addEventListener('keydown', event => {
-      if (event.key !== 'Escape') return;
-      ['incidentModal', 'loginModal', 'adminModal'].forEach(id => {
-        const modal = document.getElementById(id);
-        if (modal && !modal.classList.contains('hidden')) hideModal(id);
-      });
-    });
+    /* CLICK OUTSIDE */
+
+    document.addEventListener(
+      'click',
+      event => {
+
+        if (
+          event.target.classList.contains(
+            'modal-backdrop'
+          )
+        ) {
+
+          hideModal(
+            event.target.id
+          );
+
+        }
+
+      }
+    );
+
+
+    /* ESCAPE */
+
+    document.addEventListener(
+      'keydown',
+      event => {
+
+        if (
+          event.key !== 'Escape'
+        ) {
+          return;
+        }
+
+
+        [
+          'incidentModal',
+          'loginModal',
+          'adminModal'
+        ].forEach(id => {
+
+          const modal =
+            document.getElementById(
+              id
+            );
+
+
+          if (
+            modal &&
+            !modal.classList.contains(
+              'hidden'
+            )
+          ) {
+
+            hideModal(id);
+
+          }
+
+        });
+
+      }
+    );
+
 
     /* =========================================================
        HELPERS
     ========================================================== */
 
     function escapeHTML(value) {
-      return String(value ?? '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
+
+      return String(
+        value ?? ''
+      )
+        .replace(
+          /&/g,
+          '&amp;'
+        )
+        .replace(
+          /</g,
+          '&lt;'
+        )
+        .replace(
+          />/g,
+          '&gt;'
+        )
+        .replace(
+          /"/g,
+          '&quot;'
+        )
+        .replace(
+          /'/g,
+          '&#039;'
+        );
+
     }
 
-    function escapeAttribute(value) { return escapeHTML(value); }
+
+    function escapeAttribute(value) {
+
+      return escapeHTML(value);
+
+    }
+
 
     function formatIncidentDate(value) {
+
       if (!value) return '';
-      const date = new Date(value);
-      if (Number.isNaN(date.getTime())) return '';
-      return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }).format(date);
-    }
 
-    function setEditorMessage(message, type = 'info') {
-      const element = document.getElementById('editorMessage');
-      if (!element) return;
-      element.textContent = message;
-      if (type === 'error') {
-        element.className = 'text-xs font-semibold';
-        element.style.color = '#b93b30';
-      } else if (type === 'success') {
-        element.className = 'text-xs font-semibold';
-        element.style.color = '#1a7f37';
-      } else {
-        element.className = 'text-xs';
-        element.style.color = 'var(--n-text-muted)';
+
+      const date =
+        new Date(value);
+
+
+      if (
+        Number.isNaN(
+          date.getTime()
+        )
+      ) {
+        return '';
       }
+
+
+      return new Intl.DateTimeFormat(
+        'en-US',
+        {
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        }
+      ).format(date);
+
     }
 
-    function showToast(message, type = 'success') {
-      const container = document.getElementById('toastContainer');
+
+    function setEditorMessage(
+      message,
+      type = 'info'
+    ) {
+
+      const element =
+        document.getElementById(
+          'editorMessage'
+        );
+
+
+      if (!element) return;
+
+
+      element.textContent =
+        message;
+
+
+      if (type === 'error') {
+
+        element.className =
+          'text-xs font-semibold';
+
+
+        element.style.color =
+          '#b93b30';
+
+      } else if (
+        type === 'success'
+      ) {
+
+        element.className =
+          'text-xs font-semibold';
+
+
+        element.style.color =
+          '#1a7f37';
+
+      } else {
+
+        element.className =
+          'text-xs';
+
+
+        element.style.color =
+          'var(--n-text-muted)';
+
+      }
+
+    }
+
+
+    function showToast(
+      message,
+      type = 'success'
+    ) {
+
+      const container =
+        document.getElementById(
+          'toastContainer'
+        );
+
+
       if (!container) return;
 
-      const toast = document.createElement('div');
-      const icon = type === 'error' ? 'fa-circle-exclamation' : 'fa-circle-check';
 
-      toast.className = 'toast pointer-events-auto flex max-w-sm items-center gap-2 rounded-md border px-4 py-3 text-xs font-semibold shadow-sm';
-      toast.style.borderColor = type === 'error' ? '#f3c9c5' : 'var(--n-border)';
-      toast.style.background = type === 'error' ? '#fbe4e2' : 'var(--n-bg)';
-      toast.style.color = type === 'error' ? '#b93b30' : 'var(--n-text)';
+      const toast =
+        document.createElement(
+          'div'
+        );
 
-      toast.innerHTML = `<i class="fa-solid ${icon}"></i><span>${escapeHTML(message)}</span>`;
-      container.appendChild(toast);
 
-      setTimeout(() => toast.remove(), 3900);
+      const icon =
+        type === 'error'
+          ? 'fa-circle-exclamation'
+          : 'fa-circle-check';
+
+
+      toast.className =
+        'toast pointer-events-auto flex max-w-sm items-center gap-2 rounded-md border px-4 py-3 text-xs font-semibold shadow-sm';
+
+
+      toast.style.borderColor =
+        type === 'error'
+          ? '#f3c9c5'
+          : 'var(--n-border)';
+
+
+      toast.style.background =
+        type === 'error'
+          ? '#fbe4e2'
+          : 'var(--n-bg)';
+
+
+      toast.style.color =
+        type === 'error'
+          ? '#b93b30'
+          : 'var(--n-text)';
+
+
+      toast.innerHTML =
+        `
+          <i class="fa-solid ${icon}"></i>
+          <span>${escapeHTML(message)}</span>
+        `;
+
+
+      container.appendChild(
+        toast
+      );
+
+
+      setTimeout(
+        () => toast.remove(),
+        3900
+      );
+
     }
+
 
     /* =========================================================
        INITIALIZATION
     ========================================================== */
 
     async function initialize() {
+
       initTheme();
+
+
       renderTimezones();
+
+
       updateTbilisiClock();
+
 
       await loadIncidents();
 
-      setInterval(loadIncidents, 60000);
-      setInterval(updateLiveTimeDisplays, 1000);
+
+      /*
+        Refresh incidents every minute.
+        The time display itself updates every second.
+      */
+
+      setInterval(
+        loadIncidents,
+        60000
+      );
+
+
+      setInterval(
+        updateLiveTimeDisplays,
+        1000
+      );
+
     }
+
 
     initialize();
 
