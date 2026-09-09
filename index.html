@@ -2,110 +2,104 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  />
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Support Operations Dashboard</title>
 
-  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Font Awesome -->
   <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
   />
 
   <script>
-    tailwind.config = {
-      darkMode: 'class'
-    };
+    tailwind.config = { darkMode: 'class' };
   </script>
 
   <style>
-    * {
-      box-sizing: border-box;
+    /* ===================================================
+       NOTION-INSPIRED DESIGN TOKENS
+    =================================================== */
+    :root {
+      --n-bg: #ffffff;
+      --n-bg-secondary: #f7f7f5;
+      --n-border: #e9e9e7;
+      --n-text: #37352f;
+      --n-text-muted: #787774;
+      --n-accent: #2383e2;
+      --n-accent-soft: #e7f3fe;
+      --n-radius: 6px;
+      --n-radius-lg: 10px;
     }
 
-    html,
-    body {
+    .dark {
+      --n-bg: #191919;
+      --n-bg-secondary: #202020;
+      --n-border: #2f2f2f;
+      --n-text: #e9e9e7;
+      --n-text-muted: #9b9b99;
+      --n-accent: #5fb3fc;
+      --n-accent-soft: rgba(95, 179, 252, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
       margin: 0;
       padding: 0;
       min-height: 100%;
-      font-family:
-        Inter,
-        ui-sans-serif,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
+      max-width: 100vw;
+      overflow-x: hidden;
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji",
+        "Segoe UI Symbol";
     }
 
     body {
-      background: #f8fafc;
-      color: #0f172a;
-      transition:
-        background-color 0.2s ease,
-        color 0.2s ease;
+      background: var(--n-bg-secondary);
+      color: var(--n-text);
+      transition: background-color 0.15s ease, color 0.15s ease;
     }
 
-    .dark body {
-      background: #020617;
-      color: #e2e8f0;
+    /* Prevent any child from forcing horizontal scroll */
+    #app, main, header, section, aside {
+      min-width: 0;
+      max-width: 100%;
     }
 
     .app-card {
-      background: rgba(255, 255, 255, 0.94);
-      border: 1px solid #e2e8f0;
-      border-radius: 18px;
-      box-shadow:
-        0 8px 30px rgba(15, 23, 42, 0.06);
-    }
-
-    .dark .app-card {
-      background: rgba(15, 23, 42, 0.92);
-      border-color: #1e293b;
-      box-shadow:
-        0 8px 30px rgba(0, 0, 0, 0.18);
+      background: var(--n-bg);
+      border: 1px solid var(--n-border);
+      border-radius: var(--n-radius-lg);
+      box-shadow: none;
     }
 
     .tab-button {
-      transition: all 0.18s ease;
+      transition: all 0.15s ease;
+      color: var(--n-text-muted);
     }
 
     .tab-button.active {
-      background: #0f172a;
-      color: white;
+      background: var(--n-bg);
+      color: var(--n-text);
+      box-shadow: 0 1px 2px rgba(15, 15, 15, 0.08);
     }
 
-    .dark .tab-button.active {
-      background: #e2e8f0;
-      color: #0f172a;
+    .timezone-card, .incident-card {
+      transition: border-color 0.12s ease, background-color 0.12s ease;
     }
 
-    .timezone-card {
-      transition:
-        transform 0.15s ease,
-        box-shadow 0.15s ease;
+    .timezone-card:hover, .incident-card:hover {
+      border-color: #cfcfcd;
     }
 
-    .timezone-card:hover {
-      transform: translateY(-1px);
-      box-shadow:
-        0 8px 20px rgba(15, 23, 42, 0.08);
-    }
-
-    .dark .timezone-card:hover {
-      box-shadow:
-        0 8px 20px rgba(0, 0, 0, 0.2);
+    .dark .timezone-card:hover, .dark .incident-card:hover {
+      border-color: #3f3f3f;
     }
 
     .modal-backdrop {
-      background: rgba(2, 6, 23, 0.66);
-      backdrop-filter: blur(5px);
+      background: rgba(15, 15, 15, 0.45);
+      backdrop-filter: blur(2px);
     }
 
     .modal-panel {
@@ -113,562 +107,235 @@
       overflow-y: auto;
     }
 
-    .loading-spinner {
-      animation: spin 0.8s linear infinite;
-    }
+    .loading-spinner { animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .incident-card {
-      transition:
-        transform 0.15s ease,
-        border-color 0.15s ease,
-        box-shadow 0.15s ease;
-    }
-
-    .incident-card:hover {
-      transform: translateY(-1px);
-      box-shadow:
-        0 8px 22px rgba(15, 23, 42, 0.08);
-    }
-
-    .dark .incident-card:hover {
-      box-shadow:
-        0 8px 22px rgba(0, 0, 0, 0.22);
-    }
+    .incident-card { border-radius: var(--n-radius-lg); }
 
     .detail-section {
-      border-radius: 16px;
-      border: 1px solid #e2e8f0;
-      padding: 18px;
+      border-radius: var(--n-radius);
+      border: 1px solid var(--n-border);
+      padding: 16px;
+      background: var(--n-bg);
     }
 
-    .dark .detail-section {
-      border-color: #334155;
-    }
-
-    .detail-section.issue {
-      background: #f8fafc;
-    }
-
-    .dark .detail-section.issue {
-      background: #0f172a;
-    }
-
-    .detail-section.action {
-      background: #eff6ff;
-      border-color: #bfdbfe;
-    }
-
-    .dark .detail-section.action {
-      background: rgba(30, 64, 175, 0.18);
-      border-color: #1e40af;
-    }
-
-    .detail-section.check {
-      background: #fffbeb;
-      border-color: #fde68a;
-    }
-
-    .dark .detail-section.check {
-      background: rgba(146, 64, 14, 0.16);
-      border-color: #92400e;
-    }
-
-    .detail-section.response {
-      background: #f0fdf4;
-      border-color: #bbf7d0;
-    }
-
-    .dark .detail-section.response {
-      background: rgba(20, 83, 45, 0.16);
-      border-color: #166534;
-    }
-
-    .detail-section.procedure {
-      background: #faf5ff;
-      border-color: #e9d5ff;
-    }
-
-    .dark .detail-section.procedure {
-      background: rgba(88, 28, 135, 0.16);
-      border-color: #6b21a8;
-    }
+    .detail-section.action { border-left: 3px solid var(--n-accent); }
+    .detail-section.check { border-left: 3px solid #dfab01; }
+    .detail-section.response { border-left: 3px solid #0f7b6c; }
+    .detail-section.procedure { border-left: 3px solid #9065b0; }
 
     .badge {
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      border-radius: 999px;
-      padding: 4px 9px;
+      border-radius: var(--n-radius);
+      padding: 3px 8px;
       font-size: 11px;
-      font-weight: 700;
+      font-weight: 600;
       white-space: nowrap;
+      border: 1px solid transparent;
     }
 
-    .badge-active {
-      background: #dcfce7;
-      color: #166534;
-    }
+    .badge-active { background: #e9f6ec; color: #1a7f37; }
+    .badge-monitoring { background: #fbf1cb; color: #9a6700; }
+    .badge-resolved { background: #eeeeec; color: #6b6b68; }
+    .dark .badge-resolved { background: #2a2a2a; color: #9b9b99; }
+    .badge-high { background: #fbe4e2; color: #b93b30; }
+    .badge-medium { background: #fbf1cb; color: #9a6700; }
+    .badge-low { background: var(--n-accent-soft); color: var(--n-accent); }
+    .platform-badge { background: #f1e5fc; color: #6940a5; }
+    .dark .platform-badge { background: rgba(147, 112, 219, 0.16); color: #c9a6f5; }
+    .category-badge { background: var(--n-accent-soft); color: var(--n-accent); }
 
-    .badge-monitoring {
-      background: #fef3c7;
-      color: #92400e;
-    }
-
-    .badge-resolved {
-      background: #e2e8f0;
-      color: #475569;
-    }
-
-    .dark .badge-resolved {
-      background: #334155;
-      color: #cbd5e1;
-    }
-
-    .badge-high {
-      background: #fee2e2;
-      color: #991b1b;
-    }
-
-    .badge-medium {
-      background: #fef3c7;
-      color: #92400e;
-    }
-
-    .badge-low {
-      background: #dbeafe;
-      color: #1e40af;
-    }
-
-    .platform-badge {
-      background: #ede9fe;
-      color: #5b21b6;
-    }
-
-    .dark .platform-badge {
-      background: rgba(109, 40, 217, 0.22);
-      color: #c4b5fd;
-    }
-
-    .category-badge {
-      background: #e0f2fe;
-      color: #075985;
-    }
-
-    .dark .category-badge {
-      background: rgba(3, 105, 161, 0.2);
-      color: #7dd3fc;
-    }
-
-    textarea,
-    input,
-    select {
+    textarea, input, select {
       outline: none;
+      background: var(--n-bg);
+      color: var(--n-text);
+      border-color: var(--n-border) !important;
     }
 
-    textarea:focus,
-    input:focus,
-    select:focus {
-      border-color: #64748b !important;
-      box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.12);
+    textarea:focus, input:focus, select:focus {
+      border-color: var(--n-accent) !important;
+      box-shadow: 0 0 0 2px var(--n-accent-soft);
     }
 
-    .dark textarea,
-    .dark input,
-    .dark select {
-      background: #020617;
-      color: #e2e8f0;
-      border-color: #334155;
-    }
+    .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+    .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+    .scrollbar-thin::-webkit-scrollbar-thumb { background: #d3d3d1; border-radius: 999px; }
+    .dark .scrollbar-thin::-webkit-scrollbar-thumb { background: #3f3f3f; }
 
-    .scrollbar-thin::-webkit-scrollbar {
-      width: 7px;
-      height: 7px;
-    }
-
-    .scrollbar-thin::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    .scrollbar-thin::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 999px;
-    }
-
-    .dark .scrollbar-thin::-webkit-scrollbar-thumb {
-      background: #475569;
-    }
-
-    .hidden-view {
-      display: none !important;
-    }
+    .hidden-view { display: none !important; }
 
     .toast {
-      animation:
-        toastIn 0.2s ease,
-        toastOut 0.25s ease 3.4s forwards;
+      animation: toastIn 0.15s ease, toastOut 0.2s ease 3.4s forwards;
     }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes toastOut { to { opacity: 0; transform: translateY(6px); } }
 
-    @keyframes toastIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes toastOut {
-      to {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-    }
-
-    .empty-state {
-      min-height: 220px;
-    }
-
-    .clock-number {
-      letter-spacing: -0.04em;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .city-row {
-      font-variant-numeric: tabular-nums;
-    }
+    .empty-state { min-height: 200px; }
+    .clock-number { letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+    .city-row { font-variant-numeric: tabular-nums; }
 
     @media (max-width: 768px) {
-      .app-card {
-        border-radius: 14px;
-      }
-
-      .modal-panel {
-        max-height: calc(100vh - 16px);
-      }
+      .app-card { border-radius: var(--n-radius); }
+      .modal-panel { max-height: calc(100vh - 16px); }
     }
   </style>
 </head>
 
 <body class="min-h-screen">
 
-  <!-- =========================================================
-       HEADER
-  ========================================================== -->
-
-  <header
-    class="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur dark:border-slate-800 dark:bg-slate-950/90"
-  >
+  <!-- HEADER -->
+  <header class="sticky top-0 z-40 border-b" style="border-color: var(--n-border); background: var(--n-bg);">
     <div class="mx-auto max-w-[1600px] px-4 py-3 sm:px-6">
 
       <div class="flex flex-wrap items-center justify-between gap-3">
 
         <div class="flex min-w-0 items-center gap-3">
-
-          <div
-            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
-          >
+          <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md" style="background: var(--n-accent-soft); color: var(--n-accent);">
             <i class="fa-solid fa-headset"></i>
           </div>
 
           <div class="min-w-0">
-            <h1
-              class="truncate text-base font-bold text-slate-900 dark:text-slate-100 sm:text-lg"
-            >
+            <h1 class="truncate text-sm font-semibold sm:text-base" style="color: var(--n-text);">
               Support Operations Dashboard
             </h1>
-
-            <p
-              class="truncate text-xs text-slate-500 dark:text-slate-400"
-            >
-              US time reference & live support incidents
+            <p class="truncate text-xs" style="color: var(--n-text-muted);">
+              US time reference &amp; live support incidents
             </p>
           </div>
-
         </div>
 
         <div class="flex items-center gap-2">
 
-          <!-- Tbilisi mini clock -->
-          <div
-            class="hidden items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs dark:border-slate-800 dark:bg-slate-900 sm:flex"
-          >
-            <i class="fa-regular fa-clock text-slate-500"></i>
-
-            <span class="font-medium text-slate-600 dark:text-slate-300">
-              Tbilisi
-            </span>
-
-            <span
-              id="headerTbilisiClock"
-              class="font-bold tabular-nums text-slate-900 dark:text-white"
-            >
-              --:--:--
-            </span>
+          <div class="hidden items-center gap-2 rounded-md border px-3 py-1.5 text-xs sm:flex" style="border-color: var(--n-border);">
+            <i class="fa-regular fa-clock" style="color: var(--n-text-muted);"></i>
+            <span class="font-medium" style="color: var(--n-text-muted);">Tbilisi</span>
+            <span id="headerTbilisiClock" class="font-semibold tabular-nums" style="color: var(--n-text);">--:--:--</span>
           </div>
 
-          <!-- Theme -->
           <button
             id="themeToggle"
             onclick="toggleTheme()"
-            class="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 transition hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+            class="flex h-9 w-9 items-center justify-center rounded-md border transition"
+            style="border-color: var(--n-border); color: var(--n-text);"
             title="Toggle theme"
           >
-            <i
-              id="themeIcon"
-              class="fa-solid fa-moon"
-            ></i>
+            <i id="themeIcon" class="fa-solid fa-moon"></i>
           </button>
 
-          <!-- Management -->
           <button
             onclick="openAdmin()"
-            class="flex h-10 items-center gap-2 rounded-xl bg-slate-900 px-3 text-sm font-semibold text-white transition hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
+            class="flex h-9 items-center gap-2 rounded-md px-3 text-xs font-semibold text-white transition"
+            style="background: var(--n-accent);"
           >
             <i class="fa-solid fa-user-shield"></i>
             <span class="hidden sm:inline">TL / QA / MA</span>
           </button>
 
         </div>
-
       </div>
 
-      <!-- =====================================================
-           MAIN TABS
-      ====================================================== -->
-
-      <div class="mt-3 flex gap-1 rounded-xl bg-slate-100 p-1 dark:bg-slate-900">
-
-        <button
-          id="tabTime"
-          onclick="switchTab('time')"
-          class="tab-button active flex-1 rounded-lg px-4 py-2 text-sm font-semibold"
-        >
-          <i class="fa-regular fa-clock mr-1"></i>
-          US TIME
+      <!-- MAIN TABS -->
+      <div class="mt-3 flex gap-1 rounded-md p-1" style="background: var(--n-bg-secondary);">
+        <button id="tabTime" onclick="switchTab('time')" class="tab-button active flex-1 rounded-md px-4 py-1.5 text-xs font-semibold">
+          <i class="fa-regular fa-clock mr-1"></i> US TIME
         </button>
-
-        <button
-          id="tabIncidents"
-          onclick="switchTab('incidents')"
-          class="tab-button flex-1 rounded-lg px-4 py-2 text-sm font-semibold text-slate-500 dark:text-slate-400"
-        >
-          <i class="fa-solid fa-triangle-exclamation mr-1"></i>
-          CURRENT INCIDENTS
+        <button id="tabIncidents" onclick="switchTab('incidents')" class="tab-button flex-1 rounded-md px-4 py-1.5 text-xs font-semibold">
+          <i class="fa-solid fa-triangle-exclamation mr-1"></i> CURRENT INCIDENTS
         </button>
-
       </div>
 
     </div>
   </header>
 
-
-  <!-- =========================================================
-       MAIN
-  ========================================================== -->
-
+  <!-- MAIN -->
   <main class="mx-auto max-w-[1600px] px-4 py-5 sm:px-6">
 
-    <!-- =======================================================
-         TIME VIEW
-    ======================================================== -->
-
+    <!-- TIME VIEW -->
     <section id="timeView">
 
-      <!-- Top search / controls -->
-
-      <div
-        class="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between"
-      >
-
+      <div class="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <h2
-            class="text-lg font-bold text-slate-900 dark:text-slate-100"
-          >
-            US Time Zones
-          </h2>
-
-          <p
-            class="text-xs text-slate-500 dark:text-slate-400"
-          >
-            Quick operational view
-          </p>
+          <h2 class="text-base font-semibold" style="color: var(--n-text);">US Time Zones</h2>
+          <p class="text-xs" style="color: var(--n-text-muted);">Quick operational view</p>
         </div>
 
         <div class="flex flex-wrap items-center gap-2">
-
-          <!-- Timezone search moved to top -->
           <div class="relative w-full sm:w-72">
-            <i
-              class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400"
-            ></i>
-
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-xs" style="color: var(--n-text-muted);"></i>
             <input
               id="timezoneSearch"
               type="text"
               placeholder="Search state or city..."
               oninput="renderTimezones()"
-              class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-9 pr-3 text-sm text-slate-900 placeholder:text-slate-400 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+              class="w-full rounded-md border py-2 pl-9 pr-3 text-sm"
+              style="border-color: var(--n-border);"
             />
           </div>
 
-          <!-- Seconds -->
           <button
             id="secondsToggle"
             onclick="toggleSeconds()"
-            class="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs font-semibold text-slate-600 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
+            class="rounded-md border px-3 py-2 text-xs font-semibold transition"
+            style="border-color: var(--n-border); color: var(--n-text-muted);"
           >
-            <i class="fa-solid fa-stopwatch mr-1"></i>
-            Seconds
+            <i class="fa-solid fa-stopwatch mr-1"></i> Seconds
           </button>
-
         </div>
-
       </div>
 
-
-      <!-- =====================================================
-           COMPACT TBILISI REFERENCE
-      ====================================================== -->
-
-      <div
-        class="app-card mb-4 flex flex-col justify-between gap-3 px-4 py-3 sm:flex-row sm:items-center"
-      >
-
+      <!-- COMPACT TBILISI REFERENCE -->
+      <div class="app-card mb-4 flex flex-col justify-between gap-3 px-4 py-3 sm:flex-row sm:items-center">
         <div class="flex items-center gap-3">
-
-          <div
-            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
-          >
+          <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md" style="background: var(--n-bg-secondary); color: var(--n-text-muted);">
             <i class="fa-solid fa-location-dot"></i>
           </div>
-
           <div>
-            <p
-              class="text-[10px] font-bold uppercase tracking-wider text-slate-400"
-            >
-              Reference Time
-            </p>
-
-            <div
-              class="mt-0.5 flex flex-wrap items-baseline gap-x-2 gap-y-0"
-            >
-              <h2
-                class="text-sm font-bold text-slate-900 dark:text-white"
-              >
-                Tbilisi, Georgia
-              </h2>
-
-              <span
-                id="tbilisiDate"
-                class="text-xs text-slate-500 dark:text-slate-400"
-              >
-                --
-              </span>
+            <p class="text-[10px] font-semibold uppercase tracking-wider" style="color: var(--n-text-muted);">Reference Time</p>
+            <div class="mt-0.5 flex flex-wrap items-baseline gap-x-2 gap-y-0">
+              <h2 class="text-sm font-semibold" style="color: var(--n-text);">Tbilisi, Georgia</h2>
+              <span id="tbilisiDate" class="text-xs" style="color: var(--n-text-muted);">--</span>
             </div>
           </div>
-
         </div>
 
         <div class="flex items-center gap-4 sm:gap-6">
-
           <div class="text-right">
-            <div
-              id="tbilisiClock"
-              class="clock-number text-2xl font-black text-slate-900 dark:text-white sm:text-3xl"
-            >
-              --:--:--
-            </div>
-
-            <div
-              class="text-[10px] text-slate-400"
-            >
-              Asia/Tbilisi · UTC+4
-            </div>
+            <div id="tbilisiClock" class="clock-number text-2xl font-bold sm:text-3xl" style="color: var(--n-text);">--:--:--</div>
+            <div class="text-[10px]" style="color: var(--n-text-muted);">Asia/Tbilisi &middot; UTC+4</div>
           </div>
-
         </div>
-
       </div>
 
-
-      <!-- =====================================================
-           TIMEZONE CARDS
-      ====================================================== -->
-
-      <div
-        id="timezoneGroups"
-        class="space-y-3"
-      ></div>
+      <div id="timezoneGroups" class="space-y-3"></div>
 
     </section>
 
+    <!-- INCIDENT VIEW -->
+    <section id="incidentsView" class="hidden-view">
 
-    <!-- =======================================================
-         INCIDENT VIEW
-    ======================================================== -->
-
-    <section
-      id="incidentsView"
-      class="hidden-view"
-    >
-
-      <!-- Search and filters ALWAYS at top -->
-
-      <div
-        class="app-card mb-4 p-4"
-      >
-
-        <div
-          class="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between"
-        >
-
+      <div class="app-card mb-4 p-4">
+        <div class="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
           <div>
-            <h2
-              class="text-lg font-bold text-slate-900 dark:text-slate-100"
-            >
-              Current Incidents
-            </h2>
-
-            <p
-              class="text-xs text-slate-500 dark:text-slate-400"
-            >
-              Active operational issues and support playbooks
-            </p>
+            <h2 class="text-base font-semibold" style="color: var(--n-text);">Current Incidents</h2>
+            <p class="text-xs" style="color: var(--n-text-muted);">Active operational issues and support playbooks</p>
           </div>
 
-          <div
-            class="flex flex-col gap-2 sm:flex-row"
-          >
-
-            <!-- Incident search -->
+          <div class="flex flex-col gap-2 sm:flex-row">
             <div class="relative sm:w-72">
-              <i
-                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400"
-              ></i>
-
+              <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-xs" style="color: var(--n-text-muted);"></i>
               <input
                 id="incidentSearch"
                 type="text"
                 placeholder="Search incidents..."
                 oninput="renderIncidents()"
-                class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-9 pr-3 text-sm text-slate-900 placeholder:text-slate-400 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                class="w-full rounded-md border py-2 pl-9 pr-3 text-sm"
+                style="border-color: var(--n-border);"
               />
             </div>
 
-            <!-- Platform -->
-            <select
-              id="platformFilter"
-              onchange="renderIncidents()"
-              class="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
-            >
+            <select id="platformFilter" onchange="renderIncidents()" class="rounded-md border px-3 py-2 text-sm" style="border-color: var(--n-border);">
               <option value="">All Platforms</option>
               <option value="Fortune Purple">Fortune Purple</option>
               <option value="Movacoins">Movacoins</option>
@@ -676,12 +343,7 @@
               <option value="All Platforms">All Platforms</option>
             </select>
 
-            <!-- Category -->
-            <select
-              id="categoryFilter"
-              onchange="renderIncidents()"
-              class="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
-            >
+            <select id="categoryFilter" onchange="renderIncidents()" class="rounded-md border px-3 py-2 text-sm" style="border-color: var(--n-border);">
               <option value="">All Categories</option>
               <option value="Payments">Payments</option>
               <option value="Withdrawals">Withdrawals</option>
@@ -693,451 +355,169 @@
               <option value="Technical">Technical</option>
               <option value="Other">Other</option>
             </select>
-
           </div>
-
         </div>
-
       </div>
-
-
-      <!-- Active incidents -->
 
       <div class="mb-6">
-
-        <div
-          class="mb-3 flex items-center justify-between"
-        >
+        <div class="mb-3 flex items-center justify-between">
           <div class="flex items-center gap-2">
-
-            <span
-              class="flex h-7 w-7 items-center justify-center rounded-lg bg-red-100 text-red-600 dark:bg-red-950/50 dark:text-red-400"
-            >
+            <span class="flex h-7 w-7 items-center justify-center rounded-md" style="background: #fbe4e2; color: #b93b30;">
               <i class="fa-solid fa-bolt text-xs"></i>
             </span>
-
-            <h3
-              class="font-bold text-slate-900 dark:text-slate-100"
-            >
-              Active Incidents
-            </h3>
-
-            <span
-              id="activeIncidentCount"
-              class="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600 dark:bg-slate-800 dark:text-slate-300"
-            >
-              0
-            </span>
-
+            <h3 class="text-sm font-semibold" style="color: var(--n-text);">Active Incidents</h3>
+            <span id="activeIncidentCount" class="rounded-full px-2 py-0.5 text-[10px] font-semibold" style="background: var(--n-bg-secondary); color: var(--n-text-muted);">0</span>
           </div>
 
-          <button
-            onclick="loadIncidents()"
-            class="rounded-lg px-2.5 py-1.5 text-xs font-semibold text-slate-500 hover:bg-slate-100 hover:text-slate-800 dark:hover:bg-slate-800 dark:hover:text-slate-200"
-          >
-            <i class="fa-solid fa-rotate-right mr-1"></i>
-            Refresh
+          <button onclick="loadIncidents()" class="rounded-md px-2.5 py-1.5 text-xs font-semibold transition" style="color: var(--n-text-muted);">
+            <i class="fa-solid fa-rotate-right mr-1"></i> Refresh
           </button>
-
         </div>
 
-        <div
-          id="incidentList"
-          class="grid gap-3 md:grid-cols-2 xl:grid-cols-3"
-        ></div>
-
+        <div id="incidentList" class="grid gap-3 md:grid-cols-2 xl:grid-cols-3"></div>
       </div>
 
-
-      <!-- Resolved -->
-
       <div>
-
-        <div
-          class="mb-3 flex items-center gap-2"
-        >
-          <span
-            class="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
-          >
+        <div class="mb-3 flex items-center gap-2">
+          <span class="flex h-7 w-7 items-center justify-center rounded-md" style="background: var(--n-bg-secondary); color: var(--n-text-muted);">
             <i class="fa-solid fa-check text-xs"></i>
           </span>
-
-          <h3
-            class="font-bold text-slate-900 dark:text-slate-100"
-          >
-            Resolved History
-          </h3>
+          <h3 class="text-sm font-semibold" style="color: var(--n-text);">Resolved History</h3>
         </div>
 
-        <div
-          id="resolvedList"
-          class="space-y-2"
-        ></div>
-
+        <div id="resolvedList" class="space-y-2"></div>
       </div>
 
     </section>
 
   </main>
 
+  <!-- INCIDENT DETAIL MODAL -->
+  <div id="incidentModal" class="modal-backdrop fixed inset-0 z-50 hidden items-center justify-center p-4">
+    <div class="modal-panel w-full max-w-4xl rounded-lg" style="background: var(--n-bg);">
 
-  <!-- =========================================================
-       INCIDENT DETAIL MODAL
-  ========================================================== -->
-
-  <div
-    id="incidentModal"
-    class="modal-backdrop fixed inset-0 z-50 hidden items-center justify-center p-4"
-  >
-
-    <div
-      class="modal-panel w-full max-w-4xl rounded-2xl bg-white shadow-2xl dark:bg-slate-900"
-    >
-
-      <!-- Header -->
-
-      <div
-        class="sticky top-0 z-10 border-b border-slate-200 bg-white/95 px-5 py-4 backdrop-blur dark:border-slate-800 dark:bg-slate-900/95"
-      >
-
-        <div
-          class="flex items-start justify-between gap-4"
-        >
-
+      <div class="sticky top-0 z-10 border-b px-5 py-4" style="border-color: var(--n-border); background: var(--n-bg);">
+        <div class="flex items-start justify-between gap-4">
           <div class="min-w-0">
-
-            <div
-              id="detailBadges"
-              class="mb-2 flex flex-wrap gap-1.5"
-            ></div>
-
-            <h2
-              id="detailTitle"
-              class="text-xl font-black text-slate-900 dark:text-white"
-            >
-              Incident
-            </h2>
-
-            <p
-              id="detailMeta"
-              class="mt-1 text-xs text-slate-500 dark:text-slate-400"
-            ></p>
-
+            <div id="detailBadges" class="mb-2 flex flex-wrap gap-1.5"></div>
+            <h2 id="detailTitle" class="text-lg font-semibold" style="color: var(--n-text);">Incident</h2>
+            <p id="detailMeta" class="mt-1 text-xs" style="color: var(--n-text-muted);"></p>
           </div>
-
-          <button
-            onclick="hideModal('incidentModal')"
-            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-200"
-          >
+          <button onclick="hideModal('incidentModal')" class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md" style="color: var(--n-text-muted);">
             <i class="fa-solid fa-xmark"></i>
           </button>
-
         </div>
-
       </div>
-
-
-      <!-- Body -->
 
       <div class="space-y-4 p-5">
 
-        <!-- ISSUE -->
-
         <div class="detail-section issue">
-
           <div class="mb-2 flex items-center gap-2">
-
-            <span
-              class="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
-            >
+            <span class="flex h-7 w-7 items-center justify-center rounded-md" style="background: var(--n-bg-secondary); color: var(--n-text-muted);">
               <i class="fa-solid fa-circle-info text-xs"></i>
             </span>
-
             <div>
-              <h3
-                class="font-bold text-slate-900 dark:text-white"
-              >
-                Issue
-              </h3>
-
-              <p
-                class="text-[10px] uppercase tracking-wider text-slate-400"
-              >
-                What is happening
-              </p>
+              <h3 class="text-sm font-semibold" style="color: var(--n-text);">Issue</h3>
+              <p class="text-[10px] uppercase tracking-wider" style="color: var(--n-text-muted);">What is happening</p>
             </div>
-
           </div>
-
-          <div
-            id="detailDescription"
-            class="whitespace-pre-wrap text-sm leading-6 text-slate-700 dark:text-slate-300"
-          ></div>
-
+          <div id="detailDescription" class="whitespace-pre-wrap text-sm leading-6" style="color: var(--n-text);"></div>
         </div>
-
-
-        <!-- AGENT ACTION -->
 
         <div class="detail-section action">
-
           <div class="mb-2 flex items-center gap-2">
-
-            <span
-              class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-300"
-            >
+            <span class="flex h-7 w-7 items-center justify-center rounded-md" style="background: var(--n-accent-soft); color: var(--n-accent);">
               <i class="fa-solid fa-user-check text-xs"></i>
             </span>
-
             <div>
-              <h3
-                class="font-bold text-slate-900 dark:text-white"
-              >
-                Agent Action
-              </h3>
-
-              <p
-                class="text-[10px] uppercase tracking-wider text-slate-400"
-              >
-                What the agent should do
-              </p>
+              <h3 class="text-sm font-semibold" style="color: var(--n-text);">Agent Action</h3>
+              <p class="text-[10px] uppercase tracking-wider" style="color: var(--n-text-muted);">What the agent should do</p>
             </div>
-
           </div>
-
-          <div
-            id="detailAgentAction"
-            class="whitespace-pre-wrap text-sm font-medium leading-6 text-slate-700 dark:text-slate-300"
-          ></div>
-
+          <div id="detailAgentAction" class="whitespace-pre-wrap text-sm font-medium leading-6" style="color: var(--n-text);"></div>
         </div>
-
-
-        <!-- WHAT TO CHECK -->
 
         <div class="detail-section check">
-
           <div class="mb-2 flex items-center gap-2">
-
-            <span
-              class="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100 text-amber-600 dark:bg-amber-900/40 dark:text-amber-300"
-            >
+            <span class="flex h-7 w-7 items-center justify-center rounded-md" style="background: #fbf1cb; color: #9a6700;">
               <i class="fa-solid fa-magnifying-glass text-xs"></i>
             </span>
-
             <div>
-              <h3
-                class="font-bold text-slate-900 dark:text-white"
-              >
-                What to Check
-              </h3>
-
-              <p
-                class="text-[10px] uppercase tracking-wider text-slate-400"
-              >
-                Diagnostic information
-              </p>
+              <h3 class="text-sm font-semibold" style="color: var(--n-text);">What to Check</h3>
+              <p class="text-[10px] uppercase tracking-wider" style="color: var(--n-text-muted);">Diagnostic information</p>
             </div>
-
           </div>
-
-          <div
-            id="detailWhatToCheck"
-            class="whitespace-pre-wrap text-sm leading-6 text-slate-700 dark:text-slate-300"
-          ></div>
-
+          <div id="detailWhatToCheck" class="whitespace-pre-wrap text-sm leading-6" style="color: var(--n-text);"></div>
         </div>
-
-
-        <!-- PROCEDURE -->
 
         <div class="detail-section procedure">
-
           <div class="mb-2 flex items-center gap-2">
-
-            <span
-              class="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-100 text-purple-600 dark:bg-purple-900/40 dark:text-purple-300"
-            >
+            <span class="flex h-7 w-7 items-center justify-center rounded-md" style="background: #f1e5fc; color: #6940a5;">
               <i class="fa-solid fa-list-check text-xs"></i>
             </span>
-
             <div>
-              <h3
-                class="font-bold text-slate-900 dark:text-white"
-              >
-                Support Procedure
-              </h3>
-
-              <p
-                class="text-[10px] uppercase tracking-wider text-slate-400"
-              >
-                Step-by-step internal instructions
-              </p>
+              <h3 class="text-sm font-semibold" style="color: var(--n-text);">Support Procedure</h3>
+              <p class="text-[10px] uppercase tracking-wider" style="color: var(--n-text-muted);">Step-by-step internal instructions</p>
             </div>
-
           </div>
-
-          <div
-            id="detailInstructions"
-            class="whitespace-pre-wrap text-sm leading-6 text-slate-700 dark:text-slate-300"
-          ></div>
-
+          <div id="detailInstructions" class="whitespace-pre-wrap text-sm leading-6" style="color: var(--n-text);"></div>
         </div>
-
-
-        <!-- CUSTOMER RESPONSE -->
 
         <div class="detail-section response">
-
           <div class="mb-2 flex items-center gap-2">
-
-            <span
-              class="flex h-8 w-8 items-center justify-center rounded-lg bg-green-100 text-green-600 dark:bg-green-900/40 dark:text-green-300"
-            >
+            <span class="flex h-7 w-7 items-center justify-center rounded-md" style="background: #d9f2ec; color: #0f7b6c;">
               <i class="fa-solid fa-comment-dots text-xs"></i>
             </span>
-
             <div>
-              <h3
-                class="font-bold text-slate-900 dark:text-white"
-              >
-                Customer Response
-              </h3>
-
-              <p
-                class="text-[10px] uppercase tracking-wider text-slate-400"
-              >
-                Ready-to-use customer message
-              </p>
+              <h3 class="text-sm font-semibold" style="color: var(--n-text);">Customer Response</h3>
+              <p class="text-[10px] uppercase tracking-wider" style="color: var(--n-text-muted);">Ready-to-use customer message</p>
             </div>
-
           </div>
-
-          <div
-            id="detailResponse"
-            class="whitespace-pre-wrap rounded-xl border border-green-200 bg-white/70 p-3 text-sm leading-6 text-slate-700 dark:border-green-900 dark:bg-slate-950/40 dark:text-slate-300"
-          ></div>
-
+          <div id="detailResponse" class="whitespace-pre-wrap rounded-md border p-3 text-sm leading-6" style="border-color: var(--n-border); color: var(--n-text);"></div>
         </div>
 
-
-        <!-- NOTION -->
-
-        <div
-          id="detailNotionWrapper"
-          class="rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950"
-        >
-
+        <div id="detailNotionWrapper" class="rounded-md border p-4" style="border-color: var(--n-border); background: var(--n-bg-secondary);">
           <div class="flex items-center justify-between gap-3">
-
             <div class="flex items-center gap-2">
-
-              <i class="fa-solid fa-book text-slate-500"></i>
-
+              <i class="fa-solid fa-book" style="color: var(--n-text-muted);"></i>
               <div>
-                <p
-                  class="text-sm font-bold text-slate-800 dark:text-slate-200"
-                >
-                  Notion Article
-                </p>
-
-                <p
-                  class="text-[10px] text-slate-400"
-                >
-                  Full internal reference
-                </p>
+                <p class="text-sm font-semibold" style="color: var(--n-text);">Notion Article</p>
+                <p class="text-[10px]" style="color: var(--n-text-muted);">Full internal reference</p>
               </div>
-
             </div>
-
-            <a
-              id="detailNotion"
-              href="#"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="rounded-lg bg-slate-900 px-3 py-2 text-xs font-bold text-white hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
-            >
-              Open Article
-              <i class="fa-solid fa-arrow-up-right-from-square ml-1"></i>
+            <a id="detailNotion" href="#" target="_blank" rel="noopener noreferrer" class="rounded-md px-3 py-2 text-xs font-semibold text-white" style="background: var(--n-accent);">
+              Open Article <i class="fa-solid fa-arrow-up-right-from-square ml-1"></i>
             </a>
-
           </div>
-
         </div>
 
       </div>
-
     </div>
-
   </div>
 
-
-  <!-- =========================================================
-       LOGIN MODAL
-  ========================================================== -->
-
-  <div
-    id="loginModal"
-    class="modal-backdrop fixed inset-0 z-[60] hidden items-center justify-center p-4"
-  >
-
-    <div
-      class="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl dark:bg-slate-900"
-    >
-
+  <!-- LOGIN MODAL -->
+  <div id="loginModal" class="modal-backdrop fixed inset-0 z-[60] hidden items-center justify-center p-4">
+    <div class="w-full max-w-sm rounded-lg p-6" style="background: var(--n-bg);">
       <div class="mb-5 text-center">
-
-        <div
-          class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
-        >
+        <div class="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-md" style="background: var(--n-accent-soft); color: var(--n-accent);">
           <i class="fa-solid fa-lock"></i>
         </div>
-
-        <h2
-          class="text-lg font-black text-slate-900 dark:text-white"
-        >
-          Management Login
-        </h2>
-
-        <p
-          class="mt-1 text-xs text-slate-500 dark:text-slate-400"
-        >
-          TL, QA and Management access
-        </p>
-
+        <h2 class="text-base font-semibold" style="color: var(--n-text);">Management Login</h2>
+        <p class="mt-1 text-xs" style="color: var(--n-text-muted);">TL, QA and Management access</p>
       </div>
 
-
       <div class="space-y-3">
-
         <div>
-
-          <label
-            class="mb-1.5 block text-xs font-bold text-slate-600 dark:text-slate-300"
-          >
-            Role
-          </label>
-
-          <select
-            id="loginRole"
-            class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm dark:border-slate-700 dark:bg-slate-950"
-          >
+          <label class="field-label mb-1.5 block text-xs font-semibold" style="color: var(--n-text-muted);">Role</label>
+          <select id="loginRole" class="w-full rounded-md border px-3 py-2 text-sm" style="border-color: var(--n-border);">
             <option value="TL">Team Lead</option>
             <option value="QA">QA</option>
             <option value="MA">Management</option>
           </select>
-
         </div>
 
-
         <div>
-
-          <label
-            class="mb-1.5 block text-xs font-bold text-slate-600 dark:text-slate-300"
-          >
-            PIN
-          </label>
-
+          <label class="field-label mb-1.5 block text-xs font-semibold" style="color: var(--n-text-muted);">PIN</label>
           <input
             id="loginPin"
             type="password"
@@ -1145,249 +525,93 @@
             maxlength="12"
             placeholder="Enter PIN"
             onkeydown="if(event.key === 'Enter') login()"
-            class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm dark:border-slate-700 dark:bg-slate-950"
+            class="w-full rounded-md border px-3 py-2 text-sm"
+            style="border-color: var(--n-border);"
           />
-
         </div>
 
+        <div id="loginError" class="hidden rounded-md border p-3 text-xs font-medium" style="border-color: #f3c9c5; background: #fbe4e2; color: #b93b30;"></div>
 
-        <div
-          id="loginError"
-          class="hidden rounded-xl border border-red-200 bg-red-50 p-3 text-xs font-medium text-red-700 dark:border-red-900 dark:bg-red-950/30 dark:text-red-300"
-        ></div>
-
-
-        <button
-          id="loginSubmitButton"
-          onclick="login()"
-          class="flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-bold text-white hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
-        >
-          <i class="fa-solid fa-right-to-bracket"></i>
-          Login
+        <button id="loginSubmitButton" onclick="login()" class="flex w-full items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-semibold text-white" style="background: var(--n-accent);">
+          <i class="fa-solid fa-right-to-bracket"></i> Login
         </button>
 
-
-        <button
-          onclick="hideModal('loginModal')"
-          class="w-full rounded-xl px-4 py-2 text-xs font-semibold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
-        >
+        <button onclick="hideModal('loginModal')" class="w-full rounded-md px-4 py-2 text-xs font-semibold" style="color: var(--n-text-muted);">
           Cancel
         </button>
-
       </div>
-
     </div>
-
   </div>
 
+  <!-- ADMIN MODAL -->
+  <div id="adminModal" class="modal-backdrop fixed inset-0 z-[55] hidden items-center justify-center p-4">
+    <div class="modal-panel w-full max-w-6xl rounded-lg" style="background: var(--n-bg);">
 
-  <!-- =========================================================
-       ADMIN MODAL
-  ========================================================== -->
-
-  <div
-    id="adminModal"
-    class="modal-backdrop fixed inset-0 z-[55] hidden items-center justify-center p-4"
-  >
-
-    <div
-      class="modal-panel w-full max-w-6xl rounded-2xl bg-white shadow-2xl dark:bg-slate-900"
-    >
-
-      <!-- Admin header -->
-
-      <div
-        class="sticky top-0 z-20 border-b border-slate-200 bg-white/95 px-5 py-4 backdrop-blur dark:border-slate-800 dark:bg-slate-900/95"
-      >
-
-        <div
-          class="flex flex-wrap items-center justify-between gap-3"
-        >
-
+      <div class="sticky top-0 z-20 border-b px-5 py-4" style="border-color: var(--n-border); background: var(--n-bg);">
+        <div class="flex flex-wrap items-center justify-between gap-3">
           <div>
-
             <div class="flex items-center gap-2">
-
-              <i
-                class="fa-solid fa-user-shield text-slate-500"
-              ></i>
-
-              <h2
-                class="text-lg font-black text-slate-900 dark:text-white"
-              >
-                Incident Management
-              </h2>
-
+              <i class="fa-solid fa-user-shield" style="color: var(--n-text-muted);"></i>
+              <h2 class="text-base font-semibold" style="color: var(--n-text);">Incident Management</h2>
             </div>
-
-            <p
-              id="adminRoleText"
-              class="mt-1 text-xs text-slate-500 dark:text-slate-400"
-            ></p>
-
+            <p id="adminRoleText" class="mt-1 text-xs" style="color: var(--n-text-muted);"></p>
           </div>
 
           <div class="flex items-center gap-2">
-
-            <button
-              onclick="startNewIncident()"
-              class="rounded-xl bg-slate-900 px-3 py-2 text-xs font-bold text-white hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900"
-            >
-              <i class="fa-solid fa-plus mr-1"></i>
-              New Incident
+            <button onclick="startNewIncident()" class="rounded-md px-3 py-2 text-xs font-semibold text-white" style="background: var(--n-accent);">
+              <i class="fa-solid fa-plus mr-1"></i> New Incident
             </button>
-
-            <button
-              onclick="logout()"
-              class="rounded-xl border border-slate-200 px-3 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
-            >
-              <i class="fa-solid fa-right-from-bracket mr-1"></i>
-              Logout
+            <button onclick="logout()" class="rounded-md border px-3 py-2 text-xs font-semibold" style="border-color: var(--n-border); color: var(--n-text-muted);">
+              <i class="fa-solid fa-right-from-bracket mr-1"></i> Logout
             </button>
-
-            <button
-              onclick="hideModal('adminModal')"
-              class="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
-            >
+            <button onclick="hideModal('adminModal')" class="flex h-8 w-8 items-center justify-center rounded-md" style="color: var(--n-text-muted);">
               <i class="fa-solid fa-xmark"></i>
             </button>
-
           </div>
-
         </div>
-
       </div>
 
+      <div class="grid min-h-[600px] lg:grid-cols-[280px_1fr]">
 
-      <!-- Admin body -->
-
-      <div class="grid min-h-[600px] lg:grid-cols-[300px_1fr]">
-
-        <!-- Incident list -->
-
-        <aside
-          class="border-b border-slate-200 p-4 dark:border-slate-800 lg:border-b-0 lg:border-r"
-        >
-
-          <div
-            class="mb-3 flex items-center justify-between"
-          >
-
-            <h3
-              class="text-xs font-black uppercase tracking-wider text-slate-400"
-            >
-              Incidents
-            </h3>
-
-            <button
-              onclick="loadIncidents(); renderAdminIncidentList();"
-              class="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
-              title="Refresh"
-            >
+        <aside class="border-b p-4 lg:border-b-0 lg:border-r" style="border-color: var(--n-border);">
+          <div class="mb-3 flex items-center justify-between">
+            <h3 class="text-xs font-semibold uppercase tracking-wider" style="color: var(--n-text-muted);">Incidents</h3>
+            <button onclick="loadIncidents(); renderAdminIncidentList();" style="color: var(--n-text-muted);" title="Refresh">
               <i class="fa-solid fa-rotate-right text-xs"></i>
             </button>
-
           </div>
-
-          <div
-            id="adminIncidentList"
-            class="max-h-[260px] space-y-1 overflow-y-auto scrollbar-thin lg:max-h-[530px]"
-          ></div>
-
+          <div id="adminIncidentList" class="max-h-[260px] space-y-1 overflow-y-auto scrollbar-thin lg:max-h-[530px]"></div>
         </aside>
 
+        <section class="min-w-0 p-4 sm:p-5">
 
-        <!-- Editor -->
-
-        <section class="p-4 sm:p-5">
-
-          <div
-            id="editorEmpty"
-            class="empty-state flex items-center justify-center rounded-2xl border border-dashed border-slate-300 dark:border-slate-700"
-          >
-
+          <div id="editorEmpty" class="empty-state flex items-center justify-center rounded-lg border border-dashed" style="border-color: var(--n-border);">
             <div class="max-w-sm text-center">
-
-              <div
-                class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-slate-400 dark:bg-slate-800"
-              >
+              <div class="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-md" style="background: var(--n-bg-secondary); color: var(--n-text-muted);">
                 <i class="fa-solid fa-pen-to-square"></i>
               </div>
-
-              <h3
-                class="font-bold text-slate-800 dark:text-slate-200"
-              >
-                Select an incident
-              </h3>
-
-              <p
-                class="mt-1 text-xs leading-5 text-slate-500 dark:text-slate-400"
-              >
-                Choose an incident from the left or create a new one.
-              </p>
-
+              <h3 class="text-sm font-semibold" style="color: var(--n-text);">Select an incident</h3>
+              <p class="mt-1 text-xs leading-5" style="color: var(--n-text-muted);">Choose an incident from the left or create a new one.</p>
             </div>
-
           </div>
 
-
-          <div
-            id="incidentEditor"
-            class="hidden"
-          >
-
-            <div
-              class="mb-4 flex items-center justify-between gap-3"
-            >
-
+          <div id="incidentEditor" class="hidden">
+            <div class="mb-4 flex items-center justify-between gap-3">
               <div>
-
-                <h3
-                  id="editorHeading"
-                  class="text-lg font-black text-slate-900 dark:text-white"
-                >
-                  Edit Incident
-                </h3>
-
-                <p
-                  class="text-xs text-slate-500 dark:text-slate-400"
-                >
-                  Keep the operational information structured.
-                </p>
-
+                <h3 id="editorHeading" class="text-base font-semibold" style="color: var(--n-text);">Edit Incident</h3>
+                <p class="text-xs" style="color: var(--n-text-muted);">Keep the operational information structured.</p>
               </div>
-
-              <button
-                id="deleteIncidentButton"
-                onclick="deleteSelectedIncident()"
-                class="rounded-xl border border-red-200 px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 dark:border-red-900 dark:hover:bg-red-950/30"
-              >
-                <i class="fa-solid fa-trash mr-1"></i>
-                Delete
+              <button id="deleteIncidentButton" onclick="deleteSelectedIncident()" class="rounded-md border px-3 py-2 text-xs font-semibold" style="border-color: #f3c9c5; color: #b93b30;">
+                <i class="fa-solid fa-trash mr-1"></i> Delete
               </button>
-
             </div>
-
-
-            <!-- Form -->
 
             <div class="space-y-4">
 
-              <!-- Platform + status + severity + category -->
-
-              <div
-                class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"
-              >
-
+              <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
                 <div>
-                  <label class="field-label">
-                    Platform
-                  </label>
-
-                  <select
-                    id="editorPlatform"
-                    class="field-input"
-                  >
+                  <label class="field-label">Platform</label>
+                  <select id="editorPlatform" class="field-input">
                     <option value="Fortune Purple">Fortune Purple</option>
                     <option value="Movacoins">Movacoins</option>
                     <option value="9F">9F</option>
@@ -1395,48 +619,27 @@
                   </select>
                 </div>
 
-
                 <div>
-                  <label class="field-label">
-                    Status
-                  </label>
-
-                  <select
-                    id="editorStatus"
-                    class="field-input"
-                  >
+                  <label class="field-label">Status</label>
+                  <select id="editorStatus" class="field-input">
                     <option value="ACTIVE">ACTIVE</option>
                     <option value="MONITORING">MONITORING</option>
                     <option value="RESOLVED">RESOLVED</option>
                   </select>
                 </div>
 
-
                 <div>
-                  <label class="field-label">
-                    Severity
-                  </label>
-
-                  <select
-                    id="editorSeverity"
-                    class="field-input"
-                  >
+                  <label class="field-label">Severity</label>
+                  <select id="editorSeverity" class="field-input">
                     <option value="HIGH">HIGH</option>
                     <option value="MEDIUM">MEDIUM</option>
                     <option value="LOW">LOW</option>
                   </select>
                 </div>
 
-
                 <div>
-                  <label class="field-label">
-                    Category
-                  </label>
-
-                  <select
-                    id="editorCategory"
-                    class="field-input"
-                  >
+                  <label class="field-label">Category</label>
+                  <select id="editorCategory" class="field-input">
                     <option value="Payments">Payments</option>
                     <option value="Withdrawals">Withdrawals</option>
                     <option value="Deposits">Deposits</option>
@@ -1448,198 +651,65 @@
                     <option value="Other">Other</option>
                   </select>
                 </div>
-
               </div>
-
-
-              <!-- Title -->
 
               <div>
-                <label class="field-label">
-                  Incident Title
-                </label>
-
-                <input
-                  id="editorTitle"
-                  type="text"
-                  placeholder="Example: Temporary Game Availability Issue"
-                  class="field-input"
-                />
+                <label class="field-label">Incident Title</label>
+                <input id="editorTitle" type="text" placeholder="Example: Temporary Game Availability Issue" class="field-input" />
               </div>
-
-
-              <!-- Affected -->
 
               <div>
-                <label class="field-label">
-                  Affected
-                </label>
-
-                <input
-                  id="editorAffected"
-                  type="text"
-                  placeholder="Example: BGaming, Evoplay, Hacksaw and NETENT games"
-                  class="field-input"
-                />
+                <label class="field-label">Affected</label>
+                <input id="editorAffected" type="text" placeholder="Example: BGaming, Evoplay, Hacksaw and NETENT games" class="field-input" />
               </div>
-
-
-              <!-- Issue -->
 
               <div>
-
-                <label class="field-label">
-                  Issue
-                </label>
-
-                <textarea
-                  id="editorDescription"
-                  rows="4"
-                  placeholder="Describe what is happening and why."
-                  class="field-input resize-y"
-                ></textarea>
-
+                <label class="field-label">Issue</label>
+                <textarea id="editorDescription" rows="4" placeholder="Describe what is happening and why." class="field-input resize-y"></textarea>
               </div>
-
-
-              <!-- Agent Action -->
 
               <div>
-
-                <label class="field-label">
-                  Agent Action
-                </label>
-
-                <textarea
-                  id="editorAgentAction"
-                  rows="3"
-                  placeholder="What should the agent do immediately?"
-                  class="field-input resize-y"
-                ></textarea>
-
+                <label class="field-label">Agent Action</label>
+                <textarea id="editorAgentAction" rows="3" placeholder="What should the agent do immediately?" class="field-input resize-y"></textarea>
               </div>
-
-
-              <!-- What to Check -->
 
               <div>
-
-                <label class="field-label">
-                  What to Check
-                </label>
-
-                <textarea
-                  id="editorWhatToCheck"
-                  rows="4"
-                  placeholder="What information should the agent collect or verify?"
-                  class="field-input resize-y"
-                ></textarea>
-
+                <label class="field-label">What to Check</label>
+                <textarea id="editorWhatToCheck" rows="4" placeholder="What information should the agent collect or verify?" class="field-input resize-y"></textarea>
               </div>
-
-
-              <!-- Procedure -->
 
               <div>
-
-                <label class="field-label">
-                  Support Procedure
-                </label>
-
-                <textarea
-                  id="editorInstructions"
-                  rows="7"
-                  placeholder="Step-by-step internal instructions."
-                  class="field-input resize-y"
-                ></textarea>
-
+                <label class="field-label">Support Procedure</label>
+                <textarea id="editorInstructions" rows="7" placeholder="Step-by-step internal instructions." class="field-input resize-y"></textarea>
               </div>
-
-
-              <!-- Customer Response -->
 
               <div>
-
-                <label class="field-label">
-                  Customer Response
-                </label>
-
-                <textarea
-                  id="editorResponse"
-                  rows="5"
-                  placeholder="Ready-to-use response for the customer."
-                  class="field-input resize-y"
-                ></textarea>
-
+                <label class="field-label">Customer Response</label>
+                <textarea id="editorResponse" rows="5" placeholder="Ready-to-use response for the customer." class="field-input resize-y"></textarea>
               </div>
-
-
-              <!-- Notion -->
 
               <div>
-
-                <label class="field-label">
-                  Notion Article URL
-                </label>
-
-                <input
-                  id="editorNotionUrl"
-                  type="url"
-                  placeholder="https://..."
-                  class="field-input"
-                />
-
+                <label class="field-label">Notion Article URL</label>
+                <input id="editorNotionUrl" type="url" placeholder="https://..." class="field-input" />
               </div>
 
-
-              <!-- Save -->
-
-              <div
-                class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-4 dark:border-slate-800"
-              >
-
-                <p
-                  id="editorMessage"
-                  class="text-xs"
-                ></p>
-
-                <button
-                  onclick="saveIncident()"
-                  id="saveIncidentButton"
-                  class="rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-bold text-white hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
-                >
-                  <i class="fa-solid fa-floppy-disk mr-1"></i>
-                  Save Incident
+              <div class="flex flex-wrap items-center justify-between gap-3 border-t pt-4" style="border-color: var(--n-border);">
+                <p id="editorMessage" class="text-xs"></p>
+                <button onclick="saveIncident()" id="saveIncidentButton" class="rounded-md px-5 py-2.5 text-sm font-semibold text-white" style="background: var(--n-accent);">
+                  <i class="fa-solid fa-floppy-disk mr-1"></i> Save Incident
                 </button>
-
               </div>
 
             </div>
-
           </div>
 
         </section>
-
       </div>
-
     </div>
-
   </div>
 
-
-  <!-- =========================================================
-       TOAST
-  ========================================================== -->
-
-  <div
-    id="toastContainer"
-    class="pointer-events-none fixed bottom-5 right-5 z-[100] space-y-2"
-  ></div>
-
-
-  <!-- =========================================================
-       JAVASCRIPT
-  ========================================================== -->
+  <!-- TOAST -->
+  <div id="toastContainer" class="pointer-events-none fixed bottom-5 right-5 z-[100] space-y-2"></div>
 
   <script>
 
@@ -1647,2812 +717,986 @@
        CONFIG
     ========================================================== */
 
-    const API_URL =
-      'https://script.google.com/macros/s/AKfycbx4tSUdnFm6oSrGqK06eQ6INHyc9JA_W6TGYbfulqv5WBvB9XLDEtTLx5qSe3U4cW9DwA/exec';
-
+    const API_URL = 'https://script.google.com/macros/s/AKfycbx4tSUdnFm6oSrGqK06eQ6INHyc9JA_W6TGYbfulqv5WBvB9XLDEtTLx5qSe3U4cW9DwA/exec';
 
     /* =========================================================
        STATE
     ========================================================== */
 
     let incidents = [];
-
     let currentTab = 'time';
-
     let showSeconds = true;
-
-    let adminToken =
-      sessionStorage.getItem('support_admin_token') || '';
-
-    let role =
-      sessionStorage.getItem('support_admin_role') || '';
-
+    let adminToken = sessionStorage.getItem('support_admin_token') || '';
+    let role = sessionStorage.getItem('support_admin_role') || '';
     let adminPin = '';
-
     let selectedIncidentId = null;
-
     let creatingNewIncident = false;
 
-
-    const roleLabels = {
-      TL: 'Team Lead',
-      QA: 'QA',
-      MA: 'Management'
-    };
-
+    const roleLabels = { TL: 'Team Lead', QA: 'QA', MA: 'Management' };
 
     /* =========================================================
        TIMEZONE DATA
     ========================================================== */
 
     const timezoneGroups = [
-
       {
-        key: 'ET',
-        name: 'Eastern Time',
-        short: 'ET',
-        zone: 'America/New_York',
-        icon: 'fa-sun',
+        key: 'ET', name: 'Eastern Time', short: 'ET', zone: 'America/New_York', icon: 'fa-sun',
         states: [
-          ['FL', 'Florida', 'Miami'],
-          ['GA', 'Georgia', 'Atlanta'],
-          ['KY', 'Kentucky', 'Louisville'],
-          ['MD', 'Maryland', 'Baltimore'],
-          ['MA', 'Massachusetts', 'Boston'],
-          ['NH', 'New Hampshire', 'Concord'],
-          ['NC', 'North Carolina', 'Charlotte'],
-          ['OH', 'Ohio', 'Columbus'],
-          ['PA', 'Pennsylvania', 'Philadelphia'],
-          ['RI', 'Rhode Island', 'Providence'],
-          ['SC', 'South Carolina', 'Columbia'],
-          ['VT', 'Vermont', 'Burlington'],
+          ['FL', 'Florida', 'Miami'], ['GA', 'Georgia', 'Atlanta'], ['KY', 'Kentucky', 'Louisville'],
+          ['MD', 'Maryland', 'Baltimore'], ['MA', 'Massachusetts', 'Boston'], ['NH', 'New Hampshire', 'Concord'],
+          ['NC', 'North Carolina', 'Charlotte'], ['OH', 'Ohio', 'Columbus'], ['PA', 'Pennsylvania', 'Philadelphia'],
+          ['RI', 'Rhode Island', 'Providence'], ['SC', 'South Carolina', 'Columbia'], ['VT', 'Vermont', 'Burlington'],
           ['VA', 'Virginia', 'Richmond']
         ]
       },
-
       {
-        key: 'CT',
-        name: 'Central Time',
-        short: 'CT',
-        zone: 'America/Chicago',
-        icon: 'fa-cloud-sun',
+        key: 'CT', name: 'Central Time', short: 'CT', zone: 'America/Chicago', icon: 'fa-cloud-sun',
         states: [
-          ['AL', 'Alabama', 'Birmingham'],
-          ['AR', 'Arkansas', 'Little Rock'],
-          ['KS', 'Kansas', 'Wichita'],
-          ['MN', 'Minnesota', 'Minneapolis'],
-          ['MO', 'Missouri', 'St. Louis'],
-          ['NE', 'Nebraska', 'Omaha'],
-          ['ND', 'North Dakota', 'Fargo'],
-          ['OK', 'Oklahoma', 'Oklahoma City'],
-          ['SD', 'South Dakota', 'Sioux Falls'],
-          ['TX', 'Texas', 'Dallas'],
-          ['WI', 'Wisconsin', 'Milwaukee']
+          ['AL', 'Alabama', 'Birmingham'], ['AR', 'Arkansas', 'Little Rock'], ['KS', 'Kansas', 'Wichita'],
+          ['MN', 'Minnesota', 'Minneapolis'], ['MO', 'Missouri', 'St. Louis'], ['NE', 'Nebraska', 'Omaha'],
+          ['ND', 'North Dakota', 'Fargo'], ['OK', 'Oklahoma', 'Oklahoma City'], ['SD', 'South Dakota', 'Sioux Falls'],
+          ['TX', 'Texas', 'Dallas'], ['WI', 'Wisconsin', 'Milwaukee']
         ]
       },
-
       {
-        key: 'MT',
-        name: 'Mountain Time',
-        short: 'MT',
-        zone: 'America/Denver',
-        icon: 'fa-mountain-sun',
+        key: 'MT', name: 'Mountain Time', short: 'MT', zone: 'America/Denver', icon: 'fa-mountain-sun',
         states: [
-          ['CO', 'Colorado', 'Denver'],
-          ['NM', 'New Mexico', 'Albuquerque'],
-          ['UT', 'Utah', 'Salt Lake City'],
+          ['CO', 'Colorado', 'Denver'], ['NM', 'New Mexico', 'Albuquerque'], ['UT', 'Utah', 'Salt Lake City'],
           ['WY', 'Wyoming', 'Cheyenne']
         ]
       },
-
-      {
-        key: 'MST',
-        name: 'Arizona',
-        short: 'MST',
-        zone: 'America/Phoenix',
-        icon: 'fa-sun',
-        states: [
-          ['AZ', 'Arizona', 'Phoenix']
-        ]
-      },
-
-      {
-        key: 'PT',
-        name: 'Pacific Time',
-        short: 'PT',
-        zone: 'America/Los_Angeles',
-        icon: 'fa-water',
-        states: [
-          ['OR', 'Oregon', 'Portland']
-        ]
-      },
-
-      {
-        key: 'AKT',
-        name: 'Alaska Time',
-        short: 'AKT',
-        zone: 'America/Anchorage',
-        icon: 'fa-snowflake',
-        states: [
-          ['AK', 'Alaska', 'Anchorage']
-        ]
-      },
-
-      {
-        key: 'HST',
-        name: 'Hawaii Time',
-        short: 'HST',
-        zone: 'Pacific/Honolulu',
-        icon: 'fa-umbrella-beach',
-        states: [
-          ['HI', 'Hawaii', 'Honolulu']
-        ]
-      }
-
+      { key: 'MST', name: 'Arizona', short: 'MST', zone: 'America/Phoenix', icon: 'fa-sun', states: [['AZ', 'Arizona', 'Phoenix']] },
+      { key: 'PT', name: 'Pacific Time', short: 'PT', zone: 'America/Los_Angeles', icon: 'fa-water', states: [['OR', 'Oregon', 'Portland']] },
+      { key: 'AKT', name: 'Alaska Time', short: 'AKT', zone: 'America/Anchorage', icon: 'fa-snowflake', states: [['AK', 'Alaska', 'Anchorage']] },
+      { key: 'HST', name: 'Hawaii Time', short: 'HST', zone: 'Pacific/Honolulu', icon: 'fa-umbrella-beach', states: [['HI', 'Hawaii', 'Honolulu']] }
     ];
 
-
     /* =========================================================
-       COMMON FIELD STYLING
+       FIELD STYLING (applied after DOM ready)
     ========================================================== */
 
     document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.field-input').forEach(el => {
+        el.classList.add(
+          'w-full', 'rounded-md', 'border', 'px-3', 'py-2', 'text-sm'
+        );
+        el.style.borderColor = 'var(--n-border)';
+      });
 
-      document.querySelectorAll('input, textarea, select')
-        .forEach(el => {
-
-          if (
-            el.classList.contains('field-input') ||
-            el.id.startsWith('editor')
-          ) {
-            el.classList.add(
-              'w-full',
-              'rounded-xl',
-              'border',
-              'border-slate-200',
-              'bg-white',
-              'px-3',
-              'py-2.5',
-              'text-sm',
-              'text-slate-900',
-              'dark:border-slate-700',
-              'dark:bg-slate-950',
-              'dark:text-slate-100'
-            );
-          }
-
-        });
-
-      document.querySelectorAll('.field-label')
-        .forEach(el => {
-          el.classList.add(
-            'mb-1.5',
-            'block',
-            'text-xs',
-            'font-bold',
-            'text-slate-600',
-            'dark:text-slate-300'
-          );
-        });
-
+      document.querySelectorAll('.field-label').forEach(el => {
+        el.classList.add('mb-1.5', 'block', 'text-xs', 'font-semibold');
+        el.style.color = 'var(--n-text-muted)';
+      });
     });
-
 
     /* =========================================================
        THEME
     ========================================================== */
 
     function initTheme() {
-
-      const saved =
-        localStorage.getItem('support_dashboard_theme');
-
+      const saved = localStorage.getItem('support_dashboard_theme');
       if (saved === 'dark') {
         document.documentElement.classList.add('dark');
       } else if (saved === 'light') {
         document.documentElement.classList.remove('dark');
-      } else if (
-        window.matchMedia &&
-        window.matchMedia('(prefers-color-scheme: dark)').matches
-      ) {
+      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
         document.documentElement.classList.add('dark');
       }
-
       updateThemeIcon();
     }
-
 
     function toggleTheme() {
-
       document.documentElement.classList.toggle('dark');
-
-      const dark =
-        document.documentElement.classList.contains('dark');
-
-      localStorage.setItem(
-        'support_dashboard_theme',
-        dark ? 'dark' : 'light'
-      );
-
+      const dark = document.documentElement.classList.contains('dark');
+      localStorage.setItem('support_dashboard_theme', dark ? 'dark' : 'light');
       updateThemeIcon();
     }
 
-
     function updateThemeIcon() {
-
-      const icon =
-        document.getElementById('themeIcon');
-
+      const icon = document.getElementById('themeIcon');
       if (!icon) return;
-
-      const dark =
-        document.documentElement.classList.contains('dark');
-
-      icon.className =
-        dark
-          ? 'fa-solid fa-sun'
-          : 'fa-solid fa-moon';
+      const dark = document.documentElement.classList.contains('dark');
+      icon.className = dark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
     }
-
 
     /* =========================================================
        TABS
     ========================================================== */
 
     function switchTab(tab) {
-
       currentTab = tab;
-
-      const timeView =
-        document.getElementById('timeView');
-
-      const incidentsView =
-        document.getElementById('incidentsView');
-
-      const tabTime =
-        document.getElementById('tabTime');
-
-      const tabIncidents =
-        document.getElementById('tabIncidents');
+      const timeView = document.getElementById('timeView');
+      const incidentsView = document.getElementById('incidentsView');
+      const tabTime = document.getElementById('tabTime');
+      const tabIncidents = document.getElementById('tabIncidents');
 
       if (tab === 'time') {
-
         timeView.classList.remove('hidden-view');
         incidentsView.classList.add('hidden-view');
-
         tabTime.classList.add('active');
         tabIncidents.classList.remove('active');
-
       } else {
-
         timeView.classList.add('hidden-view');
         incidentsView.classList.remove('hidden-view');
-
         tabTime.classList.remove('active');
         tabIncidents.classList.add('active');
-
-        if (!incidents.length) {
-          loadIncidents();
-        }
-
+        if (!incidents.length) loadIncidents();
       }
-
     }
-
 
     /* =========================================================
        TIME HELPERS
     ========================================================== */
 
     function getTimeParts(zone) {
-
       const now = new Date();
-
-      const time =
-        new Intl.DateTimeFormat(
-          'en-US',
-          {
-            timeZone: zone,
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: false
-          }
-        ).formatToParts(now);
-
+      const time = new Intl.DateTimeFormat('en-US', {
+        timeZone: zone, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+      }).formatToParts(now);
       const map = {};
-
-      time.forEach(part => {
-        map[part.type] = part.value;
-      });
-
+      time.forEach(part => { map[part.type] = part.value; });
       return map;
     }
 
-
     function getDate(zone) {
-
-      return new Intl.DateTimeFormat(
-        'en-US',
-        {
-          timeZone: zone,
-          weekday: 'short',
-          month: 'short',
-          day: 'numeric'
-        }
-      ).format(new Date());
-
+      return new Intl.DateTimeFormat('en-US', {
+        timeZone: zone, weekday: 'short', month: 'short', day: 'numeric'
+      }).format(new Date());
     }
-
 
     function getOffset(zone) {
-
-      const parts =
-        new Intl.DateTimeFormat(
-          'en-US',
-          {
-            timeZone: zone,
-            timeZoneName: 'longOffset'
-          }
-        ).formatToParts(new Date());
-
-      const offset =
-        parts.find(
-          part => part.type === 'timeZoneName'
-        );
-
+      const parts = new Intl.DateTimeFormat('en-US', { timeZone: zone, timeZoneName: 'longOffset' }).formatToParts(new Date());
+      const offset = parts.find(part => part.type === 'timeZoneName');
       if (!offset) return '';
-
-      return offset.value
-        .replace('GMT', 'UTC');
+      return offset.value.replace('GMT', 'UTC');
     }
 
-
     function getMinutesForZone(zone) {
-
-      const parts =
-        new Intl.DateTimeFormat(
-          'en-US',
-          {
-            timeZone: zone,
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
-          }
-        ).formatToParts(new Date());
-
-      const hour =
-        Number(
-          parts.find(
-            p => p.type === 'hour'
-          )?.value || 0
-        );
-
-      const minute =
-        Number(
-          parts.find(
-            p => p.type === 'minute'
-          )?.value || 0
-        );
-
+      const parts = new Intl.DateTimeFormat('en-US', { timeZone: zone, hour: '2-digit', minute: '2-digit', hour12: false }).formatToParts(new Date());
+      const hour = Number(parts.find(p => p.type === 'hour')?.value || 0);
+      const minute = Number(parts.find(p => p.type === 'minute')?.value || 0);
       return hour * 60 + minute;
     }
 
-
     function getWorkingStatus(zone) {
-
-      const minutes =
-        getMinutesForZone(zone);
-
-      if (
-        minutes >= 8 * 60 &&
-        minutes < 18 * 60
-      ) {
-        return {
-          text: 'Working hours',
-          class:
-            'text-emerald-600 dark:text-emerald-400'
-        };
+      const minutes = getMinutesForZone(zone);
+      if (minutes >= 8 * 60 && minutes < 18 * 60) {
+        return { text: 'Working hours', class: 'text-emerald-600 dark:text-emerald-400' };
       }
-
-      return {
-        text: 'Outside hours',
-        class:
-          'text-slate-400'
-      };
+      return { text: 'Outside hours', class: '' };
     }
 
-
     function formatClock(zone) {
-
-      const parts =
-        getTimeParts(zone);
-
-      let result =
-        `${parts.hour}:${parts.minute}`;
-
-      if (showSeconds) {
-        result += `:${parts.second}`;
-      }
-
+      const parts = getTimeParts(zone);
+      let result = `${parts.hour}:${parts.minute}`;
+      if (showSeconds) result += `:${parts.second}`;
       return result;
     }
 
-
-    /* =========================================================
-       Tbilisi clock
-    ========================================================== */
-
     function updateTbilisiClock() {
-
       const zone = 'Asia/Tbilisi';
-
-      const parts =
-        getTimeParts(zone);
-
-      const clock =
-        `${parts.hour}:${parts.minute}:${parts.second}`;
-
-      const compactClock =
-        `${parts.hour}:${parts.minute}:${parts.second}`;
-
-      const main =
-        document.getElementById('tbilisiClock');
-
-      const header =
-        document.getElementById('headerTbilisiClock');
-
-      const date =
-        document.getElementById('tbilisiDate');
-
-      if (main) {
-        main.textContent = clock;
-      }
-
-      if (header) {
-        header.textContent = compactClock;
-      }
-
-      if (date) {
-        date.textContent = getDate(zone);
-      }
-
+      const parts = getTimeParts(zone);
+      const clock = `${parts.hour}:${parts.minute}:${parts.second}`;
+      const main = document.getElementById('tbilisiClock');
+      const header = document.getElementById('headerTbilisiClock');
+      const date = document.getElementById('tbilisiDate');
+      if (main) main.textContent = clock;
+      if (header) header.textContent = clock;
+      if (date) date.textContent = getDate(zone);
     }
-
 
     /* =========================================================
        TIMEZONE RENDERING
     ========================================================== */
 
     function renderTimezones() {
-
-      const container =
-        document.getElementById('timezoneGroups');
-
+      const container = document.getElementById('timezoneGroups');
       if (!container) return;
 
-      const search =
-        (
-          document.getElementById('timezoneSearch')?.value ||
-          ''
-        )
-        .trim()
-        .toLowerCase();
-
+      const search = (document.getElementById('timezoneSearch')?.value || '').trim().toLowerCase();
       let html = '';
 
       timezoneGroups.forEach(group => {
-
-        const matchingStates =
-          group.states.filter(state => {
-
-            if (!search) return true;
-
-            return [
-              state[0],
-              state[1],
-              state[2],
-              group.name,
-              group.short
-            ]
-              .join(' ')
-              .toLowerCase()
-              .includes(search);
-
-          });
+        const matchingStates = group.states.filter(state => {
+          if (!search) return true;
+          return [state[0], state[1], state[2], group.name, group.short].join(' ').toLowerCase().includes(search);
+        });
 
         if (!matchingStates.length) return;
 
-        const time =
-          formatClock(group.zone);
-
-        const offset =
-          getOffset(group.zone);
-
-        const working =
-          getWorkingStatus(group.zone);
+        const time = formatClock(group.zone);
+        const offset = getOffset(group.zone);
+        const working = getWorkingStatus(group.zone);
 
         html += `
           <div class="timezone-card app-card overflow-hidden">
-
             <div class="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-
-              <!-- LEFT -->
-
               <div class="flex min-w-0 items-center gap-3">
-
-                <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-300">
+                <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md" style="background: var(--n-bg-secondary); color: var(--n-text-muted);">
                   <i class="fa-solid ${group.icon} text-xs"></i>
                 </div>
-
                 <div class="min-w-0">
-
                   <div class="flex items-center gap-2">
-
-                    <h3 class="text-sm font-bold text-slate-900 dark:text-white">
-                      ${group.name}
-                    </h3>
-
-                    <span class="rounded-md bg-slate-100 px-1.5 py-0.5 text-[10px] font-black text-slate-500 dark:bg-slate-800 dark:text-slate-400">
-                      ${group.short}
-                    </span>
-
+                    <h3 class="text-sm font-semibold" style="color: var(--n-text);">${group.name}</h3>
+                    <span class="rounded-md px-1.5 py-0.5 text-[10px] font-semibold" style="background: var(--n-bg-secondary); color: var(--n-text-muted);">${group.short}</span>
                   </div>
-
                   <div class="mt-0.5 flex flex-wrap items-center gap-2 text-[10px]">
-
-                    <span class="${working.class}">
-                      ${working.text}
-                    </span>
-
-                    <span class="text-slate-400">
-                      ${offset}
-                    </span>
-
+                    <span class="${working.class}" style="color: ${working.class ? '' : 'var(--n-text-muted)'};">${working.text}</span>
+                    <span style="color: var(--n-text-muted);">${offset}</span>
                   </div>
-
                 </div>
-
               </div>
-
-
-              <!-- CENTER CLOCK -->
 
               <div class="flex items-center gap-4 sm:ml-auto">
-
                 <div class="text-right">
-
-                  <div
-                    id="zoneClock-${group.key}"
-                    class="clock-number text-2xl font-black leading-none text-slate-900 dark:text-white"
-                  >
-                    ${time}
-                  </div>
-
-                  <div class="mt-1 text-[9px] text-slate-400">
-                    Local time
-                  </div>
-
+                  <div id="zoneClock-${group.key}" class="clock-number text-2xl font-bold leading-none" style="color: var(--n-text);">${time}</div>
+                  <div class="mt-1 text-[9px]" style="color: var(--n-text-muted);">Local time</div>
                 </div>
-
               </div>
-
             </div>
 
-
-            <!-- STATES -->
-
-            <div class="border-t border-slate-100 bg-slate-50/70 px-4 py-2.5 dark:border-slate-800 dark:bg-slate-950/30">
-
+            <div class="border-t px-4 py-2.5" style="border-color: var(--n-border); background: var(--n-bg-secondary);">
               <div class="grid grid-cols-2 gap-x-4 gap-y-1 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-
                 ${matchingStates.map(state => `
-
                   <div class="city-row flex min-w-0 items-center justify-between gap-2 py-1">
-
-                    <div class="min-w-0">
-
-                      <span class="mr-1 text-[10px] font-black text-slate-500 dark:text-slate-400">
-                        ${state[0]}
-                      </span>
-
-                      <span class="truncate text-[10px] text-slate-700 dark:text-slate-300">
-                        ${state[1]}
-                      </span>
-
+                    <div class="min-w-0 truncate">
+                      <span class="mr-1 text-[10px] font-semibold" style="color: var(--n-text-muted);">${state[0]}</span>
+                      <span class="truncate text-[10px]" style="color: var(--n-text);">${state[1]}</span>
                     </div>
-
-                    <span
-                      class="state-clock shrink-0 text-[10px] font-bold tabular-nums text-slate-500 dark:text-slate-400"
-                      data-zone="${state[3] || group.zone}"
-                    >
+                    <span class="state-clock shrink-0 text-[10px] font-semibold tabular-nums" style="color: var(--n-text-muted);" data-zone="${state[3] || group.zone}">
                       ${formatClock(state[3] || group.zone)}
                     </span>
-
                   </div>
-
                 `).join('')}
-
               </div>
-
             </div>
-
           </div>
         `;
-
       });
 
-
       if (!html) {
-
         html = `
-          <div class="app-card flex min-h-[180px] items-center justify-center">
+          <div class="app-card flex min-h-[160px] items-center justify-center">
             <div class="text-center">
-              <i class="fa-solid fa-magnifying-glass mb-2 text-xl text-slate-300 dark:text-slate-600"></i>
-              <p class="text-sm font-semibold text-slate-600 dark:text-slate-300">
-                No states or cities found
-              </p>
-              <p class="mt-1 text-xs text-slate-400">
-                Try another search.
-              </p>
+              <i class="fa-solid fa-magnifying-glass mb-2 text-xl" style="color: var(--n-text-muted);"></i>
+              <p class="text-sm font-semibold" style="color: var(--n-text);">No states or cities found</p>
+              <p class="mt-1 text-xs" style="color: var(--n-text-muted);">Try another search.</p>
             </div>
           </div>
         `;
-
       }
 
       container.innerHTML = html;
-
     }
-
-
-    /* =========================================================
-       TIMEZONE LIVE UPDATE
-    ========================================================== */
 
     function updateLiveTimeDisplays() {
-
       updateTbilisiClock();
-
       timezoneGroups.forEach(group => {
-
-        const clock =
-          document.getElementById(
-            `zoneClock-${group.key}`
-          );
-
-        if (clock) {
-          clock.textContent =
-            formatClock(group.zone);
-        }
-
+        const clock = document.getElementById(`zoneClock-${group.key}`);
+        if (clock) clock.textContent = formatClock(group.zone);
       });
-
-      document
-        .querySelectorAll('.state-clock')
-        .forEach(el => {
-
-          const zone =
-            el.dataset.zone;
-
-          if (zone) {
-            el.textContent =
-              formatClock(zone);
-          }
-
-        });
-
+      document.querySelectorAll('.state-clock').forEach(el => {
+        const zone = el.dataset.zone;
+        if (zone) el.textContent = formatClock(zone);
+      });
     }
-
 
     function toggleSeconds() {
-
-      showSeconds =
-        !showSeconds;
-
-      const button =
-        document.getElementById('secondsToggle');
-
-      if (showSeconds) {
-
-        button.innerHTML =
-          `<i class="fa-solid fa-stopwatch mr-1"></i> Seconds`;
-
-      } else {
-
-        button.innerHTML =
-          `<i class="fa-solid fa-clock mr-1"></i> Minutes only`;
-
-      }
-
+      showSeconds = !showSeconds;
+      const button = document.getElementById('secondsToggle');
+      button.innerHTML = showSeconds
+        ? `<i class="fa-solid fa-stopwatch mr-1"></i> Seconds`
+        : `<i class="fa-solid fa-clock mr-1"></i> Minutes only`;
       updateLiveTimeDisplays();
-
     }
-
 
     /* =========================================================
        API
     ========================================================== */
 
     async function api(action, data = {}) {
-
       if (API_URL.includes('PASTE_YOUR_')) {
-        throw new Error(
-          'Apps Script API URL is not configured.'
-        );
+        throw new Error('Apps Script API URL is not configured.');
       }
 
-      const requestData = {
-        action,
-        ...data
-      };
+      const requestData = { action, ...data };
+      if (adminToken) requestData.token = adminToken;
+      if (adminPin) requestData.pin = adminPin;
+      if (role) requestData.role = role;
 
-      if (adminToken) {
-        requestData.token = adminToken;
-      }
+      const body = new URLSearchParams();
+      body.set('payload', JSON.stringify(requestData));
 
-      if (adminPin) {
-        requestData.pin = adminPin;
-      }
-
-      if (role) {
-        requestData.role = role;
-      }
-
-      const body =
-        new URLSearchParams();
-
-      body.set(
-        'payload',
-        JSON.stringify(requestData)
-      );
-
-      const response =
-        await fetch(
-          API_URL,
-          {
-            method: 'POST',
-            body
-          }
-        );
-
-      const text =
-        await response.text();
+      const response = await fetch(API_URL, { method: 'POST', body });
+      const text = await response.text();
 
       let json;
-
       try {
-
-        json =
-          JSON.parse(text);
-
+        json = JSON.parse(text);
       } catch (error) {
-
-        console.error(
-          'Raw Apps Script response:',
-          text
-        );
-
-        throw new Error(
-          `Apps Script returned an invalid response (${response.status}).`
-        );
-
+        console.error('Raw Apps Script response:', text);
+        throw new Error(`Apps Script returned an invalid response (${response.status}).`);
       }
 
-      console.log(
-        'Apps Script response:',
-        json
-      );
+      console.log('Apps Script response:', json);
 
-      if (
-        !response.ok ||
-        json.success === false
-      ) {
-
-        throw new Error(
-          json.message ||
-          json.error ||
-          `Request failed (${response.status}).`
-        );
-
+      /* IMPORTANT: check both ok and success — the backend uses `ok`,
+         so this used to fail to surface backend errors. */
+      if (!response.ok || json.ok === false || json.success === false) {
+        throw new Error(json.error || json.message || `Request failed (${response.status}).`);
       }
 
       return json;
-
     }
-
 
     /* =========================================================
        LOAD INCIDENTS
     ========================================================== */
 
     async function loadIncidents() {
-
       try {
-
-        const result =
-          await api('list');
-
-        incidents =
-          normalizeIncidentList(
-            result
-          );
-
+        const result = await api('list');
+        incidents = normalizeIncidentList(result);
         renderIncidents();
         renderAdminIncidentList();
-
       } catch (error) {
-
-        console.error(
-          'Failed to load incidents:',
-          error
-        );
-
+        console.error('Failed to load incidents:', error);
         incidents = [];
-
         renderIncidents();
-
-        showToast(
-          error.message ||
-          'Unable to load incidents.',
-          'error'
-        );
-
+        showToast(error.message || 'Unable to load incidents.', 'error');
       }
-
     }
-
 
     function normalizeIncidentList(result) {
-
-      if (Array.isArray(result)) {
-        return result;
-      }
-
-      if (Array.isArray(result.incidents)) {
-        return result.incidents;
-      }
-
-      if (Array.isArray(result.data)) {
-        return result.data;
-      }
-
-      if (Array.isArray(result.rows)) {
-        return result.rows;
-      }
-
+      if (Array.isArray(result)) return result;
+      if (Array.isArray(result.incidents)) return result.incidents;
+      if (Array.isArray(result.data)) return result.data;
+      if (Array.isArray(result.rows)) return result.rows;
       return [];
-
     }
-
 
     /* =========================================================
        INCIDENT NORMALIZATION
     ========================================================== */
 
     function normalizeIncident(incident) {
-
-      const item = {
-        ...incident
-      };
-
-      item.id =
-        item.id ||
-        item.ID ||
-        item.incidentId ||
-        '';
-
-      item.platform =
-        item.platform ||
-        item.Platform ||
-        'All Platforms';
-
-      item.status =
-        String(
-          item.status ||
-          item.Status ||
-          'ACTIVE'
-        ).toUpperCase();
-
-      item.severity =
-        String(
-          item.severity ||
-          item.Severity ||
-          'MEDIUM'
-        ).toUpperCase();
-
-      item.category =
-        item.category ||
-        item.Category ||
-        'Other';
-
-      item.title =
-        item.title ||
-        item.Title ||
-        'Untitled Incident';
-
-      item.affected =
-        item.affected ||
-        item.Affected ||
-        '';
-
-      item.description =
-        item.description ||
-        item.Description ||
-        '';
-
-      item.agentAction =
-        item.agentAction ||
-        item.AgentAction ||
-        item.agent_action ||
-        '';
-
-      item.whatToCheck =
-        item.whatToCheck ||
-        item.WhatToCheck ||
-        item.what_to_check ||
-        '';
-
-      item.instructions =
-        item.instructions ||
-        item.Instructions ||
-        '';
-
-      item.response =
-        item.response ||
-        item.Response ||
-        item.customerResponse ||
-        item.CustomerResponse ||
-        '';
-
-      item.notionUrl =
-        item.notionUrl ||
-        item.NotionUrl ||
-        item.notion ||
-        '';
-
-      item.createdBy =
-        item.createdBy ||
-        item.CreatedBy ||
-        '';
-
-      item.createdAt =
-        item.createdAt ||
-        item.CreatedAt ||
-        '';
-
-      item.updatedBy =
-        item.updatedBy ||
-        item.UpdatedBy ||
-        '';
-
-      item.updatedAt =
-        item.updatedAt ||
-        item.UpdatedAt ||
-        '';
-
+      const item = { ...incident };
+      item.id = item.id || item.ID || item.incidentId || '';
+      item.platform = item.platform || item.Platform || 'All Platforms';
+      item.status = String(item.status || item.Status || 'ACTIVE').toUpperCase();
+      item.severity = String(item.severity || item.Severity || 'MEDIUM').toUpperCase();
+      item.category = item.category || item.Category || 'Other';
+      item.title = item.title || item.Title || 'Untitled Incident';
+      item.affected = item.affected || item.Affected || '';
+      item.description = item.description || item.Description || '';
+      item.agentAction = item.agentAction || item.AgentAction || item.agent_action || '';
+      item.whatToCheck = item.whatToCheck || item.WhatToCheck || item.what_to_check || '';
+      item.instructions = item.instructions || item.Instructions || '';
+      item.response = item.response || item.Response || item.customerResponse || item.CustomerResponse || '';
+      item.notionUrl = item.notionUrl || item.NotionUrl || item.notion || '';
+      item.createdBy = item.createdBy || item.CreatedBy || '';
+      item.createdAt = item.createdAt || item.CreatedAt || '';
+      item.updatedBy = item.updatedBy || item.UpdatedBy || '';
+      item.updatedAt = item.updatedAt || item.UpdatedAt || '';
       return item;
-
     }
-
 
     /* =========================================================
        INCIDENT FILTERING
     ========================================================== */
 
     function getFilteredIncidents() {
+      const search = (document.getElementById('incidentSearch')?.value || '').trim().toLowerCase();
+      const platform = document.getElementById('platformFilter')?.value || '';
+      const category = document.getElementById('categoryFilter')?.value || '';
 
-      const search =
-        (
-          document.getElementById(
-            'incidentSearch'
-          )?.value || ''
-        )
-        .trim()
-        .toLowerCase();
+      return incidents.map(normalizeIncident).filter(incident => {
+        const searchable = [
+          incident.title, incident.platform, incident.category, incident.severity,
+          incident.status, incident.affected, incident.description, incident.agentAction,
+          incident.whatToCheck, incident.instructions, incident.response
+        ].join(' ').toLowerCase();
 
-      const platform =
-        document.getElementById(
-          'platformFilter'
-        )?.value || '';
-
-      const category =
-        document.getElementById(
-          'categoryFilter'
-        )?.value || '';
-
-      return incidents
-        .map(normalizeIncident)
-        .filter(incident => {
-
-          const searchable =
-            [
-              incident.title,
-              incident.platform,
-              incident.category,
-              incident.severity,
-              incident.status,
-              incident.affected,
-              incident.description,
-              incident.agentAction,
-              incident.whatToCheck,
-              incident.instructions,
-              incident.response
-            ]
-              .join(' ')
-              .toLowerCase();
-
-          if (
-            search &&
-            !searchable.includes(search)
-          ) {
-            return false;
-          }
-
-          if (
-            platform &&
-            incident.platform !== platform
-          ) {
-            return false;
-          }
-
-          if (
-            category &&
-            incident.category !== category
-          ) {
-            return false;
-          }
-
-          return true;
-
-        });
-
+        if (search && !searchable.includes(search)) return false;
+        if (platform && incident.platform !== platform) return false;
+        if (category && incident.category !== category) return false;
+        return true;
+      });
     }
-
 
     /* =========================================================
        INCIDENT RENDER
     ========================================================== */
 
     function renderIncidents() {
+      const filtered = getFilteredIncidents();
+      const active = filtered.filter(incident => incident.status !== 'RESOLVED');
+      const resolved = filtered.filter(incident => incident.status === 'RESOLVED');
 
-      const filtered =
-        getFilteredIncidents();
+      const count = document.getElementById('activeIncidentCount');
+      if (count) count.textContent = active.length;
 
-      const active =
-        filtered.filter(
-          incident =>
-            incident.status !== 'RESOLVED'
-        );
-
-      const resolved =
-        filtered.filter(
-          incident =>
-            incident.status === 'RESOLVED'
-        );
-
-      const count =
-        document.getElementById(
-          'activeIncidentCount'
-        );
-
-      if (count) {
-        count.textContent =
-          active.length;
-      }
-
-      const list =
-        document.getElementById(
-          'incidentList'
-        );
-
-      const resolvedList =
-        document.getElementById(
-          'resolvedList'
-        );
+      const list = document.getElementById('incidentList');
+      const resolvedList = document.getElementById('resolvedList');
 
       if (list) {
-
-        if (!active.length) {
-
-          list.innerHTML =
-            emptyIncidentHTML(
-              'No active incidents',
-              'There are no matching active incidents.'
-            );
-
-        } else {
-
-          list.innerHTML =
-            active
-              .map(incidentCardHTML)
-              .join('');
-
-        }
-
+        list.innerHTML = !active.length
+          ? emptyIncidentHTML('No active incidents', 'There are no matching active incidents.')
+          : active.map(incidentCardHTML).join('');
       }
 
       if (resolvedList) {
-
         if (!resolved.length) {
-
-          resolvedList.innerHTML =
-            `
-              <div class="rounded-xl border border-dashed border-slate-300 p-5 text-center dark:border-slate-700">
-                <p class="text-xs text-slate-400">
-                  No matching resolved incidents.
-                </p>
-              </div>
-            `;
-
+          resolvedList.innerHTML = `
+            <div class="rounded-md border border-dashed p-5 text-center" style="border-color: var(--n-border);">
+              <p class="text-xs" style="color: var(--n-text-muted);">No matching resolved incidents.</p>
+            </div>
+          `;
         } else {
-
-          resolvedList.innerHTML =
-            resolved
-              .sort(
-                (a, b) =>
-                  new Date(
-                    b.updatedAt || b.createdAt || 0
-                  ) -
-                  new Date(
-                    a.updatedAt || a.createdAt || 0
-                  )
-              )
-              .map(resolvedIncidentHTML)
-              .join('');
-
+          resolvedList.innerHTML = resolved
+            .sort((a, b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0))
+            .map(resolvedIncidentHTML)
+            .join('');
         }
-
       }
-
     }
-
 
     function incidentCardHTML(incident) {
-
-      const statusClass =
-        incident.status === 'MONITORING'
-          ? 'badge-monitoring'
-          : 'badge-active';
-
-      const severityClass =
-        incident.severity === 'HIGH'
-          ? 'badge-high'
-          : incident.severity === 'LOW'
-            ? 'badge-low'
-            : 'badge-medium';
-
-      const action =
-        incident.agentAction ||
-        incident.instructions ||
-        'Review the incident instructions.';
+      const statusClass = incident.status === 'MONITORING' ? 'badge-monitoring' : 'badge-active';
+      const severityClass = incident.severity === 'HIGH' ? 'badge-high' : incident.severity === 'LOW' ? 'badge-low' : 'badge-medium';
+      const action = incident.agentAction || incident.instructions || 'Review the incident instructions.';
 
       return `
-        <button
-          onclick="openIncident('${escapeAttribute(incident.id)}')"
-          class="incident-card app-card w-full text-left"
-        >
-
+        <button onclick="openIncident('${escapeAttribute(incident.id)}')" class="incident-card app-card w-full min-w-0 text-left">
           <div class="p-4">
-
             <div class="mb-3 flex flex-wrap items-center gap-1.5">
-
-              <span class="badge ${statusClass}">
-                <i class="fa-solid fa-circle text-[7px]"></i>
-                ${escapeHTML(incident.status)}
-              </span>
-
-              <span class="badge ${severityClass}">
-                ${escapeHTML(incident.severity)}
-              </span>
-
-              <span class="badge platform-badge">
-                <i class="fa-solid fa-layer-group"></i>
-                ${escapeHTML(incident.platform)}
-              </span>
-
-              <span class="badge category-badge">
-                ${escapeHTML(incident.category)}
-              </span>
-
+              <span class="badge ${statusClass}"><i class="fa-solid fa-circle text-[6px]"></i> ${escapeHTML(incident.status)}</span>
+              <span class="badge ${severityClass}">${escapeHTML(incident.severity)}</span>
+              <span class="badge platform-badge"><i class="fa-solid fa-layer-group"></i> ${escapeHTML(incident.platform)}</span>
+              <span class="badge category-badge">${escapeHTML(incident.category)}</span>
             </div>
 
+            <h3 class="line-clamp-2 text-sm font-semibold" style="color: var(--n-text);">${escapeHTML(incident.title)}</h3>
 
-            <h3
-              class="line-clamp-2 text-base font-black text-slate-900 dark:text-white"
-            >
-              ${escapeHTML(incident.title)}
-            </h3>
+            ${incident.affected ? `<p class="mt-1 text-xs font-medium" style="color: var(--n-text-muted);">${escapeHTML(incident.affected)}</p>` : ''}
 
-
-            ${
-              incident.affected
-                ? `
-                  <p class="mt-1 text-xs font-semibold text-slate-500 dark:text-slate-400">
-                    ${escapeHTML(incident.affected)}
-                  </p>
-                `
-                : ''
-            }
-
-
-            <div
-              class="mt-3 rounded-xl bg-slate-50 p-3 dark:bg-slate-950"
-            >
-
-              <div
-                class="mb-1 text-[10px] font-black uppercase tracking-wider text-blue-500"
-              >
-                Agent Action
-              </div>
-
-              <p
-                class="line-clamp-3 text-xs leading-5 text-slate-600 dark:text-slate-300"
-              >
-                ${escapeHTML(action)}
-              </p>
-
+            <div class="mt-3 rounded-md p-3" style="background: var(--n-bg-secondary);">
+              <div class="mb-1 text-[10px] font-semibold uppercase tracking-wider" style="color: var(--n-accent);">Agent Action</div>
+              <p class="line-clamp-3 text-xs leading-5" style="color: var(--n-text-muted);">${escapeHTML(action)}</p>
             </div>
 
-
-            <div
-              class="mt-3 flex items-center justify-between"
-            >
-
-              <span class="text-[10px] text-slate-400">
-                ${formatIncidentDate(
-                  incident.updatedAt ||
-                  incident.createdAt
-                )}
-              </span>
-
-              <span
-                class="text-xs font-bold text-slate-500 dark:text-slate-400"
-              >
-                View playbook
-                <i class="fa-solid fa-arrow-right ml-1"></i>
-              </span>
-
+            <div class="mt-3 flex items-center justify-between">
+              <span class="text-[10px]" style="color: var(--n-text-muted);">${formatIncidentDate(incident.updatedAt || incident.createdAt)}</span>
+              <span class="text-xs font-semibold" style="color: var(--n-text-muted);">View playbook <i class="fa-solid fa-arrow-right ml-1"></i></span>
             </div>
-
           </div>
-
         </button>
       `;
-
     }
-
 
     function resolvedIncidentHTML(incident) {
-
       return `
-        <button
-          onclick="openIncident('${escapeAttribute(incident.id)}')"
-          class="app-card flex w-full items-center justify-between gap-4 px-4 py-3 text-left hover:bg-slate-50 dark:hover:bg-slate-800/50"
-        >
-
+        <button onclick="openIncident('${escapeAttribute(incident.id)}')" class="app-card flex w-full min-w-0 items-center justify-between gap-4 px-4 py-3 text-left">
           <div class="min-w-0">
-
             <div class="mb-1 flex flex-wrap gap-1.5">
-
-              <span class="badge badge-resolved">
-                <i class="fa-solid fa-check"></i>
-                RESOLVED
-              </span>
-
-              <span class="badge platform-badge">
-                ${escapeHTML(incident.platform)}
-              </span>
-
-              <span class="badge category-badge">
-                ${escapeHTML(incident.category)}
-              </span>
-
+              <span class="badge badge-resolved"><i class="fa-solid fa-check"></i> RESOLVED</span>
+              <span class="badge platform-badge">${escapeHTML(incident.platform)}</span>
+              <span class="badge category-badge">${escapeHTML(incident.category)}</span>
             </div>
-
-            <p
-              class="truncate text-sm font-bold text-slate-800 dark:text-slate-200"
-            >
-              ${escapeHTML(incident.title)}
-            </p>
-
+            <p class="truncate text-sm font-semibold" style="color: var(--n-text);">${escapeHTML(incident.title)}</p>
           </div>
-
-          <i class="fa-solid fa-chevron-right shrink-0 text-xs text-slate-400"></i>
-
+          <i class="fa-solid fa-chevron-right shrink-0 text-xs" style="color: var(--n-text-muted);"></i>
         </button>
       `;
-
     }
-
 
     function emptyIncidentHTML(title, text) {
-
       return `
         <div class="app-card empty-state flex items-center justify-center md:col-span-2 xl:col-span-3">
-
           <div class="text-center">
-
-            <div class="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-100 text-slate-400 dark:bg-slate-800">
+            <div class="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-md" style="background: var(--n-bg-secondary); color: var(--n-text-muted);">
               <i class="fa-solid fa-circle-check"></i>
             </div>
-
-            <p class="font-bold text-slate-700 dark:text-slate-300">
-              ${escapeHTML(title)}
-            </p>
-
-            <p class="mt-1 text-xs text-slate-400">
-              ${escapeHTML(text)}
-            </p>
-
+            <p class="font-semibold" style="color: var(--n-text);">${escapeHTML(title)}</p>
+            <p class="mt-1 text-xs" style="color: var(--n-text-muted);">${escapeHTML(text)}</p>
           </div>
-
         </div>
       `;
-
     }
-
 
     /* =========================================================
        DETAIL MODAL
     ========================================================== */
 
     function openIncident(id) {
-
-      const incident =
-        incidents
-          .map(normalizeIncident)
-          .find(
-            item =>
-              String(item.id) === String(id)
-          );
-
+      const incident = incidents.map(normalizeIncident).find(item => String(item.id) === String(id));
       if (!incident) return;
 
-      document.getElementById(
-        'detailTitle'
-      ).textContent =
-        incident.title;
+      document.getElementById('detailTitle').textContent = incident.title;
+      document.getElementById('detailMeta').textContent = [
+        incident.affected, formatIncidentDate(incident.updatedAt || incident.createdAt)
+      ].filter(Boolean).join(' · ');
 
-      document.getElementById(
-        'detailMeta'
-      ).textContent =
-        [
-          incident.affected,
-          formatIncidentDate(
-            incident.updatedAt ||
-            incident.createdAt
-          )
-        ]
-        .filter(Boolean)
-        .join(' · ');
-
-
-      document.getElementById(
-        'detailBadges'
-      ).innerHTML = `
-
-        <span class="badge ${
-          incident.status === 'RESOLVED'
-            ? 'badge-resolved'
-            : incident.status === 'MONITORING'
-              ? 'badge-monitoring'
-              : 'badge-active'
-        }">
-          ${escapeHTML(incident.status)}
-        </span>
-
-        <span class="badge ${
-          incident.severity === 'HIGH'
-            ? 'badge-high'
-            : incident.severity === 'LOW'
-              ? 'badge-low'
-              : 'badge-medium'
-        }">
-          ${escapeHTML(incident.severity)}
-        </span>
-
-        <span class="badge platform-badge">
-          <i class="fa-solid fa-layer-group"></i>
-          ${escapeHTML(incident.platform)}
-        </span>
-
-        <span class="badge category-badge">
-          ${escapeHTML(incident.category)}
-        </span>
-
+      document.getElementById('detailBadges').innerHTML = `
+        <span class="badge ${incident.status === 'RESOLVED' ? 'badge-resolved' : incident.status === 'MONITORING' ? 'badge-monitoring' : 'badge-active'}">${escapeHTML(incident.status)}</span>
+        <span class="badge ${incident.severity === 'HIGH' ? 'badge-high' : incident.severity === 'LOW' ? 'badge-low' : 'badge-medium'}">${escapeHTML(incident.severity)}</span>
+        <span class="badge platform-badge"><i class="fa-solid fa-layer-group"></i> ${escapeHTML(incident.platform)}</span>
+        <span class="badge category-badge">${escapeHTML(incident.category)}</span>
       `;
 
+      document.getElementById('detailDescription').textContent = incident.description || 'No issue description provided.';
+      document.getElementById('detailAgentAction').textContent = incident.agentAction || incident.instructions || 'No specific agent action provided.';
+      document.getElementById('detailWhatToCheck').textContent = incident.whatToCheck || 'No specific checks provided.';
+      document.getElementById('detailInstructions').textContent = incident.instructions || 'No step-by-step procedure provided.';
+      document.getElementById('detailResponse').textContent = incident.response || 'No customer response provided.';
 
-      document.getElementById(
-        'detailDescription'
-      ).textContent =
-        incident.description ||
-        'No issue description provided.';
-
-
-      document.getElementById(
-        'detailAgentAction'
-      ).textContent =
-        incident.agentAction ||
-        incident.instructions ||
-        'No specific agent action provided.';
-
-
-      document.getElementById(
-        'detailWhatToCheck'
-      ).textContent =
-        incident.whatToCheck ||
-        'No specific checks provided.';
-
-
-      document.getElementById(
-        'detailInstructions'
-      ).textContent =
-        incident.instructions ||
-        'No step-by-step procedure provided.';
-
-
-      document.getElementById(
-        'detailResponse'
-      ).textContent =
-        incident.response ||
-        'No customer response provided.';
-
-
-      const notionWrapper =
-        document.getElementById(
-          'detailNotionWrapper'
-        );
-
-      const notion =
-        document.getElementById(
-          'detailNotion'
-        );
+      const notionWrapper = document.getElementById('detailNotionWrapper');
+      const notion = document.getElementById('detailNotion');
 
       if (incident.notionUrl) {
-
-        notion.href =
-          incident.notionUrl;
-
-        notionWrapper.classList.remove(
-          'hidden'
-        );
-
+        notion.href = incident.notionUrl;
+        notionWrapper.classList.remove('hidden');
       } else {
-
-        notionWrapper.classList.add(
-          'hidden'
-        );
-
+        notionWrapper.classList.add('hidden');
       }
 
-
       showModal('incidentModal');
-
     }
-
 
     /* =========================================================
        ADMIN
     ========================================================== */
 
     function openAdmin() {
-
-      if (
-        !['TL', 'QA', 'MA'].includes(role)
-      ) {
-
+      if (!['TL', 'QA', 'MA'].includes(role)) {
         showModal('loginModal');
-
         return;
       }
 
-      document.getElementById(
-        'adminRoleText'
-      ).textContent =
-        `Signed in as ${
-          roleLabels[role] || role
-        }`;
-
+      document.getElementById('adminRoleText').textContent = `Signed in as ${roleLabels[role] || role}`;
       renderAdminIncidentList();
       renderIncidentEditor();
-
       showModal('adminModal');
-
     }
-
 
     function renderAdminIncidentList() {
-
-      const container =
-        document.getElementById(
-          'adminIncidentList'
-        );
-
+      const container = document.getElementById('adminIncidentList');
       if (!container) return;
 
-      const sorted =
-        incidents
-          .map(normalizeIncident)
-          .sort(
-            (a, b) => {
-
-              if (
-                a.status !== 'RESOLVED' &&
-                b.status === 'RESOLVED'
-              ) return -1;
-
-              if (
-                a.status === 'RESOLVED' &&
-                b.status !== 'RESOLVED'
-              ) return 1;
-
-              return (
-                new Date(
-                  b.updatedAt ||
-                  b.createdAt ||
-                  0
-                ) -
-                new Date(
-                  a.updatedAt ||
-                  a.createdAt ||
-                  0
-                )
-              );
-
-            }
-          );
-
+      const sorted = incidents.map(normalizeIncident).sort((a, b) => {
+        if (a.status !== 'RESOLVED' && b.status === 'RESOLVED') return -1;
+        if (a.status === 'RESOLVED' && b.status !== 'RESOLVED') return 1;
+        return new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0);
+      });
 
       if (!sorted.length) {
-
-        container.innerHTML =
-          `
-            <div class="rounded-xl border border-dashed border-slate-300 p-4 text-center dark:border-slate-700">
-              <p class="text-xs text-slate-400">
-                No incidents found.
-              </p>
-            </div>
-          `;
-
+        container.innerHTML = `
+          <div class="rounded-md border border-dashed p-4 text-center" style="border-color: var(--n-border);">
+            <p class="text-xs" style="color: var(--n-text-muted);">No incidents found.</p>
+          </div>
+        `;
         return;
-
       }
 
-
-      container.innerHTML =
-        sorted
-          .map(incident => {
-
-            const selected =
-              String(
-                incident.id
-              ) === String(
-                selectedIncidentId
-              );
-
-            return `
-              <button
-                onclick="selectIncident('${escapeAttribute(incident.id)}')"
-                class="w-full rounded-xl border px-3 py-2.5 text-left transition ${
-                  selected
-                    ? 'border-slate-400 bg-slate-100 dark:border-slate-600 dark:bg-slate-800'
-                    : 'border-transparent hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                }"
-              >
-
-                <div class="mb-1 flex flex-wrap gap-1">
-
-                  <span class="text-[9px] font-black uppercase ${
-                    incident.status === 'RESOLVED'
-                      ? 'text-slate-400'
-                      : incident.status === 'MONITORING'
-                        ? 'text-amber-600 dark:text-amber-400'
-                        : 'text-emerald-600 dark:text-emerald-400'
-                  }">
-                    ${escapeHTML(incident.status)}
-                  </span>
-
-                  <span class="text-[9px] font-black text-purple-500">
-                    ${escapeHTML(incident.platform)}
-                  </span>
-
-                </div>
-
-                <p class="line-clamp-2 text-xs font-bold text-slate-700 dark:text-slate-200">
-                  ${escapeHTML(incident.title)}
-                </p>
-
-              </button>
-            `;
-
-          })
-          .join('');
-
+      container.innerHTML = sorted.map(incident => {
+        const selected = String(incident.id) === String(selectedIncidentId);
+        return `
+          <button onclick="selectIncident('${escapeAttribute(incident.id)}')" class="w-full min-w-0 rounded-md border px-3 py-2.5 text-left transition"
+            style="border-color: ${selected ? 'var(--n-accent)' : 'transparent'}; background: ${selected ? 'var(--n-accent-soft)' : 'transparent'};">
+            <div class="mb-1 flex flex-wrap gap-1">
+              <span class="text-[9px] font-semibold uppercase" style="color: ${incident.status === 'RESOLVED' ? 'var(--n-text-muted)' : incident.status === 'MONITORING' ? '#9a6700' : '#1a7f37'};">
+                ${escapeHTML(incident.status)}
+              </span>
+              <span class="text-[9px] font-semibold" style="color: #6940a5;">${escapeHTML(incident.platform)}</span>
+            </div>
+            <p class="line-clamp-2 text-xs font-semibold" style="color: var(--n-text);">${escapeHTML(incident.title)}</p>
+          </button>
+        `;
+      }).join('');
     }
-
 
     function selectIncident(id) {
-
       creatingNewIncident = false;
-
       selectedIncidentId = id;
-
       renderAdminIncidentList();
       renderIncidentEditor();
-
     }
 
-
     function startNewIncident() {
-
       creatingNewIncident = true;
-
       selectedIncidentId = null;
 
-      document.getElementById(
-        'editorEmpty'
-      ).classList.add('hidden');
-
-      document.getElementById(
-        'incidentEditor'
-      ).classList.remove('hidden');
-
-      document.getElementById(
-        'editorHeading'
-      ).textContent =
-        'Create New Incident';
-
-      document.getElementById(
-        'deleteIncidentButton'
-      ).classList.add('hidden');
+      document.getElementById('editorEmpty').classList.add('hidden');
+      document.getElementById('incidentEditor').classList.remove('hidden');
+      document.getElementById('editorHeading').textContent = 'Create New Incident';
+      document.getElementById('deleteIncidentButton').classList.add('hidden');
 
       clearEditor();
 
-      document.getElementById(
-        'editorPlatform'
-      ).value =
-        'Fortune Purple';
-
-      document.getElementById(
-        'editorStatus'
-      ).value =
-        'ACTIVE';
-
-      document.getElementById(
-        'editorSeverity'
-      ).value =
-        'MEDIUM';
-
-      document.getElementById(
-        'editorCategory'
-      ).value =
-        'Technical';
-
-      document.getElementById(
-        'editorTitle'
-      ).focus();
-
+      document.getElementById('editorPlatform').value = 'Fortune Purple';
+      document.getElementById('editorStatus').value = 'ACTIVE';
+      document.getElementById('editorSeverity').value = 'MEDIUM';
+      document.getElementById('editorCategory').value = 'Technical';
+      document.getElementById('editorTitle').focus();
     }
 
-
     function renderIncidentEditor() {
+      const empty = document.getElementById('editorEmpty');
+      const editor = document.getElementById('incidentEditor');
 
-      const empty =
-        document.getElementById(
-          'editorEmpty'
-        );
-
-      const editor =
-        document.getElementById(
-          'incidentEditor'
-        );
-
-      if (
-        creatingNewIncident
-      ) {
+      if (creatingNewIncident) {
         empty.classList.add('hidden');
         editor.classList.remove('hidden');
         return;
       }
 
-
-      const incident =
-        incidents
-          .map(normalizeIncident)
-          .find(
-            item =>
-              String(item.id) ===
-              String(selectedIncidentId)
-          );
-
+      const incident = incidents.map(normalizeIncident).find(item => String(item.id) === String(selectedIncidentId));
 
       if (!incident) {
-
         empty.classList.remove('hidden');
         editor.classList.add('hidden');
-
         return;
-
       }
-
 
       empty.classList.add('hidden');
       editor.classList.remove('hidden');
 
+      document.getElementById('editorHeading').textContent = 'Edit Incident';
+      document.getElementById('deleteIncidentButton').classList.remove('hidden');
 
-      document.getElementById(
-        'editorHeading'
-      ).textContent =
-        'Edit Incident';
-
-
-      document.getElementById(
-        'deleteIncidentButton'
-      ).classList.remove('hidden');
-
-
-      document.getElementById(
-        'editorPlatform'
-      ).value =
-        incident.platform ||
-        'All Platforms';
-
-
-      document.getElementById(
-        'editorStatus'
-      ).value =
-        incident.status ||
-        'ACTIVE';
-
-
-      document.getElementById(
-        'editorSeverity'
-      ).value =
-        incident.severity ||
-        'MEDIUM';
-
-
-      document.getElementById(
-        'editorCategory'
-      ).value =
-        incident.category ||
-        'Other';
-
-
-      document.getElementById(
-        'editorTitle'
-      ).value =
-        incident.title ||
-        '';
-
-
-      document.getElementById(
-        'editorAffected'
-      ).value =
-        incident.affected ||
-        '';
-
-
-      document.getElementById(
-        'editorDescription'
-      ).value =
-        incident.description ||
-        '';
-
-
-      document.getElementById(
-        'editorAgentAction'
-      ).value =
-        incident.agentAction ||
-        '';
-
-
-      document.getElementById(
-        'editorWhatToCheck'
-      ).value =
-        incident.whatToCheck ||
-        '';
-
-
-      document.getElementById(
-        'editorInstructions'
-      ).value =
-        incident.instructions ||
-        '';
-
-
-      document.getElementById(
-        'editorResponse'
-      ).value =
-        incident.response ||
-        '';
-
-
-      document.getElementById(
-        'editorNotionUrl'
-      ).value =
-        incident.notionUrl ||
-        '';
-
+      document.getElementById('editorPlatform').value = incident.platform || 'All Platforms';
+      document.getElementById('editorStatus').value = incident.status || 'ACTIVE';
+      document.getElementById('editorSeverity').value = incident.severity || 'MEDIUM';
+      document.getElementById('editorCategory').value = incident.category || 'Other';
+      document.getElementById('editorTitle').value = incident.title || '';
+      document.getElementById('editorAffected').value = incident.affected || '';
+      document.getElementById('editorDescription').value = incident.description || '';
+      document.getElementById('editorAgentAction').value = incident.agentAction || '';
+      document.getElementById('editorWhatToCheck').value = incident.whatToCheck || '';
+      document.getElementById('editorInstructions').value = incident.instructions || '';
+      document.getElementById('editorResponse').value = incident.response || '';
+      document.getElementById('editorNotionUrl').value = incident.notionUrl || '';
 
       clearEditorMessage();
-
     }
-
 
     function clearEditor() {
-
       [
-        'editorTitle',
-        'editorAffected',
-        'editorDescription',
-        'editorAgentAction',
-        'editorWhatToCheck',
-        'editorInstructions',
-        'editorResponse',
-        'editorNotionUrl'
-      ]
-        .forEach(id => {
-
-          const element =
-            document.getElementById(id);
-
-          if (element) {
-            element.value = '';
-          }
-
-        });
-
+        'editorTitle', 'editorAffected', 'editorDescription', 'editorAgentAction',
+        'editorWhatToCheck', 'editorInstructions', 'editorResponse', 'editorNotionUrl'
+      ].forEach(id => {
+        const element = document.getElementById(id);
+        if (element) element.value = '';
+      });
       clearEditorMessage();
-
     }
-
 
     function clearEditorMessage() {
-
-      const element =
-        document.getElementById(
-          'editorMessage'
-        );
-
+      const element = document.getElementById('editorMessage');
       if (element) {
         element.textContent = '';
-        element.className =
-          'text-xs';
+        element.className = 'text-xs';
       }
-
     }
-
 
     /* =========================================================
        SAVE INCIDENT
     ========================================================== */
 
     async function saveIncident() {
-
-      if (
-        !['TL', 'QA', 'MA'].includes(role)
-      ) {
-
-        showToast(
-          'Management login required.',
-          'error'
-        );
-
+      if (!['TL', 'QA', 'MA'].includes(role)) {
+        showToast('Management login required.', 'error');
         return;
-
       }
 
-
-      const title =
-        document.getElementById(
-          'editorTitle'
-        ).value.trim();
-
-
+      const title = document.getElementById('editorTitle').value.trim();
       if (!title) {
-
-        setEditorMessage(
-          'Incident title is required.',
-          'error'
-        );
-
+        setEditorMessage('Incident title is required.', 'error');
         return;
-
       }
-
 
       const incidentData = {
-
-        platform:
-          document.getElementById(
-            'editorPlatform'
-          ).value,
-
-        status:
-          document.getElementById(
-            'editorStatus'
-          ).value,
-
-        severity:
-          document.getElementById(
-            'editorSeverity'
-          ).value,
-
-        category:
-          document.getElementById(
-            'editorCategory'
-          ).value,
-
+        platform: document.getElementById('editorPlatform').value,
+        status: document.getElementById('editorStatus').value,
+        severity: document.getElementById('editorSeverity').value,
+        category: document.getElementById('editorCategory').value,
         title,
-
-        affected:
-          document.getElementById(
-            'editorAffected'
-          ).value.trim(),
-
-        description:
-          document.getElementById(
-            'editorDescription'
-          ).value.trim(),
-
-        agentAction:
-          document.getElementById(
-            'editorAgentAction'
-          ).value.trim(),
-
-        whatToCheck:
-          document.getElementById(
-            'editorWhatToCheck'
-          ).value.trim(),
-
-        instructions:
-          document.getElementById(
-            'editorInstructions'
-          ).value.trim(),
-
-        response:
-          document.getElementById(
-            'editorResponse'
-          ).value.trim(),
-
-        notionUrl:
-          document.getElementById(
-            'editorNotionUrl'
-          ).value.trim()
-
+        affected: document.getElementById('editorAffected').value.trim(),
+        description: document.getElementById('editorDescription').value.trim(),
+        agentAction: document.getElementById('editorAgentAction').value.trim(),
+        whatToCheck: document.getElementById('editorWhatToCheck').value.trim(),
+        instructions: document.getElementById('editorInstructions').value.trim(),
+        response: document.getElementById('editorResponse').value.trim(),
+        notionUrl: document.getElementById('editorNotionUrl').value.trim()
       };
 
-
-      const button =
-        document.getElementById(
-          'saveIncidentButton'
-        );
-
-
+      const button = document.getElementById('saveIncidentButton');
       button.disabled = true;
-
-      button.innerHTML =
-        `
-          <i class="fa-solid fa-spinner loading-spinner mr-1"></i>
-          Saving...
-        `;
-
+      button.innerHTML = `<i class="fa-solid fa-spinner loading-spinner mr-1"></i> Saving...`;
 
       try {
-
         if (creatingNewIncident) {
-
-          const result =
-            await api(
-              'create',
-              incidentData
-            );
-
-          const created =
-            normalizeIncident(
-              result.incident ||
-              result.data ||
-              result
-            );
+          const result = await api('create', { incident: incidentData });
+          const created = normalizeIncident(result.incident || result.data || result);
 
           if (created.id) {
-
-            incidents.push(
-              created
-            );
-
-            selectedIncidentId =
-              created.id;
-
+            incidents.push(created);
+            selectedIncidentId = created.id;
           }
 
-          creatingNewIncident =
-            false;
-
-          setEditorMessage(
-            'Incident created successfully.',
-            'success'
-          );
-
-          showToast(
-            'Incident created.'
-          );
-
+          creatingNewIncident = false;
+          setEditorMessage('Incident created successfully.', 'success');
+          showToast('Incident created.');
         } else {
+          const result = await api('update', { incident: { id: selectedIncidentId, ...incidentData } });
 
-          const result =
-            await api(
-              'update',
-              {
-                id:
-                  selectedIncidentId,
-                ...incidentData
-              }
-            );
-
-          const index =
-            incidents.findIndex(
-              incident =>
-                String(
-                  normalizeIncident(
-                    incident
-                  ).id
-                ) ===
-                String(
-                  selectedIncidentId
-                )
-            );
-
-
-          const returned =
-            normalizeIncident(
-              result.incident ||
-              result.data ||
-              incidentData
-            );
-
+          const index = incidents.findIndex(incident => String(normalizeIncident(incident).id) === String(selectedIncidentId));
+          const returned = normalizeIncident(result.incident || result.data || incidentData);
 
           if (index >= 0) {
-
-            incidents[index] = {
-              ...incidents[index],
-              ...returned,
-              ...incidentData,
-              id:
-                selectedIncidentId
-            };
-
+            incidents[index] = { ...incidents[index], ...returned, ...incidentData, id: selectedIncidentId };
           }
 
-
-          setEditorMessage(
-            'Incident updated successfully.',
-            'success'
-          );
-
-          showToast(
-            'Incident updated.'
-          );
-
+          setEditorMessage('Incident updated successfully.', 'success');
+          showToast('Incident updated.');
         }
-
 
         renderIncidents();
         renderAdminIncidentList();
         renderIncidentEditor();
 
-
       } catch (error) {
-
-        console.error(
-          'Save error:',
-          error
-        );
-
-        setEditorMessage(
-          error.message ||
-          'Unable to save incident.',
-          'error'
-        );
-
-        showToast(
-          error.message ||
-          'Unable to save incident.',
-          'error'
-        );
-
+        console.error('Save error:', error);
+        setEditorMessage(error.message || 'Unable to save incident.', 'error');
+        showToast(error.message || 'Unable to save incident.', 'error');
       } finally {
-
         button.disabled = false;
-
-        button.innerHTML =
-          `
-            <i class="fa-solid fa-floppy-disk mr-1"></i>
-            Save Incident
-          `;
-
+        button.innerHTML = `<i class="fa-solid fa-floppy-disk mr-1"></i> Save Incident`;
       }
-
     }
-
 
     /* =========================================================
        DELETE
     ========================================================== */
 
     async function deleteSelectedIncident() {
+      if (!selectedIncidentId || creatingNewIncident) return;
 
-      if (
-        !selectedIncidentId ||
-        creatingNewIncident
-      ) {
-        return;
-      }
-
-
-      const incident =
-        incidents
-          .map(normalizeIncident)
-          .find(
-            item =>
-              String(item.id) ===
-              String(selectedIncidentId)
-          );
-
-
+      const incident = incidents.map(normalizeIncident).find(item => String(item.id) === String(selectedIncidentId));
       if (!incident) return;
 
-
-      const confirmed =
-        window.confirm(
-          `Delete "${incident.title}"?\n\nThis action cannot be undone.`
-        );
-
-
+      const confirmed = window.confirm(`Delete "${incident.title}"?\n\nThis action cannot be undone.`);
       if (!confirmed) return;
 
-
       try {
+        await api('delete', { id: selectedIncidentId });
 
-        await api(
-          'delete',
-          {
-            id:
-              selectedIncidentId
-          }
-        );
+        incidents = incidents.filter(item => String(normalizeIncident(item).id) !== String(selectedIncidentId));
 
-
-        incidents =
-          incidents.filter(
-            item =>
-              String(
-                normalizeIncident(
-                  item
-                ).id
-              ) !==
-              String(
-                selectedIncidentId
-              )
-          );
-
-
-        selectedIncidentId =
-          null;
-
-        creatingNewIncident =
-          false;
+        selectedIncidentId = null;
+        creatingNewIncident = false;
 
         renderIncidents();
         renderAdminIncidentList();
         renderIncidentEditor();
 
-        showToast(
-          'Incident deleted.'
-        );
-
-
+        showToast('Incident deleted.');
       } catch (error) {
-
-        console.error(
-          'Delete error:',
-          error
-        );
-
-        showToast(
-          error.message ||
-          'Unable to delete incident.',
-          'error'
-        );
-
+        console.error('Delete error:', error);
+        showToast(error.message || 'Unable to delete incident.', 'error');
       }
-
     }
-
 
     /* =========================================================
        LOGIN
     ========================================================== */
 
     async function login() {
+      const selectedRole = document.getElementById('loginRole').value.trim().toUpperCase();
+      const pin = document.getElementById('loginPin').value.trim();
 
-      const selectedRole =
-        document.getElementById(
-          'loginRole'
-        ).value
-          .trim()
-          .toUpperCase();
+      const errorBox = document.getElementById('loginError');
+      const button = document.getElementById('loginSubmitButton');
 
-
-      const pin =
-        document.getElementById(
-          'loginPin'
-        ).value
-          .trim();
-
-
-      const errorBox =
-        document.getElementById(
-          'loginError'
-        );
-
-
-      const button =
-        document.getElementById(
-          'loginSubmitButton'
-        );
-
-
-      errorBox.classList.add(
-        'hidden'
-      );
-
+      errorBox.classList.add('hidden');
       errorBox.textContent = '';
 
-
       if (!pin) {
-
-        errorBox.textContent =
-          'Please enter your PIN.';
-
-        errorBox.classList.remove(
-          'hidden'
-        );
-
+        errorBox.textContent = 'Please enter your PIN.';
+        errorBox.classList.remove('hidden');
         return;
-
       }
-
 
       button.disabled = true;
-
-      button.innerHTML =
-        `
-          <i class="fa-solid fa-spinner loading-spinner"></i>
-          Logging in...
-        `;
-
+      button.innerHTML = `<i class="fa-solid fa-spinner loading-spinner"></i> Logging in...`;
 
       try {
+        const body = new URLSearchParams();
+        body.set('payload', JSON.stringify({ action: 'login', role: selectedRole, pin }));
 
-        const body =
-          new URLSearchParams();
-
-
-        body.set(
-          'payload',
-          JSON.stringify({
-            action: 'login',
-            role: selectedRole,
-            pin
-          })
-        );
-
-
-        const response =
-          await fetch(
-            API_URL,
-            {
-              method: 'POST',
-              body
-            }
-          );
-
-
-        const text =
-          await response.text();
-
-
-        console.log(
-          'LOGIN RAW RESPONSE:',
-          text
-        );
-
+        const response = await fetch(API_URL, { method: 'POST', body });
+        const text = await response.text();
 
         let result;
-
-
         try {
-
-          result =
-            JSON.parse(text);
-
+          result = JSON.parse(text);
         } catch (error) {
-
-          throw new Error(
-            'The Apps Script login did not return valid JSON.'
-          );
-
+          throw new Error('The Apps Script login did not return valid JSON.');
         }
 
-
-        console.log(
-          'LOGIN RESPONSE:',
-          result
-        );
-
-
-        if (
-          !response.ok ||
-          result.success === false
-        ) {
-
-          throw new Error(
-            result.message ||
-            result.error ||
-            'Invalid PIN or login failed.'
-          );
-
+        if (!response.ok || result.ok === false || result.success === false) {
+          throw new Error(result.error || result.message || 'Invalid PIN or login failed.');
         }
 
+        adminToken = result.token || result.sessionToken || result.adminToken || result.authToken || '';
+        role = String(result.role || selectedRole).toUpperCase();
+        adminPin = pin;
 
-        adminToken =
-          result.token ||
-          result.sessionToken ||
-          result.adminToken ||
-          result.authToken ||
-          '';
-
-
-        role =
-          String(
-            result.role ||
-            selectedRole
-          ).toUpperCase();
-
-
-        adminPin =
-          pin;
-
-
-        if (
-          !['TL', 'QA', 'MA'].includes(
-            role
-          )
-        ) {
-
-          throw new Error(
-            'The server returned an invalid management role.'
-          );
-
+        if (!['TL', 'QA', 'MA'].includes(role)) {
+          throw new Error('The server returned an invalid management role.');
         }
 
+        if (adminToken) sessionStorage.setItem('support_admin_token', adminToken);
+        sessionStorage.setItem('support_admin_role', role);
 
-        if (adminToken) {
-
-          sessionStorage.setItem(
-            'support_admin_token',
-            adminToken
-          );
-
-        }
-
-
-        sessionStorage.setItem(
-          'support_admin_role',
-          role
-        );
-
-
-        document.getElementById(
-          'loginPin'
-        ).value = '';
-
-
-        hideModal(
-          'loginModal'
-        );
-
-
+        document.getElementById('loginPin').value = '';
+        hideModal('loginModal');
         openAdmin();
 
-
-        showToast(
-          `Logged in as ${
-            roleLabels[role] ||
-            role
-          }.`
-        );
-
+        showToast(`Logged in as ${roleLabels[role] || role}.`);
 
       } catch (error) {
-
-        console.error(
-          'LOGIN ERROR:',
-          error
-        );
-
-
-        errorBox.textContent =
-          error.message ||
-          'Login failed.';
-
-
-        errorBox.classList.remove(
-          'hidden'
-        );
-
-
+        console.error('LOGIN ERROR:', error);
+        errorBox.textContent = error.message || 'Login failed.';
+        errorBox.classList.remove('hidden');
       } finally {
-
         button.disabled = false;
-
-        button.innerHTML =
-          `
-            <i class="fa-solid fa-right-to-bracket"></i>
-            Login
-          `;
-
+        button.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> Login`;
       }
-
     }
-
 
     /* =========================================================
        LOGOUT
     ========================================================== */
 
     function logout() {
-
       adminToken = '';
       adminPin = '';
       role = '';
+      selectedIncidentId = null;
+      creatingNewIncident = false;
 
-      selectedIncidentId =
-        null;
+      sessionStorage.removeItem('support_admin_token');
+      sessionStorage.removeItem('support_admin_role');
 
-      creatingNewIncident =
-        false;
-
-
-      sessionStorage.removeItem(
-        'support_admin_token'
-      );
-
-      sessionStorage.removeItem(
-        'support_admin_role'
-      );
-
-
-      hideModal(
-        'adminModal'
-      );
-
-
-      showToast(
-        'Logged out.'
-      );
-
+      hideModal('adminModal');
+      showToast('Logged out.');
     }
-
 
     /* =========================================================
        MODALS
     ========================================================== */
 
     function showModal(id) {
-
-      const modal =
-        document.getElementById(id);
-
+      const modal = document.getElementById(id);
       if (!modal) return;
-
-      modal.classList.remove(
-        'hidden'
-      );
-
-      modal.classList.add(
-        'flex'
-      );
-
-      document.body.style.overflow =
-        'hidden';
-
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.body.style.overflow = 'hidden';
     }
-
 
     function hideModal(id) {
-
-      const modal =
-        document.getElementById(id);
-
+      const modal = document.getElementById(id);
       if (!modal) return;
-
-      modal.classList.add(
-        'hidden'
-      );
-
-      modal.classList.remove(
-        'flex'
-      );
-
-      document.body.style.overflow =
-        '';
-
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.body.style.overflow = '';
     }
 
-
-    /* Close modal by clicking backdrop */
-
-    document.addEventListener(
-      'click',
-      event => {
-
-        if (
-          event.target.classList.contains(
-            'modal-backdrop'
-          )
-        ) {
-
-          hideModal(
-            event.target.id
-          );
-
-        }
-
+    document.addEventListener('click', event => {
+      if (event.target.classList.contains('modal-backdrop')) {
+        hideModal(event.target.id);
       }
-    );
+    });
 
-
-    /* Escape */
-
-    document.addEventListener(
-      'keydown',
-      event => {
-
-        if (
-          event.key !== 'Escape'
-        ) return;
-
-
-        [
-          'incidentModal',
-          'loginModal',
-          'adminModal'
-        ]
-          .forEach(id => {
-
-            const modal =
-              document.getElementById(id);
-
-            if (
-              modal &&
-              !modal.classList.contains(
-                'hidden'
-              )
-            ) {
-              hideModal(id);
-            }
-
-          });
-
-      }
-    );
-
+    document.addEventListener('keydown', event => {
+      if (event.key !== 'Escape') return;
+      ['incidentModal', 'loginModal', 'adminModal'].forEach(id => {
+        const modal = document.getElementById(id);
+        if (modal && !modal.classList.contains('hidden')) hideModal(id);
+      });
+    });
 
     /* =========================================================
        HELPERS
     ========================================================== */
 
     function escapeHTML(value) {
-
-      return String(
-        value ?? ''
-      )
-        .replace(
-          /&/g,
-          '&amp;'
-        )
-        .replace(
-          /</g,
-          '&lt;'
-        )
-        .replace(
-          />/g,
-          '&gt;'
-        )
-        .replace(
-          /"/g,
-          '&quot;'
-        )
-        .replace(
-          /'/g,
-          '&#039;'
-        );
-
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
     }
 
-
-    function escapeAttribute(value) {
-
-      return escapeHTML(value);
-
-    }
-
+    function escapeAttribute(value) { return escapeHTML(value); }
 
     function formatIncidentDate(value) {
-
       if (!value) return '';
-
-      const date =
-        new Date(value);
-
-      if (
-        Number.isNaN(
-          date.getTime()
-        )
-      ) {
-        return '';
-      }
-
-      return new Intl.DateTimeFormat(
-        'en-US',
-        {
-          month: 'short',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
-        }
-      ).format(date);
-
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return '';
+      return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }).format(date);
     }
 
-
-    function setEditorMessage(
-      message,
-      type = 'info'
-    ) {
-
-      const element =
-        document.getElementById(
-          'editorMessage'
-        );
-
+    function setEditorMessage(message, type = 'info') {
+      const element = document.getElementById('editorMessage');
       if (!element) return;
-
-
-      element.textContent =
-        message;
-
-
+      element.textContent = message;
       if (type === 'error') {
-
-        element.className =
-          'text-xs font-semibold text-red-600 dark:text-red-400';
-
-      } else if (
-        type === 'success'
-      ) {
-
-        element.className =
-          'text-xs font-semibold text-emerald-600 dark:text-emerald-400';
-
+        element.className = 'text-xs font-semibold';
+        element.style.color = '#b93b30';
+      } else if (type === 'success') {
+        element.className = 'text-xs font-semibold';
+        element.style.color = '#1a7f37';
       } else {
-
-        element.className =
-          'text-xs text-slate-500 dark:text-slate-400';
-
+        element.className = 'text-xs';
+        element.style.color = 'var(--n-text-muted)';
       }
-
     }
 
-
-    function showToast(
-      message,
-      type = 'success'
-    ) {
-
-      const container =
-        document.getElementById(
-          'toastContainer'
-        );
-
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toastContainer');
       if (!container) return;
 
+      const toast = document.createElement('div');
+      const icon = type === 'error' ? 'fa-circle-exclamation' : 'fa-circle-check';
 
-      const toast =
-        document.createElement(
-          'div'
-        );
+      toast.className = 'toast pointer-events-auto flex max-w-sm items-center gap-2 rounded-md border px-4 py-3 text-xs font-semibold shadow-sm';
+      toast.style.borderColor = type === 'error' ? '#f3c9c5' : 'var(--n-border)';
+      toast.style.background = type === 'error' ? '#fbe4e2' : 'var(--n-bg)';
+      toast.style.color = type === 'error' ? '#b93b30' : 'var(--n-text)';
 
+      toast.innerHTML = `<i class="fa-solid ${icon}"></i><span>${escapeHTML(message)}</span>`;
+      container.appendChild(toast);
 
-      const icon =
-        type === 'error'
-          ? 'fa-circle-exclamation'
-          : 'fa-circle-check';
-
-
-      const colors =
-        type === 'error'
-          ? 'border-red-200 bg-red-50 text-red-700 dark:border-red-900 dark:bg-red-950/50 dark:text-red-300'
-          : 'border-slate-200 bg-white text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200';
-
-
-      toast.className =
-        `toast pointer-events-auto flex max-w-sm items-center gap-2 rounded-xl border px-4 py-3 text-xs font-semibold shadow-lg ${colors}`;
-
-
-      toast.innerHTML =
-        `
-          <i class="fa-solid ${icon}"></i>
-          <span>${escapeHTML(message)}</span>
-        `;
-
-
-      container.appendChild(
-        toast
-      );
-
-
-      setTimeout(
-        () => {
-          toast.remove();
-        },
-        3900
-      );
-
+      setTimeout(() => toast.remove(), 3900);
     }
-
 
     /* =========================================================
        INITIALIZATION
     ========================================================== */
 
     async function initialize() {
-
       initTheme();
-
       renderTimezones();
-
       updateTbilisiClock();
 
-      /*
-       * Load incidents immediately so the
-       * Current Incidents tab is ready.
-       */
       await loadIncidents();
 
-      /*
-       * Refresh incidents every 60 seconds.
-       */
-      setInterval(
-        loadIncidents,
-        60000
-      );
-
-      /*
-       * Update clocks every second.
-       */
-      setInterval(
-        updateLiveTimeDisplays,
-        1000
-      );
-
+      setInterval(loadIncidents, 60000);
+      setInterval(updateLiveTimeDisplays, 1000);
     }
-
 
     initialize();
 
